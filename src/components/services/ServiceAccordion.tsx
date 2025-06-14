@@ -2,13 +2,13 @@
 import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Star, Calendar, MessageCircle } from "lucide-react";
+import { Star, Calendar, MessageCircle, PieChart, Shield, DollarSign, TrendingUp, Building, Rocket, Globe, Code, Cloud, Database } from "lucide-react";
 
 interface ServiceAccordionProps {
   services: Array<{
     title: string;
     description: string;
-    icon: React.ReactNode;
+    icon: string;
     features: string[];
   }>;
   onBookService: (serviceName: string) => void;
@@ -32,6 +32,23 @@ const ServiceAccordion: React.FC<ServiceAccordionProps> = ({ services, onBookSer
 
   const colors = colorClasses[colorScheme];
 
+  const getIcon = (iconName: string) => {
+    const icons = {
+      'pie-chart': <PieChart className="h-6 w-6" />,
+      'shield': <Shield className="h-6 w-6" />,
+      'dollar-sign': <DollarSign className="h-6 w-6" />,
+      'trending-up': <TrendingUp className="h-6 w-6" />,
+      'building': <Building className="h-6 w-6" />,
+      'rocket': <Rocket className="h-6 w-6" />,
+      'globe': <Globe className="h-6 w-6" />,
+      'code': <Code className="h-6 w-6" />,
+      'star': <Star className="h-6 w-6" />,
+      'cloud': <Cloud className="h-6 w-6" />,
+      'database': <Database className="h-6 w-6" />
+    };
+    return icons[iconName as keyof typeof icons] || <Star className="h-6 w-6" />;
+  };
+
   return (
     <Accordion type="single" collapsible className="w-full">
       {services.map((service, index) => (
@@ -39,7 +56,7 @@ const ServiceAccordion: React.FC<ServiceAccordionProps> = ({ services, onBookSer
           <AccordionTrigger className={`text-white hover:${colors.text.replace('text-', 'text-').replace('-400', '-300')}`}>
             <div className="flex items-center">
               <div className={`${colors.text} mr-3`}>
-                {service.icon}
+                {getIcon(service.icon)}
               </div>
               {service.title}
             </div>
