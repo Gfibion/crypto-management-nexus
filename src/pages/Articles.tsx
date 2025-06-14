@@ -1,8 +1,8 @@
-
 import { useArticles } from "@/hooks/useArticles";
 import { useGuestMode } from "@/hooks/useGuestMode";
 import GuestModePrompt from "@/components/GuestModePrompt";
 import ArticleCard from "@/components/ArticleCard";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { BookOpen, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,7 +18,7 @@ const Articles = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen pt-20 px-4 flex items-center justify-center">
-        <div className="text-white text-xl">Loading articles...</div>
+        <LoadingSpinner message="Loading articles..." size="lg" />
       </div>
     );
   }

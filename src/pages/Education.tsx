@@ -1,8 +1,8 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useEducation } from "@/hooks/useSupabaseData";
 import { GraduationCap, Calendar, Award } from "lucide-react";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const Education = () => {
   const { data: education, isLoading, error } = useEducation();
@@ -10,7 +10,7 @@ const Education = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen pt-20 px-4 flex items-center justify-center">
-        <div className="text-white text-xl">Loading education...</div>
+        <LoadingSpinner message="Loading education data..." size="lg" />
       </div>
     );
   }

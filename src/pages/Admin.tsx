@@ -3,6 +3,7 @@ import React from 'react';
 import { useIsAdmin } from '@/hooks/useUserRole';
 import { useAuth } from '@/hooks/useAuth';
 import AdminPanel from '@/components/AdminPanel';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { Card } from '@/components/ui/card';
 import { Shield, AlertTriangle } from 'lucide-react';
 
@@ -13,7 +14,7 @@ const Admin = () => {
   if (loading) {
     return (
       <div className="min-h-screen pt-20 px-4 flex items-center justify-center">
-        <div className="text-white">Loading...</div>
+        <LoadingSpinner message="Authenticating..." size="lg" />
       </div>
     );
   }
