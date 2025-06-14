@@ -122,7 +122,7 @@ const Portfolio = () => {
           <div className="flex justify-center mb-6">
             <Avatar className="w-32 h-32 border-4 border-purple-400/50">
               <AvatarImage 
-                src="/lovable-uploads/8dac904e-399f-485c-bbe1-d1f051fd857c.png" 
+                src="/lovable-uploads/80ca0030-f568-4d00-b7d7-16eb0542ad01.png" 
                 alt="Gfibion Joseph Mutua" 
               />
               <AvatarFallback className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-white">
