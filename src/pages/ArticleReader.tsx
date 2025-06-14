@@ -114,7 +114,7 @@ const ArticleReader: React.FC = () => {
                 <h3 className="text-lg font-semibold text-white mb-4">Tags</h3>
                 <div className="flex flex-wrap gap-2">
                   {currentArticle.tags.map((tag: string, index: number) => (
-                    <Badge key={index} variant="secondary" className="text-sm">
+                    <Badge key={index} className="bg-green-800 text-green-100 hover:bg-green-700 text-sm">
                       {tag}
                     </Badge>
                   ))}
