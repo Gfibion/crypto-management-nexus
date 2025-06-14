@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Shield } from "lucide-react";
+import { Shield, BookOpen, MessageCircle } from "lucide-react";
 
 interface NavItem {
   name: string;
@@ -13,6 +13,19 @@ interface DesktopNavigationProps {
 
 const DesktopNavigation = ({ navItems }: DesktopNavigationProps) => {
   const location = useLocation();
+
+  const getIcon = (itemName: string) => {
+    switch (itemName) {
+      case "Admin":
+        return <Shield className="h-4 w-4" />;
+      case "Articles":
+        return <BookOpen className="h-4 w-4" />;
+      case "Chat":
+        return <MessageCircle className="h-4 w-4" />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="hidden md:block">
@@ -27,7 +40,7 @@ const DesktopNavigation = ({ navItems }: DesktopNavigationProps) => {
                 : "text-gray-300 hover:text-purple-400"
             }`}
           >
-            {item.name === "Admin" && <Shield className="h-4 w-4" />}
+            {getIcon(item.name)}
             <span>{item.name}</span>
           </Link>
         ))}

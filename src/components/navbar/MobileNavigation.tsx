@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { Shield, User, LogOut } from "lucide-react";
+import { Shield, User, LogOut, BookOpen, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useUserRole";
@@ -43,6 +43,19 @@ const MobileNavigation = ({ navItems, isOpen, onClose }: MobileNavigationProps) 
     }
   };
 
+  const getIcon = (itemName: string) => {
+    switch (itemName) {
+      case "Admin":
+        return <Shield className="h-4 w-4" />;
+      case "Articles":
+        return <BookOpen className="h-4 w-4" />;
+      case "Chat":
+        return <MessageCircle className="h-4 w-4" />;
+      default:
+        return null;
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -59,7 +72,7 @@ const MobileNavigation = ({ navItems, isOpen, onClose }: MobileNavigationProps) 
                 : "text-gray-300 hover:text-purple-400"
             }`}
           >
-            {item.name === "Admin" && <Shield className="h-4 w-4" />}
+            {getIcon(item.name)}
             <span>{item.name}</span>
           </Link>
         ))}
