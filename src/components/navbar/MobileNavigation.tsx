@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { Shield, User, LogOut, BookOpen, MessageCircle } from "lucide-react";
+import { Shield, User, LogOut, BookOpen, MessageCircle, Home, Briefcase, GraduationCap, Code, FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useUserRole";
@@ -45,12 +45,24 @@ const MobileNavigation = ({ navItems, isOpen, onClose }: MobileNavigationProps) 
 
   const getIcon = (itemName: string) => {
     switch (itemName) {
-      case "Admin":
-        return <Shield className="h-4 w-4" />;
+      case "Home":
+        return <Home className="h-4 w-4" />;
+      case "About":
+        return <User className="h-4 w-4" />;
+      case "Services":
+        return <Briefcase className="h-4 w-4" />;
+      case "Skills":
+        return <Code className="h-4 w-4" />;
+      case "Education":
+        return <GraduationCap className="h-4 w-4" />;
       case "Articles":
         return <BookOpen className="h-4 w-4" />;
+      case "Portfolio":
+        return <FolderOpen className="h-4 w-4" />;
       case "Chat":
         return <MessageCircle className="h-4 w-4" />;
+      case "Admin":
+        return <Shield className="h-4 w-4" />;
       default:
         return null;
     }

@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Shield, BookOpen, MessageCircle } from "lucide-react";
+import { Shield, BookOpen, MessageCircle, Home, User, Briefcase, GraduationCap, Code, FolderOpen } from "lucide-react";
 
 interface NavItem {
   name: string;
@@ -16,12 +16,24 @@ const DesktopNavigation = ({ navItems }: DesktopNavigationProps) => {
 
   const getIcon = (itemName: string) => {
     switch (itemName) {
-      case "Admin":
-        return <Shield className="h-4 w-4" />;
+      case "Home":
+        return <Home className="h-4 w-4" />;
+      case "About":
+        return <User className="h-4 w-4" />;
+      case "Services":
+        return <Briefcase className="h-4 w-4" />;
+      case "Skills":
+        return <Code className="h-4 w-4" />;
+      case "Education":
+        return <GraduationCap className="h-4 w-4" />;
       case "Articles":
         return <BookOpen className="h-4 w-4" />;
+      case "Portfolio":
+        return <FolderOpen className="h-4 w-4" />;
       case "Chat":
         return <MessageCircle className="h-4 w-4" />;
+      case "Admin":
+        return <Shield className="h-4 w-4" />;
       default:
         return null;
     }
