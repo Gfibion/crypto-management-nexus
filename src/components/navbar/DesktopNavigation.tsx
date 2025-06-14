@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Shield, BookOpen, MessageCircle, Home, User, Briefcase, GraduationCap, Code, FolderOpen } from "lucide-react";
+import { Shield, BookOpen, MessageCircle, Home, User, Briefcase, GraduationCap, Code, FolderOpen, Heart } from "lucide-react";
 
 interface NavItem {
   name: string;
@@ -32,6 +32,8 @@ const DesktopNavigation = ({ navItems }: DesktopNavigationProps) => {
         return <FolderOpen className="h-4 w-4" />;
       case "Chat":
         return <MessageCircle className="h-4 w-4" />;
+      case "Donate":
+        return <Heart className="h-4 w-4" />;
       case "Admin":
         return <Shield className="h-4 w-4" />;
       default:

@@ -20,6 +20,7 @@ const Navbar = () => {
     { name: "Articles", path: "/articles" },
     { name: "Portfolio", path: "/portfolio" },
     { name: "Chat", path: "/chat" },
+    { name: "Donate", path: "/donate" },
   ];
 
   // Add admin link if user is admin

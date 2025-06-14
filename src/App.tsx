@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,6 +17,7 @@ import Articles from "./pages/Articles";
 import ArticleReader from "./pages/ArticleReader";
 import Chat from "./pages/Chat";
 import Portfolio from "./pages/Portfolio";
+import Donate from "./pages/Donate";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
@@ -58,6 +60,7 @@ const App = () => {
                 <Route path="/articles/:slug" element={<ArticleReader />} />
                 <Route path="/chat" element={<Chat />} />
                 <Route path="/portfolio" element={<Portfolio />} />
+                <Route path="/donate" element={<Donate />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/admin" element={<Admin />} />
