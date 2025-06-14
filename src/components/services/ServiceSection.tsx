@@ -19,7 +19,7 @@ interface ServiceSectionProps {
   detailedServices?: Array<{
     title: string;
     description: string;
-    icon: string;
+    icon: React.ReactNode;
     features: string[];
   }>;
   getIcon: (iconName: string) => React.ReactNode;
