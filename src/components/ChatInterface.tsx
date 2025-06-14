@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, User, Bot, Crown, Loader2 } from 'lucide-react';
+import { Send, User, Bot, Crown, Loader2, ArrowLeft } from 'lucide-react';
 import { useMessages, useSendMessage, useAIResponse } from '@/hooks/useChat';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -160,8 +160,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ conversationId, onBack })
     <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-purple-800/30">
-        <Button variant="outline" onClick={onBack} size="sm">
-          ← Back to Conversations
+        <Button variant="outline" onClick={onBack} size="sm" className="text-white border-purple-600/30">
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back
         </Button>
         <div className="text-center">
           <h3 className="text-lg font-semibold text-white">
