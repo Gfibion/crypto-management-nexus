@@ -4,7 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Heart, Phone, DollarSign } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Heart, Phone, DollarSign, AlertTriangle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const Donate = () => {
@@ -43,16 +44,15 @@ const Donate = () => {
         formattedPhone = '+254' + phoneNumber;
       }
 
-      // Simulate MPesa API call
-      // In a real implementation, you would call the MPesa API here
+      // Simulate MPesa API call with more realistic feedback
       await simulateMpesaPayment(formattedPhone, parseFloat(amount));
 
       toast({
-        title: "Payment Initiated",
-        description: `MPesa payment request sent to ${formattedPhone}. Please enter your MPesa PIN to complete the donation of KES ${amount}`,
+        title: "Payment Request Sent",
+        description: `Please check your phone ${formattedPhone} for the MPesa payment prompt and enter your PIN to complete the donation of KES ${amount}`,
       });
 
-      // Reset form
+      // Reset form after successful initiation
       setAmount('');
       setPhoneNumber('');
     } catch (error) {
@@ -69,15 +69,20 @@ const Donate = () => {
   const simulateMpesaPayment = async (phone: string, amount: number) => {
     // This simulates the MPesa API call
     // In production, you would integrate with the actual MPesa API
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       setTimeout(() => {
         console.log(`MPesa payment initiated: ${phone} - KES ${amount} to +254768974474`);
-        resolve(true);
+        // Simulate success most of the time
+        if (Math.random() > 0.1) {
+          resolve(true);
+        } else {
+          reject(new Error('Payment failed'));
+        }
       }, 2000);
     });
   };
 
-  const suggestedAmounts = [100, 500, 1000, 2000, 5000];
+  const suggestedAmounts = [50, 100, 500, 1000, 2000, 5000];
 
   return (
     <div className="min-h-screen pt-20 pb-12">
@@ -93,6 +98,15 @@ const Donate = () => {
             Every contribution, no matter the size, is greatly appreciated.
           </p>
         </div>
+
+        {/* Demo Notice */}
+        <Alert className="mb-8 bg-yellow-900/20 border-yellow-600/30">
+          <AlertTriangle className="h-4 w-4 text-yellow-500" />
+          <AlertDescription className="text-yellow-200">
+            <strong>Demo Mode:</strong> This is currently a demonstration. For real MPesa integration, 
+            the system needs to be connected to MPesa API with proper credentials and backend processing.
+          </AlertDescription>
+        </Alert>
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Donation Form */}
@@ -164,7 +178,7 @@ const Donate = () => {
                 size="lg"
               >
                 {isProcessing ? (
-                  "Processing..."
+                  "Sending Payment Request..."
                 ) : (
                   <>
                     <Heart className="h-5 w-5 mr-2" />
@@ -211,6 +225,18 @@ const Donate = () => {
                   <li>Maintaining and improving services</li>
                   <li>Creating valuable content and resources</li>
                   <li>Supporting community initiatives</li>
+                </ul>
+              </div>
+
+              <div>
+                <h4 className="text-white font-semibold mb-2">For Real MPesa Integration:</h4>
+                <p className="text-gray-300 text-sm">
+                  To enable actual MPesa payments, this system would need:
+                </p>
+                <ul className="text-gray-300 text-sm space-y-1 list-disc list-inside mt-2">
+                  <li>MPesa API credentials from Safaricom</li>
+                  <li>Backend server for secure API calls</li>
+                  <li>Proper webhook handling for payment confirmations</li>
                 </ul>
               </div>
 
