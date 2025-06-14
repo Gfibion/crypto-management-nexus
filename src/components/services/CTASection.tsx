@@ -4,12 +4,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
+import { generateMailtoLink } from "@/utils/emailTemplates";
 
 interface CTASectionProps {
   onScheduleConsultation: () => void;
 }
 
 const CTASection: React.FC<CTASectionProps> = ({ onScheduleConsultation }) => {
+  const handleScheduleConsultation = () => {
+    const mailtoLink = generateMailtoLink('Free Consultation', {
+      name: '[Your Name]',
+      company: '[Your Company]'
+    });
+    window.open(mailtoLink, '_blank');
+  };
+
   return (
     <Card className="bg-slate-800/50 border-purple-800/30">
       <CardContent className="p-8 text-center">
@@ -19,7 +28,7 @@ const CTASection: React.FC<CTASectionProps> = ({ onScheduleConsultation }) => {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Button 
-            onClick={onScheduleConsultation}
+            onClick={handleScheduleConsultation}
             size="lg" 
             className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0"
           >

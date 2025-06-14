@@ -3,6 +3,7 @@ import React from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Star, Calendar, MessageCircle, PieChart, Shield, DollarSign, TrendingUp, Building, Rocket, Globe, Code, Cloud, Database } from "lucide-react";
+import { generateMailtoLink } from '@/utils/emailTemplates';
 
 interface ServiceAccordionProps {
   services: Array<{
@@ -49,6 +50,11 @@ const ServiceAccordion: React.FC<ServiceAccordionProps> = ({ services, onBookSer
     return icons[iconName as keyof typeof icons] || <Star className="h-6 w-6" />;
   };
 
+  const handleServiceAction = (serviceName: string) => {
+    const mailtoLink = generateMailtoLink(serviceName);
+    window.open(mailtoLink, '_blank');
+  };
+
   return (
     <Accordion type="single" collapsible className="w-full">
       {services.map((service, index) => (
@@ -77,7 +83,7 @@ const ServiceAccordion: React.FC<ServiceAccordionProps> = ({ services, onBookSer
               </ul>
             </div>
             <Button 
-              onClick={() => onBookService(service.title)}
+              onClick={() => handleServiceAction(service.title)}
               size="sm"
               className={colors.button}
             >

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useServices } from "@/hooks/useSupabaseData";
 import { 
@@ -16,6 +15,7 @@ import ServiceSection from '@/components/services/ServiceSection';
 import ProcessSection from '@/components/services/ProcessSection';
 import CTASection from '@/components/services/CTASection';
 import { businessServices, ictServices } from '@/components/services/serviceData';
+import { generateMailtoLink } from '@/utils/emailTemplates';
 
 const Services = () => {
   const { data: services, isLoading, error } = useServices();
@@ -33,11 +33,16 @@ const Services = () => {
   };
 
   const handleBookService = (serviceName: string) => {
-    window.open(`mailto:contact@yoursite.com?subject=Book ${serviceName} Service&body=Hi, I would like to schedule a consultation for ${serviceName}. Please let me know your availability.`, '_blank');
+    const mailtoLink = generateMailtoLink(serviceName);
+    window.open(mailtoLink, '_blank');
   };
 
   const handleScheduleConsultation = () => {
-    window.open('mailto:contact@yoursite.com?subject=Schedule Consultation', '_blank');
+    const mailtoLink = generateMailtoLink('General Consultation', { 
+      name: '[Your Name]', 
+      company: '[Your Company]' 
+    });
+    window.open(mailtoLink, '_blank');
   };
 
   if (isLoading) {
