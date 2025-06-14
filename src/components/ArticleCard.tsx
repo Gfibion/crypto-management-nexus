@@ -74,12 +74,12 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onRead, showFullCont
         {article.tags && article.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-4">
             {article.tags.slice(0, 3).map((tag: string, index: number) => (
-              <Badge key={index} variant="secondary" className="text-xs">
+              <Badge key={index} className="bg-green-800 text-green-100 hover:bg-green-700 text-xs">
                 {tag}
               </Badge>
             ))}
             {article.tags.length > 3 && (
-              <Badge variant="secondary" className="text-xs">
+              <Badge className="bg-green-800 text-green-100 hover:bg-green-700 text-xs">
                 +{article.tags.length - 3} more
               </Badge>
             )}
