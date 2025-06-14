@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -43,22 +42,20 @@ const AdminPanel: React.FC = () => {
       {/* Navigation Tabs */}
       <div className="flex space-x-4 mb-6">
         <Button
-          variant={activeTab === 'dashboard' ? 'default' : 'outline'}
           onClick={() => setActiveTab('dashboard')}
           className={activeTab === 'dashboard' 
             ? "bg-gradient-to-r from-purple-600 to-blue-600" 
-            : "border-purple-600/30 text-purple-300"
+            : "bg-transparent border border-purple-600/30 text-purple-300 hover:bg-purple-600/20"
           }
         >
           <BarChart3 className="h-4 w-4 mr-2" />
           Dashboard
         </Button>
         <Button
-          variant={activeTab === 'articles' ? 'default' : 'outline'}
           onClick={() => setActiveTab('articles')}
           className={activeTab === 'articles' 
             ? "bg-gradient-to-r from-purple-600 to-blue-600" 
-            : "border-purple-600/30 text-purple-300"
+            : "bg-transparent border border-purple-600/30 text-purple-300 hover:bg-purple-600/20"
           }
         >
           <FileText className="h-4 w-4 mr-2" />
