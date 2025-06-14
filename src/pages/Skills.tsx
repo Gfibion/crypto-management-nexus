@@ -1,60 +1,45 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { useSkills } from "@/hooks/useSupabaseData";
 
 const Skills = () => {
-  const skillCategories = [
-    {
-      category: "Business Management",
-      skills: [
-        { name: "Strategic Planning", level: 95 },
-        { name: "Project Management", level: 90 },
-        { name: "Team Leadership", level: 88 },
-        { name: "Operations Management", level: 85 },
-        { name: "Financial Analysis", level: 82 }
-      ],
-      color: "blue"
-    },
-    {
-      category: "ICT & Technology",
-      skills: [
-        { name: "System Integration", level: 92 },
-        { name: "Digital Transformation", level: 88 },
-        { name: "Database Management", level: 85 },
-        { name: "Cloud Solutions", level: 83 },
-        { name: "Cybersecurity", level: 80 }
-      ],
-      color: "purple"
-    },
-    {
-      category: "Blockchain & Crypto",
-      skills: [
-        { name: "Blockchain Strategy", level: 90 },
-        { name: "Smart Contracts", level: 85 },
-        { name: "DeFi Protocols", level: 83 },
-        { name: "Crypto Trading", level: 88 },
-        { name: "Web3 Integration", level: 80 }
-      ],
-      color: "pink"
+  const { data: skills, isLoading, error } = useSkills();
+
+  // Group skills by category
+  const groupedSkills = skills?.reduce((acc, skill) => {
+    if (!acc[skill.category]) {
+      acc[skill.category] = [];
     }
-  ];
+    acc[skill.category].push(skill);
+    return acc;
+  }, {} as Record<string, typeof skills>);
 
-  const certifications = [
-    "PMP - Project Management Professional",
-    "AWS Certified Solutions Architect",
-    "Certified Blockchain Professional",
-    "ITIL Foundation Certified",
-    "Six Sigma Green Belt",
-    "Cryptocurrency Certification Consortium"
-  ];
+  const getCategoryColor = (category: string) => {
+    const colors = {
+      "Management": "blue",
+      "ICT": "purple", 
+      "Blockchain": "pink"
+    };
+    return colors[category as keyof typeof colors] || "gray";
+  };
 
-  const tools = [
-    "Microsoft Office Suite", "Google Workspace", "Slack", "Trello",
-    "Asana", "Jira", "GitHub", "Docker", "Kubernetes", "AWS",
-    "MetaMask", "Truffle Suite", "Solidity", "Web3.js",
-    "Python", "JavaScript", "SQL", "PowerBI", "Tableau"
-  ];
+  if (isLoading) {
+    return (
+      <div className="min-h-screen pt-20 px-4 flex items-center justify-center">
+        <div className="text-white text-xl">Loading skills...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen pt-20 px-4 flex items-center justify-center">
+        <div className="text-red-400 text-xl">Error loading skills</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pt-20 px-4">
@@ -65,31 +50,41 @@ const Skills = () => {
             Skills & Expertise
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            A comprehensive skill set spanning traditional business management and emerging technologies
+            A comprehensive overview of my technical competencies and professional capabilities across management, technology, and blockchain domains
           </p>
         </div>
 
-        {/* Skills Categories */}
-        <div className="grid lg:grid-cols-1 gap-8 mb-16">
-          {skillCategories.map((category, categoryIndex) => (
-            <Card key={categoryIndex} className="bg-slate-800/50 border-purple-800/30">
+        {/* Skills by Category */}
+        <div className="space-y-12 mb-16">
+          {groupedSkills && Object.entries(groupedSkills).map(([category, categorySkills]) => (
+            <Card key={category} className="bg-slate-800/50 border-purple-800/30">
               <CardHeader>
-                <CardTitle className={`text-2xl text-${category.color}-400`}>
-                  {category.category}
+                <CardTitle className="text-2xl text-white flex items-center gap-3">
+                  <Badge variant="secondary" className={`bg-${getCategoryColor(category)}-800/30 text-${getCategoryColor(category)}-300`}>
+                    {category}
+                  </Badge>
+                  <span>{category} Skills</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-6">
-                  {category.skills.map((skill, skillIndex) => (
-                    <div key={skillIndex} className="space-y-2">
+                <div className="grid lg:grid-cols-2 gap-6">
+                  {categorySkills.map((skill) => (
+                    <div key={skill.id} className="space-y-3">
                       <div className="flex justify-between items-center">
-                        <span className="text-white font-medium">{skill.name}</span>
-                        <span className={`text-${category.color}-400 font-semibold`}>{skill.level}%</span>
+                        <h3 className="text-lg font-semibold text-white">{skill.name}</h3>
+                        <div className="flex items-center gap-2">
+                          <span className="text-purple-400 font-bold">{skill.proficiency_level}%</span>
+                          {skill.years_experience && (
+                            <Badge variant="outline" className="border-purple-400/30 text-purple-300 text-xs">
+                              {skill.years_experience}y exp
+                            </Badge>
+                          )}
+                        </div>
                       </div>
-                      <Progress 
-                        value={skill.level} 
-                        className="h-3 bg-slate-700"
-                      />
+                      <Progress value={skill.proficiency_level} className="h-2" />
+                      {skill.description && (
+                        <p className="text-gray-400 text-sm">{skill.description}</p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -98,64 +93,48 @@ const Skills = () => {
           ))}
         </div>
 
-        {/* Tools & Technologies */}
-        <Card className="bg-slate-800/50 border-purple-800/30 mb-16">
-          <CardHeader>
-            <CardTitle className="text-2xl text-white text-center">Tools & Technologies</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-3 justify-center">
-              {tools.map((tool, index) => (
-                <Badge 
-                  key={index}
-                  variant="secondary"
-                  className="bg-gradient-to-r from-purple-800/30 to-blue-800/30 text-purple-200 hover:from-purple-700/40 hover:to-blue-700/40 transition-all duration-300 px-3 py-1"
-                >
-                  {tool}
-                </Badge>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        {/* Skills Summary */}
+        <div className="grid md:grid-cols-3 gap-8 mb-16">
+          {Object.entries(groupedSkills || {}).map(([category, categorySkills]) => {
+            const avgProficiency = Math.round(
+              categorySkills.reduce((sum, skill) => sum + skill.proficiency_level, 0) / categorySkills.length
+            );
+            const totalExperience = categorySkills.reduce((sum, skill) => sum + (skill.years_experience || 0), 0);
 
-        {/* Certifications */}
-        <Card className="bg-slate-800/50 border-purple-800/30 mb-16">
-          <CardHeader>
-            <CardTitle className="text-2xl text-white text-center">Professional Certifications</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 gap-4">
-              {certifications.map((cert, index) => (
-                <div key={index} className="flex items-center space-x-3 p-3 rounded-lg bg-slate-700/30 hover:bg-slate-700/50 transition-all duration-300">
-                  <div className="w-3 h-3 bg-gradient-to-r from-purple-400 to-blue-400 rounded-full"></div>
-                  <span className="text-gray-300">{cert}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Experience Summary */}
-        <div className="grid md:grid-cols-3 gap-8">
-          <Card className="bg-gradient-to-br from-blue-900/30 to-purple-900/30 border-blue-600/30 text-center">
-            <CardContent className="p-6">
-              <div className="text-4xl font-bold text-blue-400 mb-2">10+</div>
-              <p className="text-gray-300">Years of Management Experience</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-gradient-to-br from-purple-900/30 to-pink-900/30 border-purple-600/30 text-center">
-            <CardContent className="p-6">
-              <div className="text-4xl font-bold text-purple-400 mb-2">50+</div>
-              <p className="text-gray-300">ICT Projects Completed</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-gradient-to-br from-pink-900/30 to-blue-900/30 border-pink-600/30 text-center">
-            <CardContent className="p-6">
-              <div className="text-4xl font-bold text-pink-400 mb-2">25+</div>
-              <p className="text-gray-300">Blockchain Implementations</p>
-            </CardContent>
-          </Card>
+            return (
+              <Card key={category} className="bg-gradient-to-br from-slate-800/50 to-slate-700/50 border-purple-600/30 text-center">
+                <CardContent className="p-6">
+                  <div className={`text-4xl font-bold mb-2 text-${getCategoryColor(category)}-400`}>
+                    {avgProficiency}%
+                  </div>
+                  <h3 className="text-xl font-semibold text-white mb-2">{category}</h3>
+                  <p className="text-gray-300 text-sm mb-2">Average Proficiency</p>
+                  <div className="text-purple-300 text-sm">
+                    {totalExperience}+ years combined experience
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
+
+        {/* Call to Action */}
+        <Card className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 border-purple-600/30">
+          <CardContent className="p-8 text-center">
+            <h2 className="text-3xl font-bold text-white mb-4">Ready to Collaborate?</h2>
+            <p className="text-xl text-gray-300 mb-8">
+              Let's leverage these skills to drive your business forward
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-semibold transition-all duration-300">
+                Start a Project
+              </button>
+              <button className="px-8 py-3 border border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white rounded-lg font-semibold transition-all duration-300">
+                View Services
+              </button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

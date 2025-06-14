@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -6,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import { useContactSubmit } from "@/hooks/useSupabaseData";
 
 const Chat = () => {
   const [formData, setFormData] = useState({
@@ -22,7 +22,9 @@ const Chat = () => {
     }
   ]);
   const [currentMessage, setCurrentMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { submitContactForm } = useContactSubmit();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -31,13 +33,26 @@ const Chat = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Message Sent!",
-      description: "Thank you for your message. I'll get back to you within 24 hours.",
-    });
-    setFormData({ name: "", email: "", subject: "", message: "" });
+    setLoading(true);
+
+    try {
+      await submitContactForm(formData);
+      toast({
+        title: "Message Sent!",
+        description: "Thank you for your message. I'll get back to you within 24 hours.",
+      });
+      setFormData({ name: "", email: "", subject: "", message: "" });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to send message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleChatSubmit = (e: React.FormEvent) => {
@@ -205,8 +220,12 @@ const Chat = () => {
                   required
                   className="bg-slate-700 border-purple-600/30 text-white placeholder-gray-400 resize-none"
                 />
-                <Button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0">
-                  Send Message
+                <Button 
+                  type="submit" 
+                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0"
+                  disabled={loading}
+                >
+                  {loading ? "Sending..." : "Send Message"}
                 </Button>
               </form>
             </CardContent>
