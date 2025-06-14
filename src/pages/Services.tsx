@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useServices } from "@/hooks/useSupabaseData";
-import { Briefcase, Bitcoin, Laptop, Globe, Star, ArrowRight } from "lucide-react";
+import { Briefcase, TrendingUp, DollarSign, Users, Star, ArrowRight, Calendar, MessageCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Services = () => {
   const { data: services, isLoading, error } = useServices();
@@ -11,11 +12,21 @@ const Services = () => {
   const getIcon = (iconName: string) => {
     const icons = {
       briefcase: <Briefcase className="h-8 w-8" />,
-      bitcoin: <Bitcoin className="h-8 w-8" />,
-      laptop: <Laptop className="h-8 w-8" />,
-      globe: <Globe className="h-8 w-8" />
+      trending: <TrendingUp className="h-8 w-8" />,
+      dollar: <DollarSign className="h-8 w-8" />,
+      users: <Users className="h-8 w-8" />
     };
     return icons[iconName as keyof typeof icons] || <Star className="h-8 w-8" />;
+  };
+
+  const handleScheduleConsultation = () => {
+    // In a real app, this would open a calendar booking system
+    window.open('mailto:contact@yoursite.com?subject=Schedule Consultation', '_blank');
+  };
+
+  const handleContactForService = (serviceTitle: string) => {
+    // In a real app, this would open a contact form or scheduling system
+    window.open(`mailto:contact@yoursite.com?subject=Inquiry about ${serviceTitle}`, '_blank');
   };
 
   if (isLoading) {
@@ -40,10 +51,10 @@ const Services = () => {
         {/* Header Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            Professional Services
+            Business & Financial Services
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Comprehensive solutions for modern business challenges, technology integration, and blockchain innovation
+            Strategic business consulting, entrepreneurship guidance, and financial advisory services to accelerate your business growth and financial success
           </p>
         </div>
 
@@ -79,7 +90,10 @@ const Services = () => {
                     </Badge>
                   </div>
                 )}
-                <Button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 group">
+                <Button 
+                  onClick={() => handleContactForService(service.title)}
+                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 group"
+                >
                   Get Started
                   <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
@@ -88,16 +102,16 @@ const Services = () => {
           ))}
         </div>
 
-        {/* Process Section */}
+        {/* Business Process Section */}
         <Card className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 border-purple-600/30 mb-16">
           <CardContent className="p-8">
-            <h2 className="text-3xl font-bold text-center text-white mb-12">My Process</h2>
+            <h2 className="text-3xl font-bold text-center text-white mb-12">My Business Approach</h2>
             <div className="grid md:grid-cols-4 gap-8">
               {[
-                { step: "01", title: "Discovery", description: "Understanding your unique challenges and objectives" },
-                { step: "02", title: "Strategy", description: "Developing tailored solutions and implementation plans" },
-                { step: "03", title: "Implementation", description: "Executing solutions with precision and efficiency" },
-                { step: "04", title: "Support", description: "Ongoing guidance and optimization for sustained success" }
+                { step: "01", title: "Analysis", description: "Comprehensive business and financial assessment to identify opportunities" },
+                { step: "02", title: "Strategy", description: "Custom strategic planning tailored to your business goals and market position" },
+                { step: "03", title: "Implementation", description: "Hands-on execution support with measurable milestones and KPIs" },
+                { step: "04", title: "Growth", description: "Ongoing optimization and scaling strategies for sustained business growth" }
               ].map((process, index) => (
                 <div key={index} className="text-center">
                   <div className="text-4xl font-bold text-purple-400 mb-4">{process.step}</div>
@@ -112,17 +126,24 @@ const Services = () => {
         {/* CTA Section */}
         <Card className="bg-slate-800/50 border-purple-800/30">
           <CardContent className="p-8 text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">Ready to Transform Your Business?</h2>
+            <h2 className="text-3xl font-bold text-white mb-4">Ready to Scale Your Business?</h2>
             <p className="text-xl text-gray-300 mb-8">
-              Let's discuss how we can work together to achieve your goals
+              Let's discuss how strategic consulting can accelerate your growth and profitability
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0">
+              <Button 
+                onClick={handleScheduleConsultation}
+                size="lg" 
+                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0"
+              >
+                <Calendar className="mr-2 h-5 w-5" />
                 Schedule Consultation
               </Button>
-              <Button variant="outline" size="lg" className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white">
-                View Portfolio
-              </Button>
+              <Link to="/portfolio">
+                <Button variant="outline" size="lg" className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white w-full sm:w-auto">
+                  View Case Studies
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>

@@ -2,7 +2,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 import { useSkills } from "@/hooks/useSupabaseData";
+import { TrendingUp, Users, DollarSign, Briefcase, Calendar, Download } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Skills = () => {
   const { data: skills, isLoading, error } = useSkills();
@@ -19,10 +22,31 @@ const Skills = () => {
   const getCategoryColor = (category: string) => {
     const colors = {
       "Management": "blue",
-      "ICT": "purple", 
-      "Blockchain": "pink"
+      "Financial": "green", 
+      "Entrepreneurship": "purple",
+      "Strategy": "orange"
     };
     return colors[category as keyof typeof colors] || "gray";
+  };
+
+  const getCategoryIcon = (category: string) => {
+    const icons = {
+      "Management": <Users className="h-6 w-6" />,
+      "Financial": <DollarSign className="h-6 w-6" />,
+      "Entrepreneurship": <TrendingUp className="h-6 w-6" />,
+      "Strategy": <Briefcase className="h-6 w-6" />
+    };
+    return icons[category as keyof typeof icons] || <Briefcase className="h-6 w-6" />;
+  };
+
+  const handleDownloadResume = () => {
+    // In a real app, this would download a PDF resume
+    window.open('mailto:contact@yoursite.com?subject=Resume Request', '_blank');
+  };
+
+  const handleScheduleAssessment = () => {
+    // In a real app, this would open a skills assessment booking
+    window.open('mailto:contact@yoursite.com?subject=Skills Assessment Request', '_blank');
   };
 
   if (isLoading) {
@@ -47,10 +71,10 @@ const Skills = () => {
         {/* Header Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            Skills & Expertise
+            Business & Financial Expertise
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            A comprehensive overview of my technical competencies and professional capabilities across management, technology, and blockchain domains
+            Proven competencies in business management, financial strategy, entrepreneurship, and strategic planning to drive organizational success
           </p>
         </div>
 
@@ -60,10 +84,13 @@ const Skills = () => {
             <Card key={category} className="bg-slate-800/50 border-purple-800/30">
               <CardHeader>
                 <CardTitle className="text-2xl text-white flex items-center gap-3">
-                  <Badge variant="secondary" className={`bg-${getCategoryColor(category)}-800/30 text-${getCategoryColor(category)}-300`}>
-                    {category}
+                  <div className={`p-2 bg-${getCategoryColor(category)}-800/30 rounded-lg text-${getCategoryColor(category)}-300`}>
+                    {getCategoryIcon(category)}
+                  </div>
+                  <span>{category} Expertise</span>
+                  <Badge variant="secondary" className={`bg-${getCategoryColor(category)}-800/30 text-${getCategoryColor(category)}-300 ml-auto`}>
+                    {categorySkills.length} Skills
                   </Badge>
-                  <span>{category} Skills</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -104,6 +131,13 @@ const Skills = () => {
             return (
               <Card key={category} className="bg-gradient-to-br from-slate-800/50 to-slate-700/50 border-purple-600/30 text-center">
                 <CardContent className="p-6">
+                  <div className="mb-4">
+                    <div className={`mx-auto w-fit p-3 bg-${getCategoryColor(category)}-800/30 rounded-full mb-3`}>
+                      <div className={`text-${getCategoryColor(category)}-400`}>
+                        {getCategoryIcon(category)}
+                      </div>
+                    </div>
+                  </div>
                   <div className={`text-4xl font-bold mb-2 text-${getCategoryColor(category)}-400`}>
                     {avgProficiency}%
                   </div>
@@ -118,20 +152,61 @@ const Skills = () => {
           })}
         </div>
 
+        {/* Action Cards */}
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
+          <Card className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border-blue-600/30">
+            <CardContent className="p-8 text-center">
+              <Download className="h-12 w-12 text-blue-400 mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-white mb-4">Professional Resume</h3>
+              <p className="text-gray-300 mb-6">
+                Download my detailed resume with complete work history and achievements
+              </p>
+              <Button 
+                onClick={handleDownloadResume}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Download Resume
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-gradient-to-r from-purple-900/30 to-pink-900/30 border-purple-600/30">
+            <CardContent className="p-8 text-center">
+              <Calendar className="h-12 w-12 text-purple-400 mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-white mb-4">Skills Assessment</h3>
+              <p className="text-gray-300 mb-6">
+                Schedule a consultation to assess how my skills align with your needs
+              </p>
+              <Button 
+                onClick={handleScheduleAssessment}
+                className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+              >
+                <Calendar className="mr-2 h-4 w-4" />
+                Schedule Assessment
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Call to Action */}
         <Card className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 border-purple-600/30">
           <CardContent className="p-8 text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">Ready to Collaborate?</h2>
+            <h2 className="text-3xl font-bold text-white mb-4">Let's Work Together</h2>
             <p className="text-xl text-gray-300 mb-8">
-              Let's leverage these skills to drive your business forward
+              Ready to leverage these business and financial skills for your organization's success?
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-semibold transition-all duration-300">
-                Start a Project
-              </button>
-              <button className="px-8 py-3 border border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white rounded-lg font-semibold transition-all duration-300">
-                View Services
-              </button>
+              <Link to="/services">
+                <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 w-full sm:w-auto">
+                  View Services
+                </Button>
+              </Link>
+              <Link to="/portfolio">
+                <Button variant="outline" size="lg" className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white w-full sm:w-auto">
+                  See Case Studies
+                </Button>
+              </Link>
             </div>
           </CardContent>
         </Card>
