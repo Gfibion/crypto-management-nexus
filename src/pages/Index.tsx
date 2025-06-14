@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -26,7 +25,7 @@ const Index = () => {
         <div className="text-center max-w-4xl mx-auto">
           <div className={`transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
             <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Joseph Mutua
+              Gfibion Joseph
             </h1>
             <p className="text-2xl md:text-3xl text-purple-400 font-semibold mb-4">
               Professional Business Manager
