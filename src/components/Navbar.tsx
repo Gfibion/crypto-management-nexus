@@ -1,9 +1,10 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, User, LogOut, Loader2 } from "lucide-react";
+import { Menu, X, User, LogOut, Loader2, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
+import { useIsAdmin } from "@/hooks/useUserRole";
 import { useToast } from "@/hooks/use-toast";
 
 const Navbar = () => {
@@ -11,6 +12,7 @@ const Navbar = () => {
   const [signingOut, setSigningOut] = useState(false);
   const location = useLocation();
   const { user, loading, signOut } = useAuth();
+  const isAdmin = useIsAdmin();
   const { toast } = useToast();
 
   const navItems = [
@@ -23,6 +25,11 @@ const Navbar = () => {
     { name: "Portfolio", path: "/portfolio" },
     { name: "Chat", path: "/chat" },
   ];
+
+  // Add admin link if user is admin
+  if (isAdmin) {
+    navItems.push({ name: "Admin", path: "/admin" });
+  }
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -45,6 +52,12 @@ const Navbar = () => {
     }
   };
 
+  const getUserDisplayName = () => {
+    if (!user) return '';
+    const name = user.user_metadata?.full_name || user.email;
+    return isAdmin ? `${name} (Admin)` : name;
+  };
+
   return (
     <nav className="fixed top-0 w-full bg-slate-900/95 backdrop-blur-sm border-b border-purple-800/30 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,13 +77,14 @@ const Navbar = () => {
                 <Link
                   key={item.name}
                   to={item.path}
-                  className={`transition-colors ${
+                  className={`transition-colors flex items-center space-x-1 ${
                     location.pathname === item.path
                       ? "text-purple-400"
                       : "text-gray-300 hover:text-purple-400"
                   }`}
                 >
-                  {item.name}
+                  {item.name === "Admin" && <Shield className="h-4 w-4" />}
+                  <span>{item.name}</span>
                 </Link>
               ))}
             </div>
@@ -86,9 +100,9 @@ const Navbar = () => {
             ) : user ? (
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2 text-gray-300">
-                  <User className="h-4 w-4" />
+                  {isAdmin ? <Shield className="h-4 w-4 text-purple-400" /> : <User className="h-4 w-4" />}
                   <span className="text-sm">
-                    {user.user_metadata?.full_name || user.email}
+                    {getUserDisplayName()}
                   </span>
                 </div>
                 <Button
@@ -155,13 +169,14 @@ const Navbar = () => {
                 key={item.name}
                 to={item.path}
                 onClick={() => setIsOpen(false)}
-                className={`block px-3 py-2 transition-colors ${
+                className={`block px-3 py-2 transition-colors flex items-center space-x-2 ${
                   location.pathname === item.path
                     ? "text-purple-400"
                     : "text-gray-300 hover:text-purple-400"
                 }`}
               >
-                {item.name}
+                {item.name === "Admin" && <Shield className="h-4 w-4" />}
+                <span>{item.name}</span>
               </Link>
             ))}
             
@@ -175,9 +190,9 @@ const Navbar = () => {
               ) : user ? (
                 <div className="space-y-2">
                   <div className="flex items-center space-x-2 px-3 py-2 text-gray-300">
-                    <User className="h-4 w-4" />
+                    {isAdmin ? <Shield className="h-4 w-4 text-purple-400" /> : <User className="h-4 w-4" />}
                     <span className="text-sm">
-                      {user.user_metadata?.full_name || user.email}
+                      {getUserDisplayName()}
                     </span>
                   </div>
                   <button

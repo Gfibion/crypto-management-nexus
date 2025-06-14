@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { useIsAdmin } from './useUserRole';
 
 export interface ChatMessage {
   id: string;
@@ -26,17 +27,21 @@ export interface Conversation {
 
 export const useConversations = () => {
   const { user } = useAuth();
+  const isAdmin = useIsAdmin();
 
   return useQuery({
-    queryKey: ['conversations', user?.id],
+    queryKey: ['conversations', user?.id, isAdmin],
     queryFn: async () => {
       if (!user) return [];
       
-      const { data, error } = await supabase
-        .from('conversations')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('last_message_at', { ascending: false });
+      let query = supabase.from('conversations').select('*');
+      
+      // If not admin, only get user's own conversations
+      if (!isAdmin) {
+        query = query.eq('user_id', user.id);
+      }
+      
+      const { data, error } = await query.order('last_message_at', { ascending: false });
 
       if (error) throw error;
       return (data || []) as Conversation[];
@@ -93,6 +98,8 @@ export const useCreateConversation = () => {
 
 export const useSendMessage = () => {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const isAdmin = useIsAdmin();
 
   return useMutation({
     mutationFn: async ({ conversationId, content, messageType = 'user' }: {
@@ -100,13 +107,19 @@ export const useSendMessage = () => {
       content: string;
       messageType?: 'user' | 'admin' | 'ai';
     }) => {
+      // Determine message type based on user role
+      let finalMessageType = messageType;
+      if (isAdmin && messageType === 'user') {
+        finalMessageType = 'admin';
+      }
+
       const { data, error } = await supabase
         .from('chat_messages')
         .insert({
           conversation_id: conversationId,
           content,
-          message_type: messageType,
-          sender_id: messageType === 'user' ? (await supabase.auth.getUser()).data.user?.id : null
+          message_type: finalMessageType,
+          sender_id: finalMessageType !== 'ai' ? user?.id : null
         })
         .select()
         .single();

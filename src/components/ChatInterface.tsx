@@ -3,7 +3,11 @@ import React from 'react';
 import { ChatHeader } from './chat/ChatHeader';
 import { MessagesList } from './chat/MessagesList';
 import { ChatInput } from './chat/ChatInput';
+import { AdminChatControls } from './chat/AdminChatControls';
 import { useChatLogic } from './chat/useChatLogic';
+import { useIsAdmin } from '@/hooks/useUserRole';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import AIPrompt from './AIPrompt';
 
 interface ChatInterfaceProps {
@@ -12,6 +16,24 @@ interface ChatInterfaceProps {
 }
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({ conversationId, onBack }) => {
+  const isAdmin = useIsAdmin();
+
+  // Get conversation details for admin
+  const { data: conversation } = useQuery({
+    queryKey: ['conversation', conversationId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('conversations')
+        .select('*')
+        .eq('id', conversationId)
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!conversationId,
+  });
+
   const {
     inputMessage,
     setInputMessage,
@@ -32,9 +54,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ conversationId, onBack })
 
   return (
     <div className="flex flex-col h-full">
-      <ChatHeader onBack={onBack} aiMode={aiMode} />
+      <ChatHeader 
+        onBack={onBack} 
+        aiMode={aiMode} 
+        conversationStatus={conversation?.status}
+      />
 
-      {showAIPrompt && lastHumanMessageTime && (
+      {showAIPrompt && lastHumanMessageTime && !isAdmin && (
         <div className="p-4">
           <AIPrompt
             onUseAI={handleUseAI}
@@ -59,6 +85,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ conversationId, onBack })
         onKeyPress={handleKeyPress}
         isDisabled={!inputMessage.trim() || sendMessage.isPending}
       />
+
+      {isAdmin && conversation && (
+        <AdminChatControls 
+          conversationId={conversationId}
+          currentStatus={conversation.status}
+        />
+      )}
     </div>
   );
 };
