@@ -3,15 +3,26 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { BookOpen, Calendar, Clock, Tag, User } from 'lucide-react';
+import { BookOpen, Calendar, Clock, Tag } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface ArticleCardProps {
   article: any;
-  onRead: (title: string) => void;
+  onRead?: (title: string) => void;
   showFullContent?: boolean;
 }
 
 const ArticleCard: React.FC<ArticleCardProps> = ({ article, onRead, showFullContent = false }) => {
+  const navigate = useNavigate();
+
+  const handleReadClick = () => {
+    if (article.slug) {
+      navigate(`/articles/${article.slug}`);
+    } else if (onRead) {
+      onRead(article.title);
+    }
+  };
+
   return (
     <Card className="bg-slate-800/50 border-purple-800/30 hover:border-purple-600/50 transition-all duration-300 hover:transform hover:scale-105">
       <CardHeader>
@@ -77,7 +88,7 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onRead, showFullCont
         
         {!showFullContent && (
           <Button 
-            onClick={() => onRead(article.title)}
+            onClick={handleReadClick}
             className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0"
           >
             <BookOpen className="h-4 w-4 mr-2" />

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,8 +7,10 @@ import { Shield, MessageSquare, Users, FileText, BarChart3 } from 'lucide-react'
 import ArticleManager from './admin/ArticleManager';
 import ArticleStats from './admin/ArticleStats';
 
+type TabType = 'dashboard' | 'articles';
+
 const AdminPanel: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'articles'>('dashboard');
+  const [activeTab, setActiveTab] = useState<TabType>('dashboard');
   const { data: conversations = [] } = useConversations();
 
   const activeConversations = conversations.filter(conv => conv.status === 'active' || conv.status === 'waiting_for_admin');

@@ -12,6 +12,7 @@ import Services from "./pages/Services";
 import Skills from "./pages/Skills";
 import Education from "./pages/Education";
 import Articles from "./pages/Articles";
+import ArticleReader from "./pages/ArticleReader";
 import Chat from "./pages/Chat";
 import Portfolio from "./pages/Portfolio";
 import Auth from "./pages/Auth";
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="/skills" element={<Skills />} />
               <Route path="/education" element={<Education />} />
               <Route path="/articles" element={<Articles />} />
+              <Route path="/articles/:slug" element={<ArticleReader />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/auth" element={<Auth />} />
