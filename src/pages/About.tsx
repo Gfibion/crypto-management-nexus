@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
@@ -8,7 +9,7 @@ const About = () => {
         {/* Header Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            About Gfibion Joseph
+            About Gfibion Joseph Mutua
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             A passionate business professional bridging traditional management with innovative technology solutions
@@ -23,8 +24,7 @@ const About = () => {
                 <div className="text-6xl font-bold text-purple-400">JM</div>
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Gfibion Joseph</h2>
-            <p className="text-purple-400 text-lg mb-2">Alias: Joseph Mutua</p>
+            <h2 className="text-2xl font-bold text-white mb-2">Gfibion Joseph Mutua</h2>
             <p className="text-blue-400 text-lg mb-4">Strategic Leader & Tech Innovator</p>
             <div className="flex flex-wrap gap-2 justify-center">
               <Badge variant="secondary" className="bg-purple-800/30 text-purple-300">Management</Badge>
@@ -38,7 +38,7 @@ const About = () => {
             <h3 className="text-2xl font-bold text-white mb-6">Professional Journey</h3>
             <div className="space-y-4 text-gray-300">
               <p>
-                I'm Gfibion Joseph, also known as Joseph Mutua, with a strong foundation in business management 
+                I'm Gfibion Joseph Mutua, with a strong foundation in business management 
                 and an unwavering passion for emerging technologies. I specialize in helping organizations navigate 
                 the complex intersection of traditional business practices and innovative digital solutions.
               </p>
