@@ -74,6 +74,11 @@ const Services = () => {
     service.title.toLowerCase().includes('trading')
   ) || [];
 
+  const web3Integration = services?.filter(service => 
+    service.title.toLowerCase().includes('web3') || 
+    service.title.toLowerCase().includes('blockchain')
+  ) || [];
+
   return (
     <div className="min-h-screen pt-20 px-4">
       <div className="max-w-6xl mx-auto">
@@ -122,7 +127,21 @@ const Services = () => {
             accordionType="ict"
           />
 
-          {/* 3. Crypto Advisory */}
+          {/* 3. Web3 Integration */}
+          {web3Integration.length > 0 && (
+            <ServiceSection
+              title="Web3 Integration"
+              description="Next-generation blockchain and decentralized solutions"
+              icon={<Globe className="h-10 w-10 mr-4 text-green-400" />}
+              services={web3Integration}
+              getIcon={getIcon}
+              onBookService={handleBookService}
+              colorScheme="green"
+              borderColor="border-green-800/30"
+            />
+          )}
+
+          {/* 4. Crypto Advisory */}
           {cryptoAdvisory.length > 0 && (
             <ServiceSection
               title="Crypto Advisory"
