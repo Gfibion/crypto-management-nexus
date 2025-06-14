@@ -15,6 +15,7 @@ import Articles from "./pages/Articles";
 import Chat from "./pages/Chat";
 import Portfolio from "./pages/Portfolio";
 import Auth from "./pages/Auth";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
               <Route path="/chat" element={<Chat />} />
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/admin" element={<Admin />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
