@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Star, ArrowUp } from "lucide-react";
+import { Star, ArrowUp, CheckCircle, Clock } from "lucide-react";
 
 const Portfolio = () => {
   const projects = [
@@ -96,27 +96,45 @@ const Portfolio = () => {
     }
   ];
 
+  const getStatusBadge = (status: string) => {
+    const isCompleted = status === 'Completed';
+    return (
+      <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${
+        isCompleted 
+          ? 'bg-green-800 text-white border border-green-600' 
+          : 'bg-orange-800 text-white border border-orange-600'
+      }`}>
+        {isCompleted ? (
+          <CheckCircle className="h-4 w-4" />
+        ) : (
+          <Clock className="h-4 w-4" />
+        )}
+        {status}
+      </div>
+    );
+  };
+
   return (
-    <div className="min-h-screen pt-20 px-4">
+    <div className="min-h-screen pt-20 px-4 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <div className="max-w-6xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             Portfolio & Projects
           </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Showcasing successful implementations across business management, technology integration, and blockchain innovation
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+            Showcasing successful implementations across business management, technology integration, and blockchain innovation by Joseph Mutua (Gfibion)
           </p>
         </div>
 
         {/* Metrics Section */}
         <div className="grid md:grid-cols-4 gap-6 mb-16">
           {metrics.map((metric, index) => (
-            <Card key={index} className="bg-slate-800/50 border-purple-800/30 text-center hover:border-purple-600/50 transition-all duration-300">
+            <Card key={index} className="bg-slate-800/60 border-purple-800/40 text-center hover:border-purple-600/60 transition-all duration-300 hover:transform hover:scale-105 backdrop-blur-sm">
               <CardContent className="p-6">
-                <div className="text-purple-400 mb-2 flex justify-center">{metric.icon}</div>
+                <div className="text-purple-400 mb-3 flex justify-center">{metric.icon}</div>
                 <div className="text-3xl font-bold text-white mb-2">{metric.value}</div>
-                <p className="text-gray-300 text-sm">{metric.label}</p>
+                <p className="text-gray-300 text-sm font-medium">{metric.label}</p>
               </CardContent>
             </Card>
           ))}
@@ -127,48 +145,46 @@ const Portfolio = () => {
           <h2 className="text-3xl font-bold text-center mb-12 text-white">Featured Projects</h2>
           <div className="grid lg:grid-cols-2 gap-8">
             {projects.map((project, index) => (
-              <Card key={index} className="bg-slate-800/50 border-purple-800/30 hover:border-purple-600/50 transition-all duration-300 hover:transform hover:scale-105">
-                <CardHeader>
-                  <div className="flex items-center justify-between mb-2">
-                    <Badge variant="secondary" className={`bg-${project.color}-800/30 text-${project.color}-300`}>
+              <Card key={index} className="bg-slate-800/60 border-purple-800/40 hover:border-purple-600/60 transition-all duration-300 hover:transform hover:scale-105 backdrop-blur-sm shadow-xl">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <Badge variant="secondary" className={`bg-${project.color}-800/40 text-${project.color}-300 border-${project.color}-600/30`}>
                       {project.category}
                     </Badge>
-                    <div className="flex items-center gap-2">
-                      <Badge variant={project.status === 'Completed' ? 'default' : 'secondary'} className="text-xs">
-                        {project.status}
-                      </Badge>
-                      <span className="text-gray-400 text-sm">{project.year}</span>
+                    <div className="flex items-center gap-3">
+                      {getStatusBadge(project.status)}
+                      <span className="text-gray-400 text-sm font-medium">{project.year}</span>
                     </div>
                   </div>
-                  <CardTitle className="text-xl text-white">{project.title}</CardTitle>
+                  <CardTitle className="text-xl text-white leading-tight">{project.title}</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-gray-300 mb-4">{project.description}</p>
+                <CardContent className="pt-0">
+                  <p className="text-gray-300 mb-5 leading-relaxed">{project.description}</p>
                   
-                  <div className="mb-4">
-                    <h4 className="text-purple-300 font-semibold mb-2">Technologies Used:</h4>
+                  <div className="mb-5">
+                    <h4 className="text-purple-300 font-semibold mb-3 text-sm uppercase tracking-wide">Technologies Used:</h4>
                     <div className="flex flex-wrap gap-2">
                       {project.technologies.map((tech, techIndex) => (
-                        <Badge key={techIndex} variant="outline" className="border-purple-400/30 text-purple-200 text-xs">
+                        <Badge key={techIndex} variant="outline" className="border-purple-400/40 text-purple-200 text-xs bg-purple-900/20 hover:bg-purple-800/30 transition-colors">
                           {tech}
                         </Badge>
                       ))}
                     </div>
                   </div>
 
-                  <div className="mb-4">
-                    <h4 className="text-purple-300 font-semibold mb-2">Key Achievements:</h4>
-                    <div className="space-y-1">
+                  <div className="mb-6">
+                    <h4 className="text-purple-300 font-semibold mb-3 text-sm uppercase tracking-wide">Key Achievements:</h4>
+                    <div className="space-y-2">
                       {project.achievements.map((achievement, achievementIndex) => (
-                        <div key={achievementIndex} className="flex items-center space-x-2">
-                          <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
+                        <div key={achievementIndex} className="flex items-center space-x-3">
+                          <div className="w-2 h-2 bg-purple-400 rounded-full flex-shrink-0"></div>
                           <span className="text-gray-300 text-sm">{achievement}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <Button variant="outline" className="w-full border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white">
+                  <Button variant="outline" className="w-full border-purple-400/60 text-purple-400 hover:bg-purple-400 hover:text-white transition-all duration-200 font-medium">
                     View Case Study
                   </Button>
                 </CardContent>
@@ -182,12 +198,12 @@ const Portfolio = () => {
           <h2 className="text-3xl font-bold text-center mb-12 text-white">Client Testimonials</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <Card key={index} className="bg-slate-800/50 border-purple-800/30 hover:border-purple-600/50 transition-all duration-300">
+              <Card key={index} className="bg-slate-800/60 border-purple-800/40 hover:border-purple-600/60 transition-all duration-300 backdrop-blur-sm shadow-lg">
                 <CardContent className="p-6">
-                  <div className="text-4xl text-purple-400 mb-4">"</div>
-                  <p className="text-gray-300 mb-4 italic">{testimonial.quote}</p>
-                  <div className="border-t border-purple-800/30 pt-4">
-                    <p className="text-white font-semibold">{testimonial.author}</p>
+                  <div className="text-4xl text-purple-400 mb-4 font-serif">"</div>
+                  <p className="text-gray-300 mb-5 italic leading-relaxed">{testimonial.quote}</p>
+                  <div className="border-t border-purple-800/40 pt-4">
+                    <p className="text-white font-semibold text-sm">{testimonial.author}</p>
                     <p className="text-purple-300 text-sm">{testimonial.role}</p>
                     <p className="text-gray-400 text-sm">{testimonial.company}</p>
                   </div>
@@ -198,17 +214,17 @@ const Portfolio = () => {
         </div>
 
         {/* Call to Action */}
-        <Card className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 border-purple-600/30">
+        <Card className="bg-gradient-to-r from-purple-900/40 to-blue-900/40 border-purple-600/40 backdrop-blur-sm shadow-2xl">
           <CardContent className="p-8 text-center">
             <h2 className="text-3xl font-bold text-white mb-4">Ready to Start Your Project?</h2>
-            <p className="text-xl text-gray-300 mb-8">
-              Let's discuss how we can bring similar success to your organization
+            <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+              Let's discuss how Joseph Mutua (Gfibion) can bring similar success to your organization
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0">
+              <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 font-medium px-8">
                 Schedule Consultation
               </Button>
-              <Button variant="outline" size="lg" className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white">
+              <Button variant="outline" size="lg" className="border-purple-400/60 text-purple-400 hover:bg-purple-400 hover:text-white font-medium px-8">
                 Download Portfolio PDF
               </Button>
             </div>
