@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { Loader2 } from "lucide-react";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -15,9 +17,16 @@ const Auth = () => {
     fullName: ""
   });
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const { signIn, signUp, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -36,7 +45,7 @@ const Auth = () => {
         if (error) throw error;
         
         toast({
-          title: "Success!",
+          title: "Welcome back!",
           description: "You have been logged in successfully.",
         });
         navigate("/");
@@ -45,9 +54,12 @@ const Auth = () => {
         if (error) throw error;
         
         toast({
-          title: "Success!",
-          description: "Please check your email to confirm your account.",
+          title: "Account created!",
+          description: "Please check your email to confirm your account, then sign in.",
         });
+        // Switch to login mode after successful signup
+        setIsLogin(true);
+        setFormData({ email: formData.email, password: "", fullName: "" });
       }
     } catch (error: any) {
       toast({
@@ -77,6 +89,7 @@ const Auth = () => {
                 onChange={handleInputChange}
                 placeholder="Full Name"
                 required
+                disabled={loading}
                 className="bg-slate-700 border-purple-600/30 text-white placeholder-gray-400"
               />
             )}
@@ -87,6 +100,7 @@ const Auth = () => {
               onChange={handleInputChange}
               placeholder="Email"
               required
+              disabled={loading}
               className="bg-slate-700 border-purple-600/30 text-white placeholder-gray-400"
             />
             <Input
@@ -96,6 +110,7 @@ const Auth = () => {
               onChange={handleInputChange}
               placeholder="Password"
               required
+              disabled={loading}
               className="bg-slate-700 border-purple-600/30 text-white placeholder-gray-400"
             />
             <Button 
@@ -103,14 +118,22 @@ const Auth = () => {
               className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0"
               disabled={loading}
             >
-              {loading ? "Loading..." : (isLogin ? "Sign In" : "Sign Up")}
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {isLogin ? "Signing In..." : "Creating Account..."}
+                </>
+              ) : (
+                isLogin ? "Sign In" : "Sign Up"
+              )}
             </Button>
           </form>
           
           <div className="mt-4 text-center">
             <button
               onClick={() => setIsLogin(!isLogin)}
-              className="text-purple-400 hover:text-purple-300 transition-colors"
+              disabled={loading}
+              className="text-purple-400 hover:text-purple-300 transition-colors disabled:opacity-50"
             >
               {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}
             </button>
