@@ -33,13 +33,13 @@ export const useConversations = () => {
       if (!user) return [];
       
       const { data, error } = await supabase
-        .from('conversations' as any)
+        .from('conversations')
         .select('*')
         .eq('user_id', user.id)
         .order('last_message_at', { ascending: false });
 
       if (error) throw error;
-      return data as Conversation[];
+      return (data || []) as Conversation[];
     },
     enabled: !!user,
   });
@@ -52,13 +52,13 @@ export const useMessages = (conversationId: string | null) => {
       if (!conversationId) return [];
       
       const { data, error } = await supabase
-        .from('chat_messages' as any)
+        .from('chat_messages')
         .select('*')
         .eq('conversation_id', conversationId)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      return data as ChatMessage[];
+      return (data || []) as ChatMessage[];
     },
     enabled: !!conversationId,
   });
@@ -73,7 +73,7 @@ export const useCreateConversation = () => {
       if (!user) throw new Error('User not authenticated');
 
       const { data, error } = await supabase
-        .from('conversations' as any)
+        .from('conversations')
         .insert({
           user_id: user.id,
           title: title || 'New Conversation',
@@ -101,7 +101,7 @@ export const useSendMessage = () => {
       messageType?: 'user' | 'admin' | 'ai';
     }) => {
       const { data, error } = await supabase
-        .from('chat_messages' as any)
+        .from('chat_messages')
         .insert({
           conversation_id: conversationId,
           content,
