@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,7 @@ const Chat = () => {
     if (!requireAuth('start a new conversation')) return;
     
     try {
-      const newConversation = await createConversation.mutateAsync();
+      const newConversation = await createConversation.mutateAsync('New Conversation');
       setSelectedConversationId(newConversation.id);
     } catch (error) {
       console.error('Error creating conversation:', error);
