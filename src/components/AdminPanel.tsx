@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,6 +5,7 @@ import { useConversations } from '@/hooks/useChat';
 import { Shield, MessageSquare, Users, FileText, BarChart3 } from 'lucide-react';
 import ArticleManager from './admin/ArticleManager';
 import ArticleStats from './admin/ArticleStats';
+import TabButton from './admin/TabButton';
 
 type TabType = 'dashboard' | 'articles';
 
@@ -44,28 +44,20 @@ const AdminPanel: React.FC = () => {
 
       {/* Navigation Tabs */}
       <div className="flex space-x-4 mb-6">
-        <Button
+        <TabButton
+          isActive={activeTab === 'dashboard'}
           onClick={() => setActiveTab('dashboard')}
-          variant={activeTab === 'dashboard' ? 'default' : 'outline'}
-          className={activeTab === 'dashboard' 
-            ? "bg-gradient-to-r from-purple-600 to-blue-600" 
-            : "border-purple-600/30 text-purple-300 hover:bg-purple-600/20"
-          }
+          icon={BarChart3}
         >
-          <BarChart3 className="h-4 w-4 mr-2" />
           Dashboard
-        </Button>
-        <Button
+        </TabButton>
+        <TabButton
+          isActive={activeTab === 'articles'}
           onClick={() => setActiveTab('articles')}
-          variant={activeTab === 'articles' ? 'default' : 'outline'}
-          className={activeTab === 'articles' 
-            ? "bg-gradient-to-r from-purple-600 to-blue-600" 
-            : "border-purple-600/30 text-purple-300 hover:bg-purple-600/20"
-          }
+          icon={FileText}
         >
-          <FileText className="h-4 w-4 mr-2" />
           Articles
-        </Button>
+        </TabButton>
       </div>
 
       {/* Dashboard Content */}
