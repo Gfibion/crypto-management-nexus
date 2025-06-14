@@ -46,9 +46,10 @@ const AdminPanel: React.FC = () => {
       <div className="flex space-x-4 mb-6">
         <Button
           onClick={() => setActiveTab('dashboard')}
+          variant={activeTab === 'dashboard' ? 'default' : 'outline'}
           className={activeTab === 'dashboard' 
             ? "bg-gradient-to-r from-purple-600 to-blue-600" 
-            : "bg-transparent border border-purple-600/30 text-purple-300 hover:bg-purple-600/20"
+            : "border-purple-600/30 text-purple-300 hover:bg-purple-600/20"
           }
         >
           <BarChart3 className="h-4 w-4 mr-2" />
@@ -56,9 +57,10 @@ const AdminPanel: React.FC = () => {
         </Button>
         <Button
           onClick={() => setActiveTab('articles')}
+          variant={activeTab === 'articles' ? 'default' : 'outline'}
           className={activeTab === 'articles' 
             ? "bg-gradient-to-r from-purple-600 to-blue-600" 
-            : "bg-transparent border border-purple-600/30 text-purple-300 hover:bg-purple-600/20"
+            : "border-purple-600/30 text-purple-300 hover:bg-purple-600/20"
           }
         >
           <FileText className="h-4 w-4 mr-2" />
