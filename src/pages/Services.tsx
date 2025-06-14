@@ -137,6 +137,29 @@ const Services = () => {
     );
   }
 
+  // Filter and organize services by priority
+  const businessConsulting = services?.filter(service => 
+    service.title.toLowerCase().includes('business') || 
+    service.title.toLowerCase().includes('consulting')
+  ) || [];
+  
+  const techSolutions = services?.filter(service => 
+    service.title.toLowerCase().includes('tech') || 
+    service.title.toLowerCase().includes('development') ||
+    service.title.toLowerCase().includes('web') ||
+    service.title.toLowerCase().includes('app')
+  ) || [];
+  
+  const cryptoAdvisory = services?.filter(service => 
+    service.title.toLowerCase().includes('crypto') || 
+    service.title.toLowerCase().includes('trading')
+  ) || [];
+  
+  const web3Integration = services?.filter(service => 
+    service.title.toLowerCase().includes('web3') || 
+    service.title.toLowerCase().includes('blockchain')
+  ) || [];
+
   return (
     <div className="min-h-screen pt-20 px-4">
       <div className="max-w-6xl mx-auto">
@@ -150,147 +173,326 @@ const Services = () => {
           </p>
         </div>
 
-        {/* Main Services Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-          {services?.map((service, index) => (
-            <Card key={service.id} className="bg-slate-800/50 border-purple-800/30 hover:border-purple-600/50 transition-all duration-300 hover:transform hover:scale-105 group relative overflow-hidden">
-              {service.featured && (
-                <div className="absolute top-4 right-4">
-                  <Badge className="bg-gradient-to-r from-purple-600 to-blue-600 text-white">
-                    Featured
-                  </Badge>
-                </div>
-              )}
-              <CardHeader className="text-center">
-                <div className="mx-auto mb-4 p-4 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-full w-fit group-hover:from-purple-600/30 group-hover:to-blue-600/30 transition-all duration-300">
-                  <div className="text-purple-400 group-hover:text-purple-300 transition-colors">
-                    {getIcon(service.icon)}
-                  </div>
-                </div>
-                <CardTitle className="text-xl text-white group-hover:text-purple-300 transition-colors">
-                  {service.title}
+        {/* Service Categories by Priority */}
+        <div className="space-y-12 mb-16">
+          
+          {/* 1. Business Consulting */}
+          <Card className="bg-slate-800/50 border-purple-800/30">
+            <CardHeader>
+              <CardTitle className="text-3xl text-white flex items-center">
+                <Briefcase className="h-10 w-10 mr-4 text-purple-400" />
+                Business Consulting
+              </CardTitle>
+              <p className="text-gray-300 text-lg">Strategic business guidance and comprehensive management solutions</p>
+            </CardHeader>
+            <CardContent>
+              {/* Main Business Consulting Services */}
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {businessConsulting.map((service) => (
+                  <Card key={service.id} className="bg-slate-700/50 border-purple-700/30 hover:border-purple-600/50 transition-all duration-300 hover:transform hover:scale-105 group">
+                    {service.featured && (
+                      <div className="absolute top-4 right-4">
+                        <Badge className="bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+                          Featured
+                        </Badge>
+                      </div>
+                    )}
+                    <CardHeader className="text-center">
+                      <div className="mx-auto mb-4 p-4 bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-full w-fit group-hover:from-purple-600/30 group-hover:to-blue-600/30 transition-all duration-300">
+                        <div className="text-purple-400 group-hover:text-purple-300 transition-colors">
+                          {getIcon(service.icon)}
+                        </div>
+                      </div>
+                      <CardTitle className="text-lg text-white group-hover:text-purple-300 transition-colors">
+                        {service.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-center">
+                      <p className="text-gray-300 mb-4 text-sm">
+                        {service.description}
+                      </p>
+                      {service.price_range && (
+                        <div className="mb-4">
+                          <Badge variant="outline" className="border-purple-400/30 text-purple-300 text-xs">
+                            {service.price_range}
+                          </Badge>
+                        </div>
+                      )}
+                      <Button 
+                        onClick={() => handleBookService(service.title)}
+                        size="sm"
+                        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 group"
+                      >
+                        Get Started
+                        <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Detailed Business Management Services */}
+              <div className="border-t border-purple-600/30 pt-8">
+                <h3 className="text-xl font-semibold text-white mb-6 flex items-center">
+                  <PieChart className="h-6 w-6 mr-3 text-purple-400" />
+                  Specialized Business Management Services
+                </h3>
+                <Accordion type="single" collapsible className="w-full">
+                  {businessServices.map((service, index) => (
+                    <AccordionItem key={index} value={`business-${index}`} className="border-purple-600/30">
+                      <AccordionTrigger className="text-white hover:text-purple-300">
+                        <div className="flex items-center">
+                          <div className="text-purple-400 mr-3">
+                            {service.icon}
+                          </div>
+                          {service.title}
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="text-gray-300">
+                        <p className="mb-4">{service.description}</p>
+                        <div className="mb-4">
+                          <h4 className="text-white font-medium mb-2">Key Features:</h4>
+                          <ul className="grid grid-cols-2 gap-1 text-sm">
+                            {service.features.map((feature, idx) => (
+                              <li key={idx} className="flex items-center">
+                                <Star className="h-3 w-3 mr-2 text-purple-400" />
+                                {feature}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <Button 
+                          onClick={() => handleBookService(service.title)}
+                          size="sm"
+                          className="bg-purple-600 hover:bg-purple-700"
+                        >
+                          <Calendar className="h-4 w-4 mr-2" />
+                          Book Consultation
+                        </Button>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 2. Tech Solutions */}
+          <Card className="bg-slate-800/50 border-blue-800/30">
+            <CardHeader>
+              <CardTitle className="text-3xl text-white flex items-center">
+                <Laptop className="h-10 w-10 mr-4 text-blue-400" />
+                Tech Solutions
+              </CardTitle>
+              <p className="text-gray-300 text-lg">Cutting-edge technology services and digital transformation</p>
+            </CardHeader>
+            <CardContent>
+              {/* Main Tech Solutions Services */}
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {techSolutions.map((service) => (
+                  <Card key={service.id} className="bg-slate-700/50 border-blue-700/30 hover:border-blue-600/50 transition-all duration-300 hover:transform hover:scale-105 group">
+                    {service.featured && (
+                      <div className="absolute top-4 right-4">
+                        <Badge className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white">
+                          Featured
+                        </Badge>
+                      </div>
+                    )}
+                    <CardHeader className="text-center">
+                      <div className="mx-auto mb-4 p-4 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-full w-fit group-hover:from-blue-600/30 group-hover:to-cyan-600/30 transition-all duration-300">
+                        <div className="text-blue-400 group-hover:text-blue-300 transition-colors">
+                          {getIcon(service.icon)}
+                        </div>
+                      </div>
+                      <CardTitle className="text-lg text-white group-hover:text-blue-300 transition-colors">
+                        {service.title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="text-center">
+                      <p className="text-gray-300 mb-4 text-sm">
+                        {service.description}
+                      </p>
+                      {service.price_range && (
+                        <div className="mb-4">
+                          <Badge variant="outline" className="border-blue-400/30 text-blue-300 text-xs">
+                            {service.price_range}
+                          </Badge>
+                        </div>
+                      )}
+                      <Button 
+                        onClick={() => handleBookService(service.title)}
+                        size="sm"
+                        className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white border-0 group"
+                      >
+                        Get Started
+                        <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* Detailed ICT Services */}
+              <div className="border-t border-blue-600/30 pt-8">
+                <h3 className="text-xl font-semibold text-white mb-6 flex items-center">
+                  <Code className="h-6 w-6 mr-3 text-blue-400" />
+                  Specialized ICT Services
+                </h3>
+                <Accordion type="single" collapsible className="w-full">
+                  {ictServices.map((service, index) => (
+                    <AccordionItem key={index} value={`ict-${index}`} className="border-blue-600/30">
+                      <AccordionTrigger className="text-white hover:text-blue-300">
+                        <div className="flex items-center">
+                          <div className="text-blue-400 mr-3">
+                            {service.icon}
+                          </div>
+                          {service.title}
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="text-gray-300">
+                        <p className="mb-4">{service.description}</p>
+                        <div className="mb-4">
+                          <h4 className="text-white font-medium mb-2">Technologies & Skills:</h4>
+                          <ul className="grid grid-cols-2 gap-1 text-sm">
+                            {service.features.map((feature, idx) => (
+                              <li key={idx} className="flex items-center">
+                                <Star className="h-3 w-3 mr-2 text-blue-400" />
+                                {feature}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <Button 
+                          onClick={() => handleBookService(service.title)}
+                          size="sm"
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
+                          <MessageCircle className="h-4 w-4 mr-2" />
+                          Get Quote
+                        </Button>
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* 3. Crypto Advisory */}
+          {cryptoAdvisory.length > 0 && (
+            <Card className="bg-slate-800/50 border-orange-800/30">
+              <CardHeader>
+                <CardTitle className="text-3xl text-white flex items-center">
+                  <TrendingUp className="h-10 w-10 mr-4 text-orange-400" />
+                  Crypto Advisory
                 </CardTitle>
+                <p className="text-gray-300 text-lg">Expert cryptocurrency and digital asset guidance</p>
               </CardHeader>
-              <CardContent className="text-center">
-                <p className="text-gray-300 mb-6 leading-relaxed">
-                  {service.description}
-                </p>
-                {service.price_range && (
-                  <div className="mb-4">
-                    <Badge variant="outline" className="border-purple-400/30 text-purple-300">
-                      {service.price_range}
-                    </Badge>
-                  </div>
-                )}
-                <Button 
-                  onClick={() => handleBookService(service.title)}
-                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 group"
-                >
-                  Get Started
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
+              <CardContent>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {cryptoAdvisory.map((service) => (
+                    <Card key={service.id} className="bg-slate-700/50 border-orange-700/30 hover:border-orange-600/50 transition-all duration-300 hover:transform hover:scale-105 group">
+                      {service.featured && (
+                        <div className="absolute top-4 right-4">
+                          <Badge className="bg-gradient-to-r from-orange-600 to-yellow-600 text-white">
+                            Featured
+                          </Badge>
+                        </div>
+                      )}
+                      <CardHeader className="text-center">
+                        <div className="mx-auto mb-4 p-4 bg-gradient-to-r from-orange-600/20 to-yellow-600/20 rounded-full w-fit group-hover:from-orange-600/30 group-hover:to-yellow-600/30 transition-all duration-300">
+                          <div className="text-orange-400 group-hover:text-orange-300 transition-colors">
+                            {getIcon(service.icon)}
+                          </div>
+                        </div>
+                        <CardTitle className="text-lg text-white group-hover:text-orange-300 transition-colors">
+                          {service.title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="text-center">
+                        <p className="text-gray-300 mb-4 text-sm">
+                          {service.description}
+                        </p>
+                        {service.price_range && (
+                          <div className="mb-4">
+                            <Badge variant="outline" className="border-orange-400/30 text-orange-300 text-xs">
+                              {service.price_range}
+                            </Badge>
+                          </div>
+                        )}
+                        <Button 
+                          onClick={() => handleBookService(service.title)}
+                          size="sm"
+                          className="w-full bg-gradient-to-r from-orange-600 to-yellow-600 hover:from-orange-700 hover:to-yellow-700 text-white border-0 group"
+                        >
+                          Get Started
+                          <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               </CardContent>
             </Card>
-          ))}
-        </div>
+          )}
 
-        {/* Detailed Service Categories */}
-        <div className="grid lg:grid-cols-2 gap-8 mb-16">
-          {/* Business Management Services */}
-          <Card className="bg-slate-800/50 border-purple-800/30">
-            <CardHeader>
-              <CardTitle className="text-2xl text-white flex items-center">
-                <Briefcase className="h-8 w-8 mr-3 text-purple-400" />
-                Business Management Services
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Accordion type="single" collapsible className="w-full">
-                {businessServices.map((service, index) => (
-                  <AccordionItem key={index} value={`business-${index}`} className="border-purple-600/30">
-                    <AccordionTrigger className="text-white hover:text-purple-300">
-                      <div className="flex items-center">
-                        <div className="text-purple-400 mr-3">
-                          {service.icon}
+          {/* 4. Web3 Integration */}
+          {web3Integration.length > 0 && (
+            <Card className="bg-slate-800/50 border-green-800/30">
+              <CardHeader>
+                <CardTitle className="text-3xl text-white flex items-center">
+                  <Globe className="h-10 w-10 mr-4 text-green-400" />
+                  Web3 Integration
+                </CardTitle>
+                <p className="text-gray-300 text-lg">Next-generation blockchain and decentralized solutions</p>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {web3Integration.map((service) => (
+                    <Card key={service.id} className="bg-slate-700/50 border-green-700/30 hover:border-green-600/50 transition-all duration-300 hover:transform hover:scale-105 group">
+                      {service.featured && (
+                        <div className="absolute top-4 right-4">
+                          <Badge className="bg-gradient-to-r from-green-600 to-emerald-600 text-white">
+                            Featured
+                          </Badge>
                         </div>
-                        {service.title}
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="text-gray-300">
-                      <p className="mb-4">{service.description}</p>
-                      <div className="mb-4">
-                        <h4 className="text-white font-medium mb-2">Key Features:</h4>
-                        <ul className="grid grid-cols-2 gap-1 text-sm">
-                          {service.features.map((feature, idx) => (
-                            <li key={idx} className="flex items-center">
-                              <Star className="h-3 w-3 mr-2 text-purple-400" />
-                              {feature}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <Button 
-                        onClick={() => handleBookService(service.title)}
-                        size="sm"
-                        className="bg-purple-600 hover:bg-purple-700"
-                      >
-                        <Calendar className="h-4 w-4 mr-2" />
-                        Book Consultation
-                      </Button>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </CardContent>
-          </Card>
-
-          {/* ICT Services */}
-          <Card className="bg-slate-800/50 border-purple-800/30">
-            <CardHeader>
-              <CardTitle className="text-2xl text-white flex items-center">
-                <Laptop className="h-8 w-8 mr-3 text-blue-400" />
-                ICT Services
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Accordion type="single" collapsible className="w-full">
-                {ictServices.map((service, index) => (
-                  <AccordionItem key={index} value={`ict-${index}`} className="border-blue-600/30">
-                    <AccordionTrigger className="text-white hover:text-blue-300">
-                      <div className="flex items-center">
-                        <div className="text-blue-400 mr-3">
-                          {service.icon}
+                      )}
+                      <CardHeader className="text-center">
+                        <div className="mx-auto mb-4 p-4 bg-gradient-to-r from-green-600/20 to-emerald-600/20 rounded-full w-fit group-hover:from-green-600/30 group-hover:to-emerald-600/30 transition-all duration-300">
+                          <div className="text-green-400 group-hover:text-green-300 transition-colors">
+                            {getIcon(service.icon)}
+                          </div>
                         </div>
-                        {service.title}
-                      </div>
-                    </AccordionTrigger>
-                    <AccordionContent className="text-gray-300">
-                      <p className="mb-4">{service.description}</p>
-                      <div className="mb-4">
-                        <h4 className="text-white font-medium mb-2">Technologies & Skills:</h4>
-                        <ul className="grid grid-cols-2 gap-1 text-sm">
-                          {service.features.map((feature, idx) => (
-                            <li key={idx} className="flex items-center">
-                              <Star className="h-3 w-3 mr-2 text-blue-400" />
-                              {feature}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <Button 
-                        onClick={() => handleBookService(service.title)}
-                        size="sm"
-                        className="bg-blue-600 hover:bg-blue-700"
-                      >
-                        <MessageCircle className="h-4 w-4 mr-2" />
-                        Get Quote
-                      </Button>
-                    </AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion>
-            </CardContent>
-          </Card>
+                        <CardTitle className="text-lg text-white group-hover:text-green-300 transition-colors">
+                          {service.title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="text-center">
+                        <p className="text-gray-300 mb-4 text-sm">
+                          {service.description}
+                        </p>
+                        {service.price_range && (
+                          <div className="mb-4">
+                            <Badge variant="outline" className="border-green-400/30 text-green-300 text-xs">
+                              {service.price_range}
+                            </Badge>
+                          </div>
+                        )}
+                        <Button 
+                          onClick={() => handleBookService(service.title)}
+                          size="sm"
+                          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white border-0 group"
+                        >
+                          Get Started
+                          <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Business Process Section */}
