@@ -117,17 +117,29 @@ const Services = () => {
             description="Cutting-edge technology services and digital transformation"
             icon={<Laptop className="h-10 w-10 mr-4 text-blue-400" />}
             services={techSolutions}
-            detailedServices={ictServices}
             getIcon={getIcon}
             onBookService={handleBookService}
             colorScheme="blue"
             borderColor="border-blue-800/30"
+          />
+
+          {/* 3. ICT Services */}
+          <ServiceSection
+            title="ICT Services"
+            description="Professional information and communication technology solutions"
+            icon={<Code className="h-10 w-10 mr-4 text-cyan-400" />}
+            services={[]}
+            detailedServices={ictServices}
+            getIcon={getIcon}
+            onBookService={handleBookService}
+            colorScheme="blue"
+            borderColor="border-cyan-800/30"
             accordionTitle="Specialized ICT Services"
-            accordionIcon={<Code className="h-6 w-6 mr-3 text-blue-400" />}
+            accordionIcon={<Code className="h-6 w-6 mr-3 text-cyan-400" />}
             accordionType="ict"
           />
 
-          {/* 3. Web3 Integration */}
+          {/* 4. Web3 Integration */}
           {web3Integration.length > 0 && (
             <ServiceSection
               title="Web3 Integration"
@@ -141,7 +153,7 @@ const Services = () => {
             />
           )}
 
-          {/* 4. Crypto Advisory */}
+          {/* 5. Crypto Advisory */}
           {cryptoAdvisory.length > 0 && (
             <ServiceSection
               title="Crypto Advisory"
