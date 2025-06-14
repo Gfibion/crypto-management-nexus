@@ -62,21 +62,25 @@ const Services = () => {
     service.title.toLowerCase().includes('consulting')
   ) || [];
   
+  // Separate Web3 and blockchain services first
+  const web3Integration = services?.filter(service => 
+    service.title.toLowerCase().includes('web3') || 
+    service.title.toLowerCase().includes('blockchain')
+  ) || [];
+  
+  // Filter tech solutions to exclude Web3/blockchain services
   const techSolutions = services?.filter(service => 
-    service.title.toLowerCase().includes('tech') || 
-    service.title.toLowerCase().includes('development') ||
-    service.title.toLowerCase().includes('web') ||
-    service.title.toLowerCase().includes('app')
+    (service.title.toLowerCase().includes('tech') || 
+     service.title.toLowerCase().includes('development') ||
+     service.title.toLowerCase().includes('web') ||
+     service.title.toLowerCase().includes('app')) &&
+    !service.title.toLowerCase().includes('web3') &&
+    !service.title.toLowerCase().includes('blockchain')
   ) || [];
   
   const cryptoAdvisory = services?.filter(service => 
     service.title.toLowerCase().includes('crypto') || 
     service.title.toLowerCase().includes('trading')
-  ) || [];
-
-  const web3Integration = services?.filter(service => 
-    service.title.toLowerCase().includes('web3') || 
-    service.title.toLowerCase().includes('blockchain')
   ) || [];
 
   return (
