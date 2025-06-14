@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -81,63 +81,67 @@ const Auth = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {!isLogin && (
-              <Input
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleInputChange}
-                placeholder="Full Name"
-                required
-                disabled={loading}
-                className="bg-slate-700 border-purple-600/30 text-white placeholder-gray-400"
+          {loading ? (
+            <div className="flex justify-center py-8">
+              <LoadingSpinner 
+                message={isLogin ? "Signing you in..." : "Creating your account..."} 
+                size="md" 
               />
-            )}
-            <Input
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              placeholder="Email"
-              required
-              disabled={loading}
-              className="bg-slate-700 border-purple-600/30 text-white placeholder-gray-400"
-            />
-            <Input
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              placeholder="Password"
-              required
-              disabled={loading}
-              className="bg-slate-700 border-purple-600/30 text-white placeholder-gray-400"
-            />
-            <Button 
-              type="submit" 
-              className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {isLogin ? "Signing In..." : "Creating Account..."}
-                </>
-              ) : (
-                isLogin ? "Sign In" : "Sign Up"
-              )}
-            </Button>
-          </form>
-          
-          <div className="mt-4 text-center">
-            <button
-              onClick={() => setIsLogin(!isLogin)}
-              disabled={loading}
-              className="text-purple-400 hover:text-purple-300 transition-colors disabled:opacity-50"
-            >
-              {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}
-            </button>
-          </div>
+            </div>
+          ) : (
+            <>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                {!isLogin && (
+                  <Input
+                    name="fullName"
+                    value={formData.fullName}
+                    onChange={handleInputChange}
+                    placeholder="Full Name"
+                    required
+                    disabled={loading}
+                    className="bg-slate-700 border-purple-600/30 text-white placeholder-gray-400"
+                  />
+                )}
+                <Input
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Email"
+                  required
+                  disabled={loading}
+                  className="bg-slate-700 border-purple-600/30 text-white placeholder-gray-400"
+                />
+                <Input
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Password"
+                  required
+                  disabled={loading}
+                  className="bg-slate-700 border-purple-600/30 text-white placeholder-gray-400"
+                />
+                <Button 
+                  type="submit" 
+                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0"
+                  disabled={loading}
+                >
+                  {isLogin ? "Sign In" : "Sign Up"}
+                </Button>
+              </form>
+              
+              <div className="mt-4 text-center">
+                <button
+                  onClick={() => setIsLogin(!isLogin)}
+                  disabled={loading}
+                  className="text-purple-400 hover:text-purple-300 transition-colors disabled:opacity-50"
+                >
+                  {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}
+                </button>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>
