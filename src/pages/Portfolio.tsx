@@ -1,8 +1,8 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Star, ArrowUp, CheckCircle, Clock } from "lucide-react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const Portfolio = () => {
   const projects = [
@@ -119,11 +119,22 @@ const Portfolio = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-16">
+          <div className="flex justify-center mb-6">
+            <Avatar className="w-32 h-32 border-4 border-purple-400/50">
+              <AvatarImage 
+                src="/lovable-uploads/8dac904e-399f-485c-bbe1-d1f051fd857c.png" 
+                alt="Gfibion Joseph Mutua" 
+              />
+              <AvatarFallback className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+                GM
+              </AvatarFallback>
+            </Avatar>
+          </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
             Portfolio & Projects
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-            Showcasing successful implementations across business management, technology integration, and blockchain innovation by Joseph Mutua (Gfibion)
+            Showcasing successful implementations across business management, technology integration, and blockchain innovation by Gfibion Joseph Mutua
           </p>
         </div>
 
@@ -218,7 +229,7 @@ const Portfolio = () => {
           <CardContent className="p-8 text-center">
             <h2 className="text-3xl font-bold text-white mb-4">Ready to Start Your Project?</h2>
             <p className="text-xl text-gray-300 mb-8 leading-relaxed">
-              Let's discuss how Joseph Mutua (Gfibion) can bring similar success to your organization
+              Let's discuss how Gfibion Joseph Mutua can bring similar success to your organization
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0 font-medium px-8">
