@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { User, MapPin, Globe, Mail, Calendar } from "lucide-react";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import AvatarUpload from "@/components/AvatarUpload";
 
 interface Profile {
   id: string;
@@ -132,6 +133,10 @@ const Profile = () => {
     setEditing(false);
   };
 
+  const handleAvatarUpdate = (newAvatarUrl: string) => {
+    setProfile(prev => prev ? { ...prev, avatar_url: newAvatarUrl } : null);
+  };
+
   if (authLoading || loading) {
     return (
       <div className="min-h-screen pt-20 px-4 flex items-center justify-center">
@@ -163,10 +168,13 @@ const Profile = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-white text-2xl font-bold">
-                    {(profile?.full_name || user.email || "U").charAt(0).toUpperCase()}
-                  </span>
+                <div className="flex justify-center mb-4">
+                  <AvatarUpload
+                    userId={user.id}
+                    currentAvatarUrl={profile?.avatar_url}
+                    onAvatarUpdate={handleAvatarUpdate}
+                    size="lg"
+                  />
                 </div>
                 <h3 className="text-white font-semibold">
                   {profile?.full_name || "No name set"}

@@ -10,16 +10,38 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useUserRole";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const ProfileDropdown = () => {
   const [signingOut, setSigningOut] = useState(false);
   const { user, signOut } = useAuth();
   const isAdmin = useIsAdmin();
   const { toast } = useToast();
+
+  // Fetch user profile data
+  const { data: profile } = useQuery({
+    queryKey: ['profile', user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching profile:', error);
+        return null;
+      }
+      return data;
+    },
+    enabled: !!user,
+  });
 
   const handleSignOut = async () => {
     setSigningOut(true);
@@ -45,7 +67,7 @@ const ProfileDropdown = () => {
   if (!user) return null;
 
   const getUserDisplayName = () => {
-    const name = user.user_metadata?.full_name || user.email;
+    const name = profile?.full_name || user.user_metadata?.full_name || user.email;
     return name?.split('@')[0] || 'User';
   };
 
@@ -59,6 +81,10 @@ const ProfileDropdown = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
+            <AvatarImage 
+              src={profile?.avatar_url || undefined} 
+              alt={getUserDisplayName()}
+            />
             <AvatarFallback className="bg-gradient-to-br from-purple-500 to-blue-500 text-white">
               {getUserInitials()}
             </AvatarFallback>
