@@ -26,26 +26,29 @@ const Index = () => {
         <div className="text-center max-w-4xl mx-auto">
           <div className={`transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
             <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Business Manager
+              Joseph Mutua
             </h1>
+            <p className="text-2xl md:text-3xl text-purple-400 font-semibold mb-4">
+              Alias: Gfibion
+            </p>
             <div className="text-xl md:text-2xl text-gray-300 mb-8 space-y-2">
-              <p className="animate-fade-in">Bridging Traditional Business with</p>
+              <p className="animate-fade-in">Business Manager - Bridging Traditional Business with</p>
               <p className="animate-fade-in" style={{ animationDelay: "0.5s" }}>
                 <span className="text-purple-400 font-semibold">Blockchain Technology</span>
               </p>
             </div>
             <p className="text-lg text-gray-400 mb-10 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: "1s" }}>
               Empowering businesses through strategic management, cutting-edge ICT solutions, 
-              and innovative blockchain integration.
+              and innovative blockchain integration. Your trusted partner for digital transformation.
             </p>
           </div>
           
           <div className={`flex flex-col sm:flex-row gap-4 justify-center mb-12 transition-all duration-1000 delay-700 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
             <Button asChild size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0">
-              <Link to="/services">Explore Services</Link>
+              <Link to="/services">Explore My Services</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white">
-              <Link to="/portfolio">View Portfolio</Link>
+              <Link to="/portfolio">View My Portfolio</Link>
             </Button>
           </div>
 
@@ -62,7 +65,7 @@ const Index = () => {
       <section id="highlights" className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            Core Expertise
+            My Core Expertise
           </h2>
           
           <div className="grid md:grid-cols-3 gap-8">
@@ -104,10 +107,10 @@ const Index = () => {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-6 text-white">Ready to Transform Your Business?</h2>
           <p className="text-xl text-gray-300 mb-8">
-            Let's discuss how we can leverage technology and strategic management to drive your success.
+            Let's discuss how I can leverage technology and strategic management to drive your business success.
           </p>
           <Button asChild size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0">
-            <Link to="/chat">Get In Touch</Link>
+            <Link to="/chat">Get In Touch with Joseph</Link>
           </Button>
         </div>
       </section>

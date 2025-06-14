@@ -9,7 +9,7 @@ const About = () => {
         {/* Header Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            About Me
+            About Joseph Mutua
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             A passionate business professional bridging traditional management with innovative technology solutions
@@ -21,11 +21,12 @@ const About = () => {
           <div className="flex flex-col items-center">
             <div className="w-64 h-64 rounded-full bg-gradient-to-br from-purple-400 to-blue-500 p-1 mb-6">
               <div className="w-full h-full rounded-full bg-slate-800 flex items-center justify-center">
-                <div className="text-6xl font-bold text-purple-400">BM</div>
+                <div className="text-6xl font-bold text-purple-400">JM</div>
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Business Manager</h2>
-            <p className="text-purple-400 text-lg mb-4">Strategic Leader & Tech Innovator</p>
+            <h2 className="text-2xl font-bold text-white mb-2">Joseph Mutua</h2>
+            <p className="text-purple-400 text-lg mb-2">Alias: Gfibion</p>
+            <p className="text-blue-400 text-lg mb-4">Strategic Leader & Tech Innovator</p>
             <div className="flex flex-wrap gap-2 justify-center">
               <Badge variant="secondary" className="bg-purple-800/30 text-purple-300">Management</Badge>
               <Badge variant="secondary" className="bg-blue-800/30 text-blue-300">ICT</Badge>
@@ -38,9 +39,9 @@ const About = () => {
             <h3 className="text-2xl font-bold text-white mb-6">Professional Journey</h3>
             <div className="space-y-4 text-gray-300">
               <p>
-                With a strong foundation in business management and an unwavering passion for emerging technologies, 
-                I specialize in helping organizations navigate the complex intersection of traditional business practices 
-                and innovative digital solutions.
+                I'm Joseph Mutua, professionally known as Gfibion, with a strong foundation in business management 
+                and an unwavering passion for emerging technologies. I specialize in helping organizations navigate 
+                the complex intersection of traditional business practices and innovative digital solutions.
               </p>
               <p>
                 My expertise spans strategic planning, operational excellence, and technology integration, with a particular 
@@ -50,7 +51,7 @@ const About = () => {
               <p>
                 Through years of experience in ICT and business management, I've developed a unique perspective on how 
                 technology can drive sustainable growth and competitive advantage. My approach combines analytical rigor 
-                with creative problem-solving to deliver results that matter.
+                with creative problem-solving to deliver results that matter for my clients and partners.
               </p>
             </div>
           </div>
