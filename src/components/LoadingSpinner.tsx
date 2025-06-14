@@ -28,11 +28,11 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
         {/* Spinning green ring */}
         <div className={`${sizeClasses[size]} rounded-full border-4 border-gray-600 border-t-green-500 animate-spin`}></div>
         
-        {/* Website icon in the center */}
+        {/* Gfibion Genesis logo in the center */}
         <div className={`absolute inset-0 flex items-center justify-center`}>
           <img 
-            src="/lovable-uploads/530a9f4b-2998-47ff-8c7f-869444ff18ac.png" 
-            alt="Joseph Mutua - Business Manager" 
+            src="/lovable-uploads/91d89c08-ff38-450a-b2a5-543fb578f2d3.png" 
+            alt="Gfibion Genesis - Venturing half future life" 
             className={`${size === 'sm' ? 'w-8 h-8' : size === 'md' ? 'w-12 h-12' : 'w-20 h-20'} rounded-full object-cover`}
           />
         </div>
