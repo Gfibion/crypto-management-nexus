@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useArticles } from '@/hooks/useArticles';
 import { Button } from '@/components/ui/button';
@@ -14,6 +13,11 @@ const ArticleReader: React.FC = () => {
   const navigate = useNavigate();
   const { data: articles, isLoading } = useArticles();
   const [showComments, setShowComments] = useState(false);
+
+  // Scroll to top when article changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [slug]);
 
   if (isLoading) {
     return (
@@ -45,6 +49,11 @@ const ArticleReader: React.FC = () => {
   const currentIndex = articles?.findIndex(article => article.id === currentArticle.id) || 0;
   const previousArticle = articles && currentIndex > 0 ? articles[currentIndex - 1] : null;
   const nextArticle = articles && currentIndex < articles.length - 1 ? articles[currentIndex + 1] : null;
+
+  const handleArticleNavigation = (articleSlug: string) => {
+    setShowComments(false); // Close comments when navigating
+    navigate(`/articles/${articleSlug}`);
+  };
 
   return (
     <div className="min-h-screen pt-20 px-4">
@@ -156,7 +165,7 @@ const ArticleReader: React.FC = () => {
             <Card className="bg-slate-800/50 border-purple-800/30 hover:border-purple-600/50 transition-all duration-300 cursor-pointer">
               <CardContent 
                 className="p-6"
-                onClick={() => navigate(`/articles/${previousArticle.slug}`)}
+                onClick={() => handleArticleNavigation(previousArticle.slug)}
               >
                 <div className="flex items-center gap-3 mb-2">
                   <ChevronLeft className="h-4 w-4 text-purple-400" />
@@ -174,7 +183,7 @@ const ArticleReader: React.FC = () => {
             <Card className="bg-slate-800/50 border-purple-800/30 hover:border-purple-600/50 transition-all duration-300 cursor-pointer">
               <CardContent 
                 className="p-6"
-                onClick={() => navigate(`/articles/${nextArticle.slug}`)}
+                onClick={() => handleArticleNavigation(nextArticle.slug)}
               >
                 <div className="flex items-center justify-end gap-3 mb-2">
                   <span className="text-sm text-purple-400 uppercase tracking-wide">Next Article</span>
@@ -204,7 +213,7 @@ const ArticleReader: React.FC = () => {
                     <div
                       key={article.id}
                       className="p-4 bg-slate-700/50 rounded-lg hover:bg-slate-700/70 transition-colors cursor-pointer"
-                      onClick={() => navigate(`/articles/${article.slug}`)}
+                      onClick={() => handleArticleNavigation(article.slug)}
                     >
                       <h4 className="text-white font-medium line-clamp-2 mb-2">{article.title}</h4>
                       {article.excerpt && (
