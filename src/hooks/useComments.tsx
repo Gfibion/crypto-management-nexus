@@ -29,13 +29,21 @@ export const useComments = (articleId: string) => {
         .from('comments')
         .select(`
           *,
-          profiles (full_name, avatar_url),
-          comment_likes (user_id)
+          profiles!inner (
+            full_name,
+            avatar_url
+          ),
+          comment_likes (
+            user_id
+          )
         `)
         .eq('article_id', articleId)
         .order('created_at', { ascending: true });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching comments:', error);
+        throw error;
+      }
       
       // Organize comments into a tree structure
       const commentMap = new Map<string, CommentWithExtras>();
@@ -47,6 +55,7 @@ export const useComments = (articleId: string) => {
           ...comment,
           replies: [],
           like_count: comment.comment_likes?.length || 0,
+          profiles: comment.profiles || null,
         };
         commentMap.set(comment.id, commentWithExtras);
       });
