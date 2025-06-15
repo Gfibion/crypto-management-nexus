@@ -63,7 +63,7 @@ const ArticleLikes: React.FC<ArticleLikesProps> = ({ articleId }) => {
       </div>
       
       <span className="text-sm text-gray-400">
-        Was this article helpful?
+        Was this article helpful? Please comment.
       </span>
     </div>
   );
