@@ -15,7 +15,18 @@ interface CommentsSectionProps {
 }
 
 interface CommentItemProps {
-  comment: any;
+  comment: {
+    id: string;
+    content: string;
+    created_at: string;
+    profiles: {
+      full_name: string | null;
+      avatar_url: string | null;
+    } | null;
+    comment_likes: Array<{ user_id: string }>;
+    replies: any[];
+    like_count: number;
+  };
   articleId: string;
   onReply: (commentId: string) => void;
   depth?: number;
@@ -41,7 +52,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ comment, articleId, onReply, 
     <div className={`${depth > 0 ? 'ml-8 mt-4' : 'mt-4'}`}>
       <div className="flex gap-3">
         <Avatar className="h-8 w-8">
-          <AvatarImage src={comment.profiles?.avatar_url} />
+          <AvatarImage src={comment.profiles?.avatar_url || undefined} />
           <AvatarFallback>
             {comment.profiles?.full_name?.charAt(0) || 'U'}
           </AvatarFallback>

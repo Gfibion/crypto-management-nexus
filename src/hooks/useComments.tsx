@@ -4,6 +4,23 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 
+interface CommentWithExtras {
+  id: string;
+  article_id: string;
+  user_id: string;
+  content: string;
+  parent_id: string | null;
+  created_at: string;
+  updated_at: string;
+  profiles: {
+    full_name: string | null;
+    avatar_url: string | null;
+  } | null;
+  comment_likes: Array<{ user_id: string }>;
+  replies: CommentWithExtras[];
+  like_count: number;
+}
+
 export const useComments = (articleId: string) => {
   return useQuery({
     queryKey: ['comments', articleId],
@@ -12,7 +29,7 @@ export const useComments = (articleId: string) => {
         .from('comments')
         .select(`
           *,
-          profiles:user_id (full_name, avatar_url),
+          profiles!comments_user_id_fkey (full_name, avatar_url),
           comment_likes (user_id)
         `)
         .eq('article_id', articleId)
@@ -21,23 +38,29 @@ export const useComments = (articleId: string) => {
       if (error) throw error;
       
       // Organize comments into a tree structure
-      const commentMap = new Map();
-      const rootComments = [];
+      const commentMap = new Map<string, CommentWithExtras>();
+      const rootComments: CommentWithExtras[] = [];
       
+      // First pass: create all comment objects with extended properties
       data.forEach(comment => {
-        comment.replies = [];
-        comment.like_count = comment.comment_likes?.length || 0;
-        commentMap.set(comment.id, comment);
+        const commentWithExtras: CommentWithExtras = {
+          ...comment,
+          replies: [],
+          like_count: comment.comment_likes?.length || 0,
+        };
+        commentMap.set(comment.id, commentWithExtras);
       });
       
+      // Second pass: organize into tree structure
       data.forEach(comment => {
+        const commentWithExtras = commentMap.get(comment.id)!;
         if (comment.parent_id) {
           const parent = commentMap.get(comment.parent_id);
           if (parent) {
-            parent.replies.push(comment);
+            parent.replies.push(commentWithExtras);
           }
         } else {
-          rootComments.push(comment);
+          rootComments.push(commentWithExtras);
         }
       });
       
