@@ -17,16 +17,6 @@ interface CommentsSectionProps {
 const CommentsSection: React.FC<CommentsSectionProps> = ({ articleId, onClose }) => {
   const { data: comments, isLoading } = useComments(articleId);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
-  const [isVisible, setIsVisible] = useState(true);
-
-  const handleClose = () => {
-    setIsVisible(false);
-    onClose?.();
-  };
-
-  if (!isVisible) {
-    return null;
-  }
 
   if (isLoading) {
     return <LoadingSpinner message="Loading comments..." />;
@@ -40,14 +30,16 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ articleId, onClose })
             <MessageSquare className="h-5 w-5" />
             Comments ({comments?.length || 0})
           </CardTitle>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleClose}
-            className="text-gray-400 hover:text-white"
-          >
-            <X className="h-4 w-4" />
-          </Button>
+          {onClose && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onClose}
+              className="text-gray-400 hover:text-white"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
         </div>
       </CardHeader>
       

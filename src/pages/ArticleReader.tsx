@@ -1,11 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useArticles } from '@/hooks/useArticles';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Calendar, Clock, Tag, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Tag, ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
 import ArticleLikes from '@/components/ArticleLikes';
 import CommentsSection from '@/components/CommentsSection';
 
@@ -13,6 +13,7 @@ const ArticleReader: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { data: articles, isLoading } = useArticles();
+  const [showComments, setShowComments] = useState(false);
 
   if (isLoading) {
     return (
@@ -126,11 +127,28 @@ const ArticleReader: React.FC = () => {
 
             {/* Article Likes */}
             <ArticleLikes articleId={currentArticle.id} />
+
+            {/* Comments Toggle Button */}
+            <div className="mt-6 pt-6 border-t border-gray-700">
+              <Button
+                onClick={() => setShowComments(!showComments)}
+                variant="outline"
+                className="border-purple-600/30 text-purple-300 hover:bg-purple-600/20"
+              >
+                <MessageSquare className="h-4 w-4 mr-2" />
+                {showComments ? 'Hide Comments' : 'Show Comments'}
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
         {/* Comments Section */}
-        <CommentsSection articleId={currentArticle.id} />
+        {showComments && (
+          <CommentsSection 
+            articleId={currentArticle.id} 
+            onClose={() => setShowComments(false)}
+          />
+        )}
 
         {/* Article Navigation */}
         <div className="grid md:grid-cols-2 gap-6 my-8">
