@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import { Camera, Loader2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -28,13 +27,19 @@ const AvatarUpload = ({ userId, currentAvatarUrl, onAvatarUpdate, size = "lg" }:
       }
 
       const file = event.target.files[0];
+      
+      // Check file size (max 2MB for avatars)
+      if (file.size > 2 * 1024 * 1024) {
+        throw new Error('File size must be less than 2MB');
+      }
+
       const fileExt = file.name.split('.').pop();
       const fileName = `${userId}/avatar.${fileExt}`;
 
       // Delete old avatar if it exists
       if (currentAvatarUrl) {
         const oldPath = currentAvatarUrl.split('/').pop();
-        if (oldPath) {
+        if (oldPath && oldPath.includes(userId)) {
           await supabase.storage.from('avatars').remove([`${userId}/${oldPath}`]);
         }
       }
