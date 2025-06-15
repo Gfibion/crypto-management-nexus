@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { Shield, User, LogOut, BookOpen, MessageCircle, Home, Briefcase, GraduationCap, Code, FolderOpen } from "lucide-react";
+import { Shield, User, LogOut, BookOpen, MessageCircle, Home, Briefcase, GraduationCap, Code, FolderOpen, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useUserRole";
@@ -61,6 +61,8 @@ const MobileNavigation = ({ navItems, isOpen, onClose }: MobileNavigationProps) 
         return <FolderOpen className="h-4 w-4" />;
       case "Chat":
         return <MessageCircle className="h-4 w-4" />;
+      case "Donate":
+        return <Heart className="h-4 w-4" />;
       case "Admin":
         return <Shield className="h-4 w-4" />;
       default:
