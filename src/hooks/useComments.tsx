@@ -29,7 +29,7 @@ export const useComments = (articleId: string) => {
         .from('comments')
         .select(`
           *,
-          profiles!comments_user_id_fkey (full_name, avatar_url),
+          profiles (full_name, avatar_url),
           comment_likes (user_id)
         `)
         .eq('article_id', articleId)
