@@ -25,14 +25,11 @@ export const useComments = (articleId: string) => {
   return useQuery({
     queryKey: ['comments', articleId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // First fetch comments
+      const { data: commentsData, error: commentsError } = await supabase
         .from('comments')
         .select(`
           *,
-          profiles!inner (
-            full_name,
-            avatar_url
-          ),
           comment_likes (
             user_id
           )
@@ -40,28 +37,51 @@ export const useComments = (articleId: string) => {
         .eq('article_id', articleId)
         .order('created_at', { ascending: true });
       
-      if (error) {
-        console.error('Error fetching comments:', error);
-        throw error;
+      if (commentsError) {
+        console.error('Error fetching comments:', commentsError);
+        throw commentsError;
       }
+
+      // Get unique user IDs from comments
+      const userIds = [...new Set(commentsData.map(comment => comment.user_id))];
+      
+      // Fetch profiles for these users
+      const { data: profilesData, error: profilesError } = await supabase
+        .from('profiles')
+        .select('id, full_name, avatar_url')
+        .in('id', userIds);
+      
+      if (profilesError) {
+        console.error('Error fetching profiles:', profilesError);
+      }
+
+      // Create a map of profiles for easy lookup
+      const profilesMap = new Map();
+      profilesData?.forEach(profile => {
+        profilesMap.set(profile.id, profile);
+      });
       
       // Organize comments into a tree structure
       const commentMap = new Map<string, CommentWithExtras>();
       const rootComments: CommentWithExtras[] = [];
       
       // First pass: create all comment objects with extended properties
-      data.forEach(comment => {
+      commentsData.forEach(comment => {
+        const profile = profilesMap.get(comment.user_id);
         const commentWithExtras: CommentWithExtras = {
           ...comment,
           replies: [],
           like_count: comment.comment_likes?.length || 0,
-          profiles: comment.profiles || null,
+          profiles: profile ? {
+            full_name: profile.full_name,
+            avatar_url: profile.avatar_url
+          } : null,
         };
         commentMap.set(comment.id, commentWithExtras);
       });
       
       // Second pass: organize into tree structure
-      data.forEach(comment => {
+      commentsData.forEach(comment => {
         const commentWithExtras = commentMap.get(comment.id)!;
         if (comment.parent_id) {
           const parent = commentMap.get(comment.parent_id);
