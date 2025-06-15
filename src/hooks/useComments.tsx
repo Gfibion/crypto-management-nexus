@@ -1,0 +1,133 @@
+
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
+
+export const useComments = (articleId: string) => {
+  return useQuery({
+    queryKey: ['comments', articleId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('comments')
+        .select(`
+          *,
+          profiles:user_id (full_name, avatar_url),
+          comment_likes (user_id)
+        `)
+        .eq('article_id', articleId)
+        .order('created_at', { ascending: true });
+      
+      if (error) throw error;
+      
+      // Organize comments into a tree structure
+      const commentMap = new Map();
+      const rootComments = [];
+      
+      data.forEach(comment => {
+        comment.replies = [];
+        comment.like_count = comment.comment_likes?.length || 0;
+        commentMap.set(comment.id, comment);
+      });
+      
+      data.forEach(comment => {
+        if (comment.parent_id) {
+          const parent = commentMap.get(comment.parent_id);
+          if (parent) {
+            parent.replies.push(comment);
+          }
+        } else {
+          rootComments.push(comment);
+        }
+      });
+      
+      return rootComments;
+    },
+  });
+};
+
+export const useCommentOperations = () => {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const { user } = useAuth();
+
+  const createComment = useMutation({
+    mutationFn: async ({ articleId, content, parentId }: { 
+      articleId: string; 
+      content: string; 
+      parentId?: string;
+    }) => {
+      if (!user) throw new Error('User must be authenticated');
+
+      const { data, error } = await supabase
+        .from('comments')
+        .insert([{
+          article_id: articleId,
+          user_id: user.id,
+          content,
+          parent_id: parentId || null
+        }])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['comments', variables.articleId] });
+      toast({
+        title: "Success",
+        description: "Comment posted successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to post comment",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const toggleCommentLike = useMutation({
+    mutationFn: async ({ commentId }: { commentId: string }) => {
+      if (!user) throw new Error('User must be authenticated');
+
+      const { data: existing } = await supabase
+        .from('comment_likes')
+        .select('id')
+        .eq('comment_id', commentId)
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (existing) {
+        const { error } = await supabase
+          .from('comment_likes')
+          .delete()
+          .eq('id', existing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('comment_likes')
+          .insert([{
+            comment_id: commentId,
+            user_id: user.id
+          }]);
+        if (error) throw error;
+      }
+    },
+    onSuccess: (_, variables) => {
+      // Refresh comments to update like counts
+      queryClient.invalidateQueries({ queryKey: ['comments'] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to like comment",
+        variant: "destructive",
+      });
+    },
+  });
+
+  return { createComment, toggleCommentLike };
+};

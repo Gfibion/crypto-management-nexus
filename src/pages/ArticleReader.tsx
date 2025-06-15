@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Calendar, Clock, Tag, ChevronLeft, ChevronRight } from 'lucide-react';
+import ArticleLikes from '@/components/ArticleLikes';
+import CommentsSection from '@/components/CommentsSection';
 
 const ArticleReader: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -121,11 +123,17 @@ const ArticleReader: React.FC = () => {
                 </div>
               </div>
             )}
+
+            {/* Article Likes */}
+            <ArticleLikes articleId={currentArticle.id} />
           </CardContent>
         </Card>
 
+        {/* Comments Section */}
+        <CommentsSection articleId={currentArticle.id} />
+
         {/* Article Navigation */}
-        <div className="grid md:grid-cols-2 gap-6 mb-8">
+        <div className="grid md:grid-cols-2 gap-6 my-8">
           {previousArticle && (
             <Card className="bg-slate-800/50 border-purple-800/30 hover:border-purple-600/50 transition-all duration-300 cursor-pointer">
               <CardContent 
