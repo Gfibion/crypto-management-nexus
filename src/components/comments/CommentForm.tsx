@@ -15,7 +15,7 @@ interface CommentFormProps {
 
 const CommentForm: React.FC<CommentFormProps> = ({ 
   articleId, 
-  placeholder = "Share your thoughts...",
+  placeholder = "Comment",
   onSuccess
 }) => {
   const { user } = useAuth();

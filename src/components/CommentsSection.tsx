@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, X } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { useComments } from '@/hooks/useComments';
 import LoadingSpinner from './LoadingSpinner';
 import CommentItem from './comments/CommentItem';
@@ -10,11 +11,22 @@ import ReplyForm from './comments/ReplyForm';
 
 interface CommentsSectionProps {
   articleId: string;
+  onClose?: () => void;
 }
 
-const CommentsSection: React.FC<CommentsSectionProps> = ({ articleId }) => {
+const CommentsSection: React.FC<CommentsSectionProps> = ({ articleId, onClose }) => {
   const { data: comments, isLoading } = useComments(articleId);
   const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [isVisible, setIsVisible] = useState(true);
+
+  const handleClose = () => {
+    setIsVisible(false);
+    onClose?.();
+  };
+
+  if (!isVisible) {
+    return null;
+  }
 
   if (isLoading) {
     return <LoadingSpinner message="Loading comments..." />;
@@ -23,10 +35,20 @@ const CommentsSection: React.FC<CommentsSectionProps> = ({ articleId }) => {
   return (
     <Card className="bg-slate-800/50 border-purple-800/30 mt-8">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-white">
-          <MessageSquare className="h-5 w-5" />
-          Comments ({comments?.length || 0})
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-white">
+            <MessageSquare className="h-5 w-5" />
+            Comments ({comments?.length || 0})
+          </CardTitle>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClose}
+            className="text-gray-400 hover:text-white"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
       </CardHeader>
       
       <CardContent className="space-y-6">
