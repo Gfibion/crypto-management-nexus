@@ -6,19 +6,152 @@ import { Button } from "@/components/ui/button";
 import { useSkills } from "@/hooks/useSupabaseData";
 import { TrendingUp, Users, DollarSign, Briefcase, Calendar, Download, PieChart, Shield, Rocket, Globe, Code, Star, Cloud, Database, Building } from "lucide-react";
 import { Link } from "react-router-dom";
-import { businessServices, ictServices } from "@/components/services/serviceData";
 
 const Skills = () => {
   const { data: skills, isLoading, error } = useSkills();
 
-  // Group skills by category
-  const groupedSkills = skills?.reduce((acc, skill) => {
+  // Additional management skills from business services
+  const managementSkills = [
+    {
+      id: "business-planning",
+      name: "Strategic Business Planning",
+      category: "Management",
+      description: "Comprehensive strategic planning to transform business vision into actionable roadmaps",
+      proficiency_level: 92,
+      years_experience: 8,
+      icon: "pie-chart",
+      competencies: ["Market Analysis", "Financial Projections", "Strategic Roadmaps", "Competitive Intelligence"]
+    },
+    {
+      id: "risk-management",
+      name: "Risk Management & Compliance",
+      category: "Management",
+      description: "Identify, assess and mitigate business risks to protect investments and operations",
+      proficiency_level: 88,
+      years_experience: 6,
+      icon: "shield",
+      competencies: ["Risk Assessment", "Compliance Planning", "Crisis Management", "Insurance Optimization"]
+    },
+    {
+      id: "business-administration",
+      name: "Business Administration",
+      category: "Management",
+      description: "Streamline operations and improve efficiency across all business functions",
+      proficiency_level: 90,
+      years_experience: 10,
+      icon: "building",
+      competencies: ["Process Optimization", "Team Management", "Resource Planning", "Performance Metrics"]
+    }
+  ];
+
+  // Additional financial skills
+  const financialSkills = [
+    {
+      id: "financial-consultation",
+      name: "Financial Planning & Analysis",
+      category: "Financial",
+      description: "Expert financial guidance to optimize cash flow and maximize profitability",
+      proficiency_level: 89,
+      years_experience: 7,
+      icon: "dollar-sign",
+      competencies: ["Financial Planning", "Budget Management", "Cost Optimization", "Tax Strategy"]
+    },
+    {
+      id: "investment-consultation",
+      name: "Investment Strategy & Portfolio Management",
+      category: "Financial",
+      description: "Strategic investment advice for portfolio diversification and wealth building",
+      proficiency_level: 85,
+      years_experience: 5,
+      icon: "trending-up",
+      competencies: ["Portfolio Analysis", "Investment Strategy", "Due Diligence", "Market Research"]
+    }
+  ];
+
+  // Additional entrepreneurship skills
+  const entrepreneurshipSkills = [
+    {
+      id: "startup-development",
+      name: "Startup Development & Launch",
+      category: "Entrepreneurship",
+      description: "End-to-end expertise for launching and scaling innovative startups",
+      proficiency_level: 91,
+      years_experience: 9,
+      icon: "rocket",
+      competencies: ["MVP Development", "Go-to-Market Strategy", "Fundraising Support", "Growth Hacking"]
+    }
+  ];
+
+  // Additional ICT skills from ICT services
+  const ictSkills = [
+    {
+      id: "web-design",
+      name: "Web Design & User Experience",
+      category: "ICT",
+      description: "Modern, responsive web designs that captivate users and drive conversions",
+      proficiency_level: 87,
+      years_experience: 6,
+      icon: "globe",
+      competencies: ["UI/UX Design", "Responsive Design", "Brand Integration", "User Research"]
+    },
+    {
+      id: "web-app-development",
+      name: "Full-Stack Development",
+      category: "ICT",
+      description: "Custom web applications and mobile apps built with cutting-edge technology",
+      proficiency_level: 90,
+      years_experience: 8,
+      icon: "code",
+      competencies: ["Full-Stack Development", "Mobile Apps", "Progressive Web Apps", "API Integration"]
+    },
+    {
+      id: "algorithm-integration",
+      name: "Algorithm Development & AI Integration",
+      category: "ICT",
+      description: "Advanced algorithms and AI solutions to automate and optimize business processes",
+      proficiency_level: 83,
+      years_experience: 4,
+      icon: "star",
+      competencies: ["Machine Learning", "Data Analytics", "Process Automation", "Predictive Modeling"]
+    },
+    {
+      id: "cloud-computing",
+      name: "Cloud Computing & Infrastructure",
+      category: "ICT",
+      description: "Scalable cloud infrastructure and migration solutions for modern businesses",
+      proficiency_level: 86,
+      years_experience: 5,
+      icon: "cloud",
+      competencies: ["Cloud Migration", "Infrastructure Setup", "DevOps", "Security Implementation"]
+    },
+    {
+      id: "system-management",
+      name: "Computer System Management",
+      category: "ICT",
+      description: "Complete IT infrastructure management and optimization capabilities",
+      proficiency_level: 88,
+      years_experience: 7,
+      icon: "database",
+      competencies: ["Network Management", "System Monitoring", "Security Audits", "Technical Support"]
+    }
+  ];
+
+  // Group skills by category including additional skills
+  const allSkills = [
+    ...(skills || []),
+    ...managementSkills,
+    ...financialSkills,
+    ...entrepreneurshipSkills,
+    ...ictSkills
+  ];
+
+  const groupedSkills = allSkills.reduce((acc, skill) => {
     if (!acc[skill.category]) {
       acc[skill.category] = [];
     }
     acc[skill.category].push(skill);
     return acc;
-  }, {} as Record<string, typeof skills>);
+  }, {} as Record<string, typeof allSkills>);
 
   const getCategoryColor = (category: string) => {
     const colors = {
@@ -26,8 +159,7 @@ const Skills = () => {
       "Financial": "green", 
       "Entrepreneurship": "purple",
       "Strategy": "orange",
-      "Business Services": "purple",
-      "ICT Services": "blue"
+      "ICT": "blue"
     };
     return colors[category as keyof typeof colors] || "gray";
   };
@@ -38,13 +170,12 @@ const Skills = () => {
       "Financial": <DollarSign className="h-6 w-6" />,
       "Entrepreneurship": <TrendingUp className="h-6 w-6" />,
       "Strategy": <Briefcase className="h-6 w-6" />,
-      "Business Services": <PieChart className="h-6 w-6" />,
-      "ICT Services": <Code className="h-6 w-6" />
+      "ICT": <Code className="h-6 w-6" />
     };
     return icons[category as keyof typeof icons] || <Briefcase className="h-6 w-6" />;
   };
 
-  const getServiceIcon = (iconName: string) => {
+  const getSkillIcon = (iconName: string) => {
     const icons = {
       'pie-chart': <PieChart className="h-5 w-5" />,
       'shield': <Shield className="h-5 w-5" />,
@@ -87,38 +218,13 @@ const Skills = () => {
     );
   }
 
-  // Create combined skills object including services
-  const allSkillCategories = {
-    ...groupedSkills,
-    "Business Services": businessServices.map(service => ({
-      id: service.title,
-      name: service.title,
-      category: "Business Services",
-      description: service.description,
-      proficiency_level: 90, // Default high proficiency for services
-      years_experience: null,
-      icon: service.icon,
-      features: service.features
-    })),
-    "ICT Services": ictServices.map(service => ({
-      id: service.title,
-      name: service.title,
-      category: "ICT Services", 
-      description: service.description,
-      proficiency_level: 85, // Default high proficiency for services
-      years_experience: null,
-      icon: service.icon,
-      features: service.features
-    }))
-  };
-
   return (
     <div className="min-h-screen pt-20 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            Comprehensive Skills & Services Portfolio
+            Comprehensive Skills & Expertise Portfolio
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Proven competencies in business management, financial strategy, entrepreneurship, strategic planning, and cutting-edge technology solutions
@@ -127,7 +233,7 @@ const Skills = () => {
 
         {/* Skills by Category */}
         <div className="space-y-12 mb-16">
-          {allSkillCategories && Object.entries(allSkillCategories).map(([category, categorySkills]) => (
+          {groupedSkills && Object.entries(groupedSkills).map(([category, categorySkills]) => (
             <Card key={category} className="bg-slate-800/50 border-purple-800/30">
               <CardHeader>
                 <CardTitle className="text-2xl text-white flex items-center gap-3">
@@ -136,69 +242,56 @@ const Skills = () => {
                   </div>
                   <span>{category}</span>
                   <Badge variant="secondary" className={`bg-${getCategoryColor(category)}-800/30 text-${getCategoryColor(category)}-300 ml-auto`}>
-                    {categorySkills.length} {category.includes('Services') ? 'Services' : 'Skills'}
+                    {categorySkills.length} Skills
                   </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {category.includes('Services') ? (
-                  <div className="grid lg:grid-cols-2 gap-6">
-                    {categorySkills.map((service: any) => (
-                      <div key={service.id} className="space-y-3 p-4 bg-slate-700/30 rounded-lg border border-slate-600/30">
-                        <div className="flex items-start gap-3">
+                <div className="grid lg:grid-cols-2 gap-6">
+                  {categorySkills.map((skill: any) => (
+                    <div key={skill.id} className="space-y-3 p-4 bg-slate-700/30 rounded-lg border border-slate-600/30">
+                      <div className="flex items-start gap-3">
+                        {skill.icon && (
                           <div className={`text-${getCategoryColor(category)}-400 mt-1`}>
-                            {getServiceIcon(service.icon)}
+                            {getSkillIcon(skill.icon)}
                           </div>
-                          <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-white mb-2">{service.name}</h3>
-                            <p className="text-gray-400 text-sm mb-3">{service.description}</p>
-                            <div className="mb-3">
-                              <h4 className="text-white font-medium mb-2 text-sm">Key Capabilities:</h4>
+                        )}
+                        <div className="flex-1">
+                          <div className="flex justify-between items-start mb-2">
+                            <h3 className="text-lg font-semibold text-white">{skill.name}</h3>
+                            <div className="flex items-center gap-2">
+                              <span className={`text-${getCategoryColor(category)}-400 font-bold`}>
+                                {skill.proficiency_level}%
+                              </span>
+                              {skill.years_experience && (
+                                <Badge variant="outline" className={`border-${getCategoryColor(category)}-400/30 text-${getCategoryColor(category)}-300 text-xs`}>
+                                  {skill.years_experience}y exp
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                          <Progress value={skill.proficiency_level} className="h-2 mb-3" />
+                          {skill.description && (
+                            <p className="text-gray-400 text-sm mb-3">{skill.description}</p>
+                          )}
+                          {skill.competencies && (
+                            <>
+                              <h4 className="text-white font-medium mb-2 text-sm">Key Competencies:</h4>
                               <div className="grid grid-cols-2 gap-1">
-                                {service.features.map((feature: string, idx: number) => (
+                                {skill.competencies.map((competency: string, idx: number) => (
                                   <div key={idx} className="flex items-center text-xs">
                                     <Star className={`h-3 w-3 mr-2 text-${getCategoryColor(category)}-400`} />
-                                    <span className="text-gray-300">{feature}</span>
+                                    <span className="text-gray-300">{competency}</span>
                                   </div>
                                 ))}
                               </div>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <span className={`text-${getCategoryColor(category)}-400 font-bold`}>
-                                Expert Level
-                              </span>
-                              <Badge variant="outline" className={`border-${getCategoryColor(category)}-400/30 text-${getCategoryColor(category)}-300 text-xs`}>
-                                Professional Service
-                              </Badge>
-                            </div>
-                          </div>
+                            </>
+                          )}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="grid lg:grid-cols-2 gap-6">
-                    {categorySkills.map((skill) => (
-                      <div key={skill.id} className="space-y-3">
-                        <div className="flex justify-between items-center">
-                          <h3 className="text-lg font-semibold text-white">{skill.name}</h3>
-                          <div className="flex items-center gap-2">
-                            <span className="text-purple-400 font-bold">{skill.proficiency_level}%</span>
-                            {skill.years_experience && (
-                              <Badge variant="outline" className="border-purple-400/30 text-purple-300 text-xs">
-                                {skill.years_experience}y exp
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                        <Progress value={skill.proficiency_level} className="h-2" />
-                        {skill.description && (
-                          <p className="text-gray-400 text-sm">{skill.description}</p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
+                    </div>
+                  ))}
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -206,7 +299,7 @@ const Skills = () => {
 
         {/* Skills Summary */}
         <div className="grid md:grid-cols-4 gap-8 mb-16">
-          {Object.entries(allSkillCategories || {}).map(([category, categorySkills]) => {
+          {Object.entries(groupedSkills || {}).map(([category, categorySkills]) => {
             const avgProficiency = Math.round(
               categorySkills.reduce((sum, skill) => sum + skill.proficiency_level, 0) / categorySkills.length
             );
