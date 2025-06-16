@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -10,7 +9,7 @@ import { Link } from "react-router-dom";
 const Skills = () => {
   const { data: skills, isLoading, error } = useSkills();
 
-  // Additional management skills from business services
+  // Management skills - comprehensive business management capabilities
   const managementSkills = [
     {
       id: "business-planning",
@@ -41,39 +40,11 @@ const Skills = () => {
       years_experience: 10,
       icon: "building",
       competencies: ["Process Optimization", "Team Management", "Resource Planning", "Performance Metrics"]
-    }
-  ];
-
-  // Additional financial skills
-  const financialSkills = [
-    {
-      id: "financial-consultation",
-      name: "Financial Planning & Analysis",
-      category: "Financial",
-      description: "Expert financial guidance to optimize cash flow and maximize profitability",
-      proficiency_level: 89,
-      years_experience: 7,
-      icon: "dollar-sign",
-      competencies: ["Financial Planning", "Budget Management", "Cost Optimization", "Tax Strategy"]
     },
-    {
-      id: "investment-consultation",
-      name: "Investment Strategy & Portfolio Management",
-      category: "Financial",
-      description: "Strategic investment advice for portfolio diversification and wealth building",
-      proficiency_level: 85,
-      years_experience: 5,
-      icon: "trending-up",
-      competencies: ["Portfolio Analysis", "Investment Strategy", "Due Diligence", "Market Research"]
-    }
-  ];
-
-  // Additional entrepreneurship skills
-  const entrepreneurshipSkills = [
     {
       id: "startup-development",
       name: "Startup Development & Launch",
-      category: "Entrepreneurship",
+      category: "Management",
       description: "End-to-end expertise for launching and scaling innovative startups",
       proficiency_level: 91,
       years_experience: 9,
@@ -82,7 +53,7 @@ const Skills = () => {
     }
   ];
 
-  // Additional ICT skills from ICT services
+  // ICT skills - comprehensive technology capabilities
   const ictSkills = [
     {
       id: "web-design",
@@ -136,13 +107,47 @@ const Skills = () => {
     }
   ];
 
-  // Group skills by category including additional skills
+  // Financial skills
+  const financialSkills = [
+    {
+      id: "financial-consultation",
+      name: "Financial Planning & Analysis",
+      category: "Financial",
+      description: "Expert financial guidance to optimize cash flow and maximize profitability",
+      proficiency_level: 89,
+      years_experience: 7,
+      icon: "dollar-sign",
+      competencies: ["Financial Planning", "Budget Management", "Cost Optimization", "Tax Strategy"]
+    },
+    {
+      id: "investment-consultation",
+      name: "Investment Strategy & Portfolio Management",
+      category: "Financial",
+      description: "Strategic investment advice for portfolio diversification and wealth building",
+      proficiency_level: 85,
+      years_experience: 5,
+      icon: "trending-up",
+      competencies: ["Portfolio Analysis", "Investment Strategy", "Due Diligence", "Market Research"]
+    }
+  ];
+
+  // Filter out the specified skills from database skills and group by category
+  const filteredDatabaseSkills = (skills || []).filter(skill => {
+    const skillsToRemove = [
+      "Business Strategy", "Project Management", "Team Leadership",
+      "React", "Javascript", "Python", "Node.js"
+    ];
+    return !skillsToRemove.some(removeSkill => 
+      skill.name.toLowerCase().includes(removeSkill.toLowerCase())
+    );
+  });
+
+  // Group skills by category with custom order
   const allSkills = [
-    ...(skills || []),
     ...managementSkills,
+    ...ictSkills,
     ...financialSkills,
-    ...entrepreneurshipSkills,
-    ...ictSkills
+    ...filteredDatabaseSkills
   ];
 
   const groupedSkills = allSkills.reduce((acc, skill) => {
@@ -152,6 +157,18 @@ const Skills = () => {
     acc[skill.category].push(skill);
     return acc;
   }, {} as Record<string, typeof allSkills>);
+
+  // Define category order
+  const categoryOrder = ["Management", "ICT", "Financial", "Strategy", "Entrepreneurship"];
+  
+  // Sort categories according to the specified order
+  const sortedCategories = Object.keys(groupedSkills).sort((a, b) => {
+    const indexA = categoryOrder.indexOf(a);
+    const indexB = categoryOrder.indexOf(b);
+    if (indexA === -1) return 1;
+    if (indexB === -1) return -1;
+    return indexA - indexB;
+  });
 
   const getCategoryColor = (category: string) => {
     const colors = {
@@ -231,9 +248,9 @@ const Skills = () => {
           </p>
         </div>
 
-        {/* Skills by Category */}
+        {/* Skills by Category - Ordered */}
         <div className="space-y-12 mb-16">
-          {groupedSkills && Object.entries(groupedSkills).map(([category, categorySkills]) => (
+          {sortedCategories.map((category) => (
             <Card key={category} className="bg-slate-800/50 border-purple-800/30">
               <CardHeader>
                 <CardTitle className="text-2xl text-white flex items-center gap-3">
@@ -242,13 +259,13 @@ const Skills = () => {
                   </div>
                   <span>{category}</span>
                   <Badge variant="secondary" className={`bg-${getCategoryColor(category)}-800/30 text-${getCategoryColor(category)}-300 ml-auto`}>
-                    {categorySkills.length} Skills
+                    {groupedSkills[category].length} Skills
                   </Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid lg:grid-cols-2 gap-6">
-                  {categorySkills.map((skill: any) => (
+                  {groupedSkills[category].map((skill: any) => (
                     <div key={skill.id} className="space-y-3 p-4 bg-slate-700/30 rounded-lg border border-slate-600/30">
                       <div className="flex items-start gap-3">
                         {skill.icon && (
@@ -299,7 +316,8 @@ const Skills = () => {
 
         {/* Skills Summary */}
         <div className="grid md:grid-cols-4 gap-8 mb-16">
-          {Object.entries(groupedSkills || {}).map(([category, categorySkills]) => {
+          {sortedCategories.map((category) => {
+            const categorySkills = groupedSkills[category];
             const avgProficiency = Math.round(
               categorySkills.reduce((sum, skill) => sum + skill.proficiency_level, 0) / categorySkills.length
             );
