@@ -23,15 +23,6 @@ const DonationInfo = () => {
           </ol>
         </div>
 
-        <div className="bg-slate-700/50 p-4 rounded-lg">
-          <h4 className="text-white font-semibold mb-2">Recipient Details:</h4>
-          <p className="text-gray-300">
-            <strong>Name:</strong> Gfibion Joseph Mutua<br />
-            <strong>Phone:</strong> +254768974474<br />
-            <strong>Service:</strong> MPesa
-          </p>
-        </div>
-
         <div>
           <h4 className="text-white font-semibold mb-2">Your support helps with:</h4>
           <ul className="text-gray-300 space-y-1 list-disc list-inside">
@@ -39,18 +30,6 @@ const DonationInfo = () => {
             <li>Maintaining and improving services</li>
             <li>Creating valuable content and resources</li>
             <li>Supporting community initiatives</li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 className="text-white font-semibold mb-2">For Real MPesa Integration:</h4>
-          <p className="text-gray-300 text-sm">
-            To enable actual MPesa payments, this system would need:
-          </p>
-          <ul className="text-gray-300 text-sm space-y-1 list-disc list-inside mt-2">
-            <li>MPesa API credentials from Safaricom</li>
-            <li>Backend server for secure API calls</li>
-            <li>Proper webhook handling for payment confirmations</li>
           </ul>
         </div>
 
