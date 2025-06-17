@@ -430,7 +430,7 @@ export type Database = {
           description: string | null
           id: string
           name: string
-          proficiency_level: number | null
+          proficiency_level: number
           updated_at: string
           years_experience: number | null
         }
@@ -440,7 +440,7 @@ export type Database = {
           description?: string | null
           id?: string
           name: string
-          proficiency_level?: number | null
+          proficiency_level?: number
           updated_at?: string
           years_experience?: number | null
         }
@@ -450,7 +450,7 @@ export type Database = {
           description?: string | null
           id?: string
           name?: string
-          proficiency_level?: number | null
+          proficiency_level?: number
           updated_at?: string
           years_experience?: number | null
         }
