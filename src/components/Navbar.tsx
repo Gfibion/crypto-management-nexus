@@ -1,11 +1,13 @@
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useIsAdmin } from "@/hooks/useUserRole";
-import Logo from "./navbar/Logo";
-import DesktopNavigation from "./navbar/DesktopNavigation";
+import NavigationDropdown from "./navbar/NavigationDropdown";
+import DirectLinks from "./navbar/DirectLinks";
 import AuthSection from "./navbar/AuthSection";
 import MobileNavigation from "./navbar/MobileNavigation";
+import Logo from "./navbar/Logo";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,9 +19,7 @@ const Navbar = () => {
     { name: "Services", path: "/services" },
     { name: "Skills", path: "/skills" },
     { name: "Education", path: "/education" },
-    { name: "Articles", path: "/articles" },
     { name: "Portfolio", path: "/portfolio" },
-    { name: "Chat", path: "/chat" },
     { name: "Donate", path: "/donate" },
   ];
 
@@ -29,27 +29,44 @@ const Navbar = () => {
   }
 
   return (
-    <nav className="fixed top-0 w-full bg-slate-900/95 backdrop-blur-sm border-b border-purple-800/30 z-50">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-purple-800/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Logo />
-          <DesktopNavigation navItems={navItems} />
+          {/* Left side - Navigation Dropdown */}
+          <div className="flex items-center space-x-8">
+            <Logo />
+            <div className="hidden md:block">
+              <NavigationDropdown navItems={navItems} />
+            </div>
+          </div>
+
+          {/* Center - Direct Links for Articles and Chat */}
+          <div className="hidden md:block">
+            <DirectLinks />
+          </div>
+
+          {/* Right side - Auth Section */}
           <AuthSection />
 
           {/* Mobile menu button */}
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-400 hover:text-white focus:outline-none"
+              className="text-gray-400 hover:text-white hover:bg-gray-700 p-2 rounded-md"
             >
-              {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              {isOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
             </button>
           </div>
         </div>
       </div>
 
+      {/* Mobile Navigation */}
       <MobileNavigation 
-        navItems={navItems} 
+        navItems={[...navItems, { name: "Articles", path: "/articles" }, { name: "Chat", path: "/chat" }]} 
         isOpen={isOpen} 
         onClose={() => setIsOpen(false)} 
       />

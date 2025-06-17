@@ -58,19 +58,6 @@ const DesktopNavigation = ({ navItems }: DesktopNavigationProps) => {
             <span>{item.name}</span>
           </Link>
         ))}
-        
-        {/* Direct Articles Link */}
-        <Link
-          to="/articles"
-          className={`transition-colors flex items-center space-x-1 ${
-            location.pathname === "/articles"
-              ? "text-purple-400"
-              : "text-gray-300 hover:text-purple-400"
-          }`}
-        >
-          <BookOpen className="h-4 w-4" />
-          <span>Articles</span>
-        </Link>
       </div>
     </div>
   );
