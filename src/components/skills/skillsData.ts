@@ -34,6 +34,49 @@ export const skillsData = {
   ]
 };
 
+// Individual skill arrays for import
+export const managementSkills = skillsData.Management.map((skill, index) => ({
+  id: `mgmt-${index}`,
+  name: skill.name,
+  category: "Management",
+  proficiency_level: skill.level,
+  icon: skill.icon,
+  years_experience: 1
+}));
+
+export const ictSkills = skillsData.ICT.map((skill, index) => ({
+  id: `ict-${index}`,
+  name: skill.name,
+  category: "ICT",
+  proficiency_level: skill.level,
+  icon: skill.icon,
+  years_experience: 1
+}));
+
+export const financialSkills = skillsData.Financial.map((skill, index) => ({
+  id: `fin-${index}`,
+  name: skill.name,
+  category: "Financial",
+  proficiency_level: skill.level,
+  icon: skill.icon,
+  years_experience: 1
+}));
+
+// Category order for consistent display
+export const categoryOrder = ["Management", "ICT", "Financial", "Entrepreneurship", "Strategy"];
+
+// Function to get category colors
+export const getCategoryColor = (category: string): string => {
+  const colors = {
+    "Management": "blue",
+    "Financial": "green",
+    "Entrepreneurship": "purple",
+    "Strategy": "orange",
+    "ICT": "cyan"
+  };
+  return colors[category as keyof typeof colors] || "gray";
+};
+
 export const totalProjects = 15;
 export const completionRate = 95;
 export const clientSatisfaction = 100; // Academic satisfaction rate
