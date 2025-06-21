@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useIsAdmin } from "@/hooks/useUserRole";
-import NavigationDropdown from "./navbar/NavigationDropdown";
+import DesktopNavigation from "./navbar/DesktopNavigation";
 import DirectLinks from "./navbar/DirectLinks";
 import AuthSection from "./navbar/AuthSection";
 import MobileNavigation from "./navbar/MobileNavigation";
@@ -32,12 +32,10 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-purple-800/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Left side - Navigation Dropdown */}
+          {/* Left side - Logo and Desktop Navigation */}
           <div className="flex items-center space-x-8">
             <Logo />
-            <div className="hidden md:block">
-              <NavigationDropdown navItems={navItems} />
-            </div>
+            <DesktopNavigation navItems={navItems} />
           </div>
 
           {/* Center - Direct Links for Articles and Chat */}
