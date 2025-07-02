@@ -9,7 +9,7 @@ import TabButton from './TabButton';
 
 interface DashboardContentProps {
   activeTab: string;
-  setActiveTab: (tab: 'dashboard' | 'articles' | 'messages' | 'content') => void;
+  setActiveTab: (tab: 'dashboard' | 'articles' | 'messages' | 'content' | 'users') => void;
   conversations: any[];
 }
 
@@ -98,6 +98,13 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           icon={Settings}
         >
           Content
+        </TabButton>
+        <TabButton
+          isActive={activeTab === 'users'}
+          onClick={() => setActiveTab('users')}
+          icon={Users}
+        >
+          Users
         </TabButton>
       </div>
 

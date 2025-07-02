@@ -1,8 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Mail, MailOpen, Trash2, Reply } from 'lucide-react';
@@ -15,6 +17,8 @@ interface MessagesSectionProps {
 const MessagesSection: React.FC<MessagesSectionProps> = ({ setActiveTab }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [replyMessage, setReplyMessage] = useState('');
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
 
   // Fetch contact messages
   const { data: messages = [], isLoading } = useQuery({
@@ -66,6 +70,39 @@ const MessagesSection: React.FC<MessagesSectionProps> = ({ setActiveTab }) => {
         description: "Message deleted successfully",
       });
     },
+  });
+
+  // Send reply email
+  const sendReply = useMutation({
+    mutationFn: async ({ messageId, to, subject, message }: { 
+      messageId: string; 
+      to: string; 
+      subject: string; 
+      message: string; 
+    }) => {
+      const { data, error } = await supabase.functions.invoke('send-email', {
+        body: { messageId, to, subject, message }
+      });
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contact-messages'] });
+      setReplyMessage('');
+      setReplyingTo(null);
+      toast({
+        title: "Success",
+        description: "Reply sent successfully",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error", 
+        description: "Failed to send reply",
+        variant: "destructive",
+      });
+    }
   });
 
   if (isLoading) {
@@ -135,14 +172,61 @@ const MessagesSection: React.FC<MessagesSectionProps> = ({ setActiveTab }) => {
                     </Button>
                   )}
                   
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => window.open(`mailto:${message.email}?subject=Re: ${message.subject || 'Your message'}`)}
-                    className="border-green-600/30 text-green-300 hover:bg-green-600/20"
-                  >
-                    <Reply className="h-4 w-4" />
-                  </Button>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setReplyingTo(message.id)}
+                        className="border-green-600/30 text-green-300 hover:bg-green-600/20"
+                      >
+                        <Reply className="h-4 w-4" />
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-slate-800 border-purple-800/30">
+                      <DialogHeader>
+                        <DialogTitle className="text-white">
+                          Reply to {message.name}
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div className="text-sm text-gray-300">
+                          <strong>To:</strong> {message.email}<br/>
+                          <strong>Subject:</strong> Re: {message.subject || 'Your message'}
+                        </div>
+                        <Textarea
+                          placeholder="Type your reply here..."
+                          value={replyMessage}
+                          onChange={(e) => setReplyMessage(e.target.value)}
+                          className="bg-slate-700/50 border-purple-600/30 text-white min-h-32"
+                        />
+                        <div className="flex gap-2 justify-end">
+                          <Button
+                            variant="outline"
+                            onClick={() => {
+                              setReplyMessage('');
+                              setReplyingTo(null);
+                            }}
+                            className="border-gray-600"
+                          >
+                            Cancel
+                          </Button>
+                          <Button
+                            onClick={() => sendReply.mutate({
+                              messageId: message.id,
+                              to: message.email,
+                              subject: `Re: ${message.subject || 'Your message'}`,
+                              message: replyMessage
+                            })}
+                            disabled={!replyMessage.trim() || sendReply.isPending}
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            {sendReply.isPending ? 'Sending...' : 'Send Reply'}
+                          </Button>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
                   
                   <Button
                     variant="outline"

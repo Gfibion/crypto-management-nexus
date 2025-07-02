@@ -5,8 +5,10 @@ import DashboardContent from './admin/DashboardContent';
 import ArticlesSection from './admin/ArticlesSection';
 import MessagesSection from './admin/MessagesSection';
 import ContentSection from './admin/ContentSection';
+import UserManagement from './admin/UserManagement';
+import ContentManagement from './admin/ContentManagement';
 
-type TabType = 'dashboard' | 'articles' | 'messages' | 'content';
+type TabType = 'dashboard' | 'articles' | 'messages' | 'content' | 'users';
 
 const AdminPanel: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
@@ -21,7 +23,11 @@ const AdminPanel: React.FC = () => {
   }
 
   if (activeTab === 'content') {
-    return <ContentSection setActiveTab={setActiveTab} />;
+    return <ContentManagement setActiveTab={setActiveTab} />;
+  }
+
+  if (activeTab === 'users') {
+    return <UserManagement setActiveTab={setActiveTab} />;
   }
 
   return (
