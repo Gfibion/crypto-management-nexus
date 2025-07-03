@@ -306,6 +306,57 @@ export type Database = {
         }
         Relationships: []
       }
+      email_logs: {
+        Row: {
+          created_at: string
+          email_type: string
+          error_message: string | null
+          id: string
+          message: string
+          metadata: Json | null
+          recipient_email: string
+          recipient_name: string | null
+          resend_id: string | null
+          sender_id: string | null
+          sent_at: string | null
+          status: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email_type?: string
+          error_message?: string | null
+          id?: string
+          message: string
+          metadata?: Json | null
+          recipient_email: string
+          recipient_name?: string | null
+          resend_id?: string | null
+          sender_id?: string | null
+          sent_at?: string | null
+          status?: string
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email_type?: string
+          error_message?: string | null
+          id?: string
+          message?: string
+          metadata?: Json | null
+          recipient_email?: string
+          recipient_name?: string | null
+          resend_id?: string | null
+          sender_id?: string | null
+          sent_at?: string | null
+          status?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

@@ -14,7 +14,9 @@ interface EmailRequest {
   to: string;
   subject: string;
   message: string;
-  messageId: string;
+  messageId?: string;
+  emailType?: string;
+  recipientName?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -24,13 +26,46 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { to, subject, message, messageId }: EmailRequest = await req.json();
+    const { to, subject, message, messageId, emailType = 'reply', recipientName }: EmailRequest = await req.json();
+
+    // Get auth header to identify sender
+    const authHeader = req.headers.get('authorization');
+    const token = authHeader?.replace('Bearer ', '');
 
     // Initialize Supabase client
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
+
+    // Get sender info if authenticated
+    let senderId = null;
+    if (token) {
+      const { data: { user } } = await supabase.auth.getUser(token);
+      senderId = user?.id || null;
+    }
+
+    // Create email log entry (pending status)
+    const { data: emailLogData, error: logError } = await supabase
+      .from('email_logs')
+      .insert({
+        sender_id: senderId,
+        recipient_email: to,
+        recipient_name: recipientName,
+        subject: subject,
+        message: message,
+        email_type: emailType,
+        status: 'pending',
+        metadata: { messageId: messageId || null }
+      })
+      .select('id')
+      .single();
+
+    if (logError) {
+      console.error('Error creating email log:', logError);
+    }
+
+    const emailLogId = emailLogData?.id;
 
     // Send email via Resend
     const emailResponse = await resend.emails.send({
@@ -57,14 +92,29 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Email sent successfully:", emailResponse);
 
-    // Mark message as replied in database
-    const { error: updateError } = await supabase
-      .from('contact_messages')
-      .update({ replied: true, read: true })
-      .eq('id', messageId);
+    // Update email log with success status and Resend ID
+    if (emailLogId) {
+      await supabase
+        .from('email_logs')
+        .update({
+          status: 'sent',
+          resend_id: emailResponse.data?.id,
+          sent_at: new Date().toISOString(),
+          error_message: null
+        })
+        .eq('id', emailLogId);
+    }
 
-    if (updateError) {
-      console.error('Error updating message status:', updateError);
+    // Mark message as replied in database if messageId provided
+    if (messageId) {
+      const { error: updateError } = await supabase
+        .from('contact_messages')
+        .update({ replied: true, read: true })
+        .eq('id', messageId);
+
+      if (updateError) {
+        console.error('Error updating message status:', updateError);
+      }
     }
 
     return new Response(JSON.stringify({ 
@@ -79,6 +129,28 @@ const handler = async (req: Request): Promise<Response> => {
     });
   } catch (error: any) {
     console.error("Error in send-email function:", error);
+
+    // Update email log with error status if we have the log ID
+    const logId = req.headers.get('x-email-log-id');
+    if (logId) {
+      try {
+        const supabase = createClient(
+          Deno.env.get('SUPABASE_URL')!,
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+        );
+        
+        await supabase
+          .from('email_logs')
+          .update({
+            status: 'failed',
+            error_message: error.message || 'Failed to send email'
+          })
+          .eq('id', logId);
+      } catch (logError) {
+        console.error('Error updating email log:', logError);
+      }
+    }
+
     return new Response(
       JSON.stringify({ 
         error: error.message || 'Failed to send email'

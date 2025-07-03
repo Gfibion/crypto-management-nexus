@@ -11,7 +11,7 @@ import { Mail, MailOpen, Trash2, Reply } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface MessagesSectionProps {
-  setActiveTab: (tab: 'dashboard' | 'articles' | 'messages' | 'content') => void;
+  setActiveTab: (tab: 'dashboard' | 'articles' | 'messages' | 'content' | 'users' | 'emails') => void;
 }
 
 const MessagesSection: React.FC<MessagesSectionProps> = ({ setActiveTab }) => {
@@ -81,7 +81,14 @@ const MessagesSection: React.FC<MessagesSectionProps> = ({ setActiveTab }) => {
       message: string; 
     }) => {
       const { data, error } = await supabase.functions.invoke('send-email', {
-        body: { messageId, to, subject, message }
+        body: { 
+          messageId, 
+          to, 
+          subject, 
+          message,
+          emailType: 'reply',
+          recipientName: messages.find(m => m.id === messageId)?.name 
+        }
       });
       
       if (error) throw error;

@@ -7,8 +7,9 @@ import MessagesSection from './admin/MessagesSection';
 import ContentSection from './admin/ContentSection';
 import UserManagement from './admin/UserManagement';
 import ContentManagement from './admin/ContentManagement';
+import EmailLogsSection from './admin/EmailLogsSection';
 
-type TabType = 'dashboard' | 'articles' | 'messages' | 'content' | 'users';
+type TabType = 'dashboard' | 'articles' | 'messages' | 'content' | 'users' | 'emails';
 
 const AdminPanel: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
@@ -28,6 +29,10 @@ const AdminPanel: React.FC = () => {
 
   if (activeTab === 'users') {
     return <UserManagement setActiveTab={setActiveTab} />;
+  }
+
+  if (activeTab === 'emails') {
+    return <EmailLogsSection setActiveTab={setActiveTab} />;
   }
 
   return (
