@@ -64,28 +64,64 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
   // Generic mutations for CRUD operations
   const createItem = useMutation({
     mutationFn: async ({ table, data }: { table: string; data: any }) => {
-      const { error } = await supabase.from(table as any).insert(data);
+      const { data: result, error } = await supabase.from(table as any).insert(data).select();
       if (error) throw error;
+      return result;
     },
     onSuccess: () => {
+      // Invalidate all related queries to ensure UI refresh
       queryClient.invalidateQueries({ queryKey: [`admin-${activeContentTab}`] });
+      queryClient.invalidateQueries({ queryKey: [activeContentTab] }); // Also refresh public queries
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['services'] });
+      queryClient.invalidateQueries({ queryKey: ['skills'] });
+      queryClient.invalidateQueries({ queryKey: ['education'] });
+      
       setEditingItem(null);
       setFormData({});
-      toast({ title: "Success", description: "Item created successfully" });
+      toast({ 
+        title: "Success", 
+        description: `${activeContentTab.slice(0, -1).charAt(0).toUpperCase() + activeContentTab.slice(1, -1)} created successfully` 
+      });
     },
+    onError: (error: any) => {
+      toast({ 
+        title: "Error", 
+        description: error.message || "Failed to create item",
+        variant: "destructive"
+      });
+    }
   });
 
   const updateItem = useMutation({
     mutationFn: async ({ table, id, data }: { table: string; id: string; data: any }) => {
-      const { error } = await supabase.from(table as any).update(data).eq('id', id);
+      const { data: result, error } = await supabase.from(table as any).update(data).eq('id', id).select();
       if (error) throw error;
+      return result;
     },
     onSuccess: () => {
+      // Invalidate all related queries to ensure UI refresh
       queryClient.invalidateQueries({ queryKey: [`admin-${activeContentTab}`] });
+      queryClient.invalidateQueries({ queryKey: [activeContentTab] }); // Also refresh public queries
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['services'] });
+      queryClient.invalidateQueries({ queryKey: ['skills'] });
+      queryClient.invalidateQueries({ queryKey: ['education'] });
+      
       setEditingItem(null);
       setFormData({});
-      toast({ title: "Success", description: "Item updated successfully" });
+      toast({ 
+        title: "Success", 
+        description: `${activeContentTab.slice(0, -1).charAt(0).toUpperCase() + activeContentTab.slice(1, -1)} updated successfully` 
+      });
     },
+    onError: (error: any) => {
+      toast({ 
+        title: "Error", 
+        description: error.message || "Failed to update item",
+        variant: "destructive"
+      });
+    }
   });
 
   const deleteItem = useMutation({
@@ -94,9 +130,26 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
       if (error) throw error;
     },
     onSuccess: () => {
+      // Invalidate all related queries to ensure UI refresh
       queryClient.invalidateQueries({ queryKey: [`admin-${activeContentTab}`] });
-      toast({ title: "Success", description: "Item deleted successfully" });
+      queryClient.invalidateQueries({ queryKey: [activeContentTab] }); // Also refresh public queries
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+      queryClient.invalidateQueries({ queryKey: ['services'] });
+      queryClient.invalidateQueries({ queryKey: ['skills'] });
+      queryClient.invalidateQueries({ queryKey: ['education'] });
+      
+      toast({ 
+        title: "Success", 
+        description: `${activeContentTab.slice(0, -1).charAt(0).toUpperCase() + activeContentTab.slice(1, -1)} deleted successfully` 
+      });
     },
+    onError: (error: any) => {
+      toast({ 
+        title: "Error", 
+        description: error.message || "Failed to delete item",
+        variant: "destructive"
+      });
+    }
   });
 
   const getCurrentData = () => {
