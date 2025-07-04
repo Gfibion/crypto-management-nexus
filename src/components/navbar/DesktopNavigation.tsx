@@ -42,20 +42,20 @@ const DesktopNavigation = ({ navItems }: DesktopNavigationProps) => {
   };
 
   return (
-    <div className="hidden md:block">
-      <div className="ml-10 flex items-center space-x-8">
+    <div className="hidden md:flex items-center space-x-6">
+      <div className="flex items-center space-x-6">
         {navItems.map((item) => (
           <Link
             key={item.name}
             to={item.path}
-            className={`transition-colors flex items-center space-x-1 ${
+            className={`transition-colors flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-purple-400/20 ${
               location.pathname === item.path
-                ? "text-purple-400"
+                ? "text-purple-400 bg-purple-400/10"
                 : "text-gray-300 hover:text-purple-400"
             }`}
           >
             {getIcon(item.name)}
-            <span>{item.name}</span>
+            <span className="font-medium">{item.name}</span>
           </Link>
         ))}
       </div>
