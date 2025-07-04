@@ -14,6 +14,7 @@ import {
 import ServiceSection from '@/components/services/ServiceSection';
 import ProcessSection from '@/components/services/ProcessSection';
 import CTASection from '@/components/services/CTASection';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { businessServices, ictServices } from '@/components/services/serviceData';
 import { generateMailtoLink } from '@/utils/emailTemplates';
 
@@ -48,7 +49,7 @@ const Services = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen pt-20 px-4 flex items-center justify-center">
-        <div className="text-white text-xl">Loading services...</div>
+        <LoadingSpinner message="Loading services..." size="lg" />
       </div>
     );
   }

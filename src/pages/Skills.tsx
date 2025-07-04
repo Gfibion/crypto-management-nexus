@@ -5,6 +5,7 @@ import SkillCategory from "@/components/skills/SkillCategory";
 import SkillsSummary from "@/components/skills/SkillsSummary";
 import ActionCards from "@/components/skills/ActionCards";
 import SkillsCTA from "@/components/skills/SkillsCTA";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const Skills = () => {
   const { data: skills, isLoading, error } = useSkills();
@@ -48,7 +49,7 @@ const Skills = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen pt-20 px-4 flex items-center justify-center">
-        <div className="text-white text-xl">Loading skills...</div>
+        <LoadingSpinner message="Loading skills..." size="lg" />
       </div>
     );
   }
