@@ -19,7 +19,7 @@ const PortfolioHeader = () => {
         Portfolio & Projects
       </h1>
       <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
-        Showcasing successful implementations across business management, technology integration, and blockchain innovation by Gfibion Joseph Mutua
+        Showcasing successful implementations across business management and technology integration by Gfibion Joseph Mutua
       </p>
     </div>
   );

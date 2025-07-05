@@ -102,7 +102,7 @@ const Index = () => {
                   <Star className="h-8 w-8 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold mb-3 text-purple-300">Technology Integration</h3>
-                <p className="text-gray-400">Strong foundation in emerging technologies including blockchain, AI, and modern business intelligence systems from academic projects and personal learning.</p>
+                <p className="text-gray-400">Strong foundation in emerging technologies including AI, and modern business intelligence systems from academic projects and personal learning.</p>
               </CardContent>
             </Card>
           </div>

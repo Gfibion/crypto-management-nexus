@@ -29,7 +29,7 @@ export const skillsData = {
     { name: "System Analysis", level: 80, icon: "code" },
     { name: "Database Management", level: 75, icon: "database" },
     { name: "Cloud Computing", level: 70, icon: "cloud" },
-    { name: "Blockchain Technology", level: 75, icon: "star" },
+    { name: "Emerging Technologies", level: 65, icon: "star" },
     { name: "Web Development", level: 65, icon: "globe" }
   ]
 };

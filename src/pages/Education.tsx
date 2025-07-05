@@ -32,7 +32,7 @@ const Education = () => {
             Education & Qualifications
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Academic foundation and professional certifications that shape my expertise in business management, technology, and blockchain innovation
+            Academic foundation and professional certifications that shape my expertise in business management and technology
           </p>
         </div>
 
@@ -141,7 +141,7 @@ const Education = () => {
           <CardContent className="p-8 text-center">
             <h2 className="text-3xl font-bold text-white mb-4">Continuous Learning</h2>
             <p className="text-xl text-gray-300 mb-8">
-              Committed to staying at the forefront of business, technology, and blockchain innovation
+              Committed to staying at the forefront of business and technology innovation
             </p>
             <button className="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-semibold transition-all duration-300">
               View Latest Certifications

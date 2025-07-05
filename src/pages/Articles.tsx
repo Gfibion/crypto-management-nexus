@@ -40,7 +40,7 @@ const Articles = () => {
             Articles & Insights
           </h1>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Expert insights on business management, technology trends, and blockchain innovations
+            Expert insights on business management and technology trends
           </p>
           {!isAuthenticated && (
             <div className="mt-4 p-3 bg-yellow-400/10 border border-yellow-400/30 rounded-lg max-w-md mx-auto">
@@ -68,7 +68,7 @@ const Articles = () => {
             <BookOpen className="h-16 w-16 text-purple-400 mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-white mb-4">Coming Soon</h3>
             <p className="text-gray-300 mb-6">
-              I'm currently working on exciting articles about business strategy, technology trends, and blockchain innovations.
+              I'm currently working on exciting articles about business strategy and technology trends.
             </p>
             <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0">
               <User className="h-4 w-4 mr-2" />

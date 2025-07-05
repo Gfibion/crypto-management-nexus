@@ -334,7 +334,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
             {activeContentTab === 'education' && (
               <>
                 <Input
-                  placeholder="Degree"
+                  placeholder="Qualification"
                   value={formData.degree || ''}
                   onChange={(e) => setFormData({...formData, degree: e.target.value})}
                   className="bg-slate-700/50 border-purple-600/30 text-white"

@@ -45,8 +45,8 @@ const About = () => {
               </p>
               <p>
                 My academic background has equipped me with knowledge in strategic planning, operational principles, 
-                and technology integration, with a particular focus on blockchain technology and cryptocurrency markets. 
-                I believe in the transformative power of decentralized systems and their potential to revolutionize 
+                and technology integration, with some experience in emerging technologies. 
+                I believe in the transformative power of innovative systems and their potential to revolutionize
                 how we conduct business in the modern era.
               </p>
               <p>
@@ -65,7 +65,7 @@ const About = () => {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               <div className="text-center">
                 <div className="text-3xl font-bold text-purple-400 mb-2">Fresh</div>
-                <p className="text-gray-300">Graduate with Business Management Degree</p>
+                <p className="text-gray-300">Graduate with Business Management Background</p>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-blue-400 mb-2">15+</div>

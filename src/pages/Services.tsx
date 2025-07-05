@@ -137,11 +137,11 @@ const Services = () => {
             accordionType="ict"
           />
 
-          {/* 3. Web3 Integration */}
+          {/* 3. Emerging Technologies */}
           {web3Integration.length > 0 && (
             <ServiceSection
-              title="Web3 Integration"
-              description="Next-generation blockchain and decentralized solutions"
+              title="Emerging Technologies"
+              description="Modern solutions including distributed systems (limited availability)"
               icon={<Globe className="h-10 w-10 mr-4 text-green-400" />}
               services={web3Integration}
               getIcon={getIcon}

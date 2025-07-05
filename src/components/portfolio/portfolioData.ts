@@ -1,10 +1,10 @@
 
 export const projects = [
   {
-    title: "Enterprise Blockchain Integration",
-    category: "Blockchain",
-    description: "Led the implementation of a comprehensive blockchain solution for supply chain management, reducing operational costs by 30%.",
-    technologies: ["Ethereum", "Smart Contracts", "Web3.js", "Solidity"],
+    title: "Enterprise Technology Integration",
+    category: "Technology",
+    description: "Led the implementation of a comprehensive technology solution for supply chain management, reducing operational costs by 30%.",
+    technologies: ["Modern Web", "Cloud Systems", "Integration APIs", "Analytics"],
     achievements: ["30% cost reduction", "Improved transparency", "Automated processes"],
     status: "Completed",
     year: "2023",
@@ -51,9 +51,9 @@ export const projects = [
     color: "pink"
   },
   {
-    title: "Smart Contract Audit Platform",
-    category: "Blockchain",
-    description: "Created automated smart contract auditing platform to identify vulnerabilities and ensure security best practices.",
+    title: "System Audit Platform",
+    category: "Technology",
+    description: "Created automated system auditing platform to identify vulnerabilities and ensure security best practices.",
     technologies: ["Static Analysis", "Security Patterns", "Automated Testing", "Reporting"],
     achievements: ["99% accuracy rate", "Reduced audit time", "Enhanced security"],
     status: "Completed",
@@ -71,7 +71,7 @@ export const metrics = [
 
 export const testimonials = [
   {
-    quote: "Outstanding leadership in our blockchain transformation. The results exceeded expectations.",
+    quote: "Outstanding leadership in our technology transformation. The results exceeded expectations.",
     author: "Sarah Johnson",
     role: "CTO, TechCorp",
     company: "TechCorp"
