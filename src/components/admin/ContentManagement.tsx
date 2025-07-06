@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,9 +7,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Settings, Edit, Trash2, Plus, Upload } from 'lucide-react';
+import { Settings, Edit, Trash2, Plus, Upload, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -20,7 +23,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
   const { toast } = useToast();
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [activeContentTab, setActiveContentTab] = useState<'projects' | 'services' | 'skills' | 'education'>('projects');
+  const [activeContentTab, setActiveContentTab] = useState<'projects' | 'services' | 'skills' | 'education' | 'contact'>('projects');
   const [editingItem, setEditingItem] = useState<any>(null);
   const [formData, setFormData] = useState<any>({});
 
@@ -61,6 +64,15 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
     },
   });
 
+  const { data: contactMessages = [] } = useQuery({
+    queryKey: ['admin-contact-messages'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('contact_messages').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
   // Generic mutations for CRUD operations
   const createItem = useMutation({
     mutationFn: async ({ table, data }: { table: string; data: any }) => {
@@ -69,9 +81,8 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
       return result;
     },
     onSuccess: () => {
-      // Invalidate all related queries to ensure UI refresh
       queryClient.invalidateQueries({ queryKey: [`admin-${activeContentTab}`] });
-      queryClient.invalidateQueries({ queryKey: [activeContentTab] }); // Also refresh public queries
+      queryClient.invalidateQueries({ queryKey: [activeContentTab] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['services'] });
       queryClient.invalidateQueries({ queryKey: ['skills'] });
@@ -100,9 +111,8 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
       return result;
     },
     onSuccess: () => {
-      // Invalidate all related queries to ensure UI refresh
       queryClient.invalidateQueries({ queryKey: [`admin-${activeContentTab}`] });
-      queryClient.invalidateQueries({ queryKey: [activeContentTab] }); // Also refresh public queries
+      queryClient.invalidateQueries({ queryKey: [activeContentTab] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['services'] });
       queryClient.invalidateQueries({ queryKey: ['skills'] });
@@ -130,9 +140,8 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
       if (error) throw error;
     },
     onSuccess: () => {
-      // Invalidate all related queries to ensure UI refresh
       queryClient.invalidateQueries({ queryKey: [`admin-${activeContentTab}`] });
-      queryClient.invalidateQueries({ queryKey: [activeContentTab] }); // Also refresh public queries
+      queryClient.invalidateQueries({ queryKey: [activeContentTab] });
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       queryClient.invalidateQueries({ queryKey: ['services'] });
       queryClient.invalidateQueries({ queryKey: ['skills'] });
@@ -158,6 +167,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
       case 'services': return services;
       case 'skills': return skills;
       case 'education': return education;
+      case 'contact': return contactMessages;
       default: return [];
     }
   };
@@ -169,6 +179,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
         case 'services': return item.title;
         case 'skills': return item.name;
         case 'education': return `${item.degree} - ${item.institution}`;
+        case 'contact': return `${item.name} - ${item.subject || 'No Subject'}`;
         default: return 'Unknown';
       }
     };
@@ -179,40 +190,66 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
         case 'services': return item.description;
         case 'skills': return `${item.category} - Level ${item.proficiency_level}/10`;
         case 'education': return `${item.field_of_study} (${item.start_year}-${item.end_year || 'Present'})`;
+        case 'contact': return item.message?.substring(0, 100) + '...';
         default: return '';
       }
     };
 
+    const getBadges = () => {
+      const badges = [];
+      
+      if (activeContentTab === 'contact') {
+        if (item.read) badges.push(<Badge key="read" className="bg-green-600">Read</Badge>);
+        if (item.replied) badges.push(<Badge key="replied" className="bg-blue-600">Replied</Badge>);
+        if (!item.read) badges.push(<Badge key="unread" className="bg-red-600">Unread</Badge>);
+      } else {
+        if (item.featured) badges.push(<Badge key="featured" className="bg-yellow-600">Featured</Badge>);
+        if (item.active !== undefined) {
+          badges.push(<Badge key="active" className={item.active ? "bg-green-600" : "bg-gray-600"}>
+            {item.active ? 'Active' : 'Inactive'}
+          </Badge>);
+        }
+        if (item.status) badges.push(<Badge key="status" variant="outline">{item.status}</Badge>);
+      }
+      
+      return badges;
+    };
+
     return (
-      <Card key={item.id} className="bg-slate-700/50 border-purple-600/20">
+      <Card key={item.id} className="bg-slate-700/50 border-purple-600/20 hover:border-red-400/40 transition-all duration-300">
         <CardContent className="p-4">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-white mb-2">{getTitle()}</h3>
               <p className="text-gray-300 text-sm mb-2">{getDescription()}</p>
-              {(item.featured || item.active) && (
-                <Badge className="bg-green-600 text-white">
-                  {item.featured ? 'Featured' : 'Active'}
-                </Badge>
+              {activeContentTab === 'contact' && (
+                <p className="text-gray-400 text-xs mb-2">
+                  {item.email} • {new Date(item.created_at).toLocaleDateString()}
+                </p>
               )}
+              <div className="flex flex-wrap gap-2">
+                {getBadges()}
+              </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 ml-4">
+              {activeContentTab !== 'contact' && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setEditingItem(item);
+                    setFormData(item);
+                  }}
+                  className="border-blue-600/30 text-blue-300 hover:bg-blue-600/20"
+                >
+                  <Edit className="h-4 w-4" />
+                </Button>
+              )}
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  setEditingItem(item);
-                  setFormData(item);
-                }}
-                className="border-blue-600/30 text-blue-300"
-              >
-                <Edit className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => deleteItem.mutate({ table: activeContentTab, id: item.id })}
-                className="border-red-600/30 text-red-300"
+                onClick={() => deleteItem.mutate({ table: activeContentTab === 'contact' ? 'contact_messages' : activeContentTab, id: item.id })}
+                className="border-red-600/30 text-red-300 hover:bg-red-600/20"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
@@ -228,13 +265,13 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
     
     return (
       <Dialog open={isEditing} onOpenChange={(open) => !open && setEditingItem(null)}>
-        <DialogContent className="bg-slate-800 border-purple-800/30 max-w-2xl">
+        <DialogContent className="bg-slate-800 border-purple-800/30 max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-white">
               {isEditing ? 'Edit' : 'Create'} {activeContentTab.slice(0, -1).charAt(0).toUpperCase() + activeContentTab.slice(0, -1).slice(1)}
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 max-h-96 overflow-y-auto">
+          <div className="space-y-4">
             {activeContentTab === 'projects' && (
               <>
                 <Input
@@ -247,12 +284,12 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
                   placeholder="Project Description"
                   value={formData.description || ''}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="bg-slate-700/50 border-purple-600/30 text-white"
+                  className="bg-slate-700/50 border-purple-600/30 text-white min-h-[100px]"
                 />
                 <Input
                   placeholder="Technologies (comma-separated)"
                   value={formData.technologies?.join(', ') || ''}
-                  onChange={(e) => setFormData({...formData, technologies: e.target.value.split(', ')})}
+                  onChange={(e) => setFormData({...formData, technologies: e.target.value.split(', ').filter(t => t.trim())})}
                   className="bg-slate-700/50 border-purple-600/30 text-white"
                 />
                 <Input
@@ -267,6 +304,27 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
                   onChange={(e) => setFormData({...formData, github_url: e.target.value})}
                   className="bg-slate-700/50 border-purple-600/30 text-white"
                 />
+                <Select
+                  value={formData.status || 'completed'}
+                  onValueChange={(value) => setFormData({...formData, status: value})}
+                >
+                  <SelectTrigger className="bg-slate-700/50 border-purple-600/30 text-white">
+                    <SelectValue placeholder="Select Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="completed">Completed</SelectItem>
+                    <SelectItem value="in-progress">In Progress</SelectItem>
+                    <SelectItem value="planned">Planned</SelectItem>
+                  </SelectContent>
+                </Select>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="featured"
+                    checked={formData.featured || false}
+                    onCheckedChange={(checked) => setFormData({...formData, featured: checked})}
+                  />
+                  <Label htmlFor="featured" className="text-white">Featured Project</Label>
+                </div>
               </>
             )}
 
@@ -282,14 +340,38 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
                   placeholder="Service Description"
                   value={formData.description || ''}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
-                  className="bg-slate-700/50 border-purple-600/30 text-white"
+                  className="bg-slate-700/50 border-purple-600/30 text-white min-h-[100px]"
                 />
                 <Input
-                  placeholder="Price Range"
+                  placeholder="Price Range (e.g., $100-$500)"
                   value={formData.price_range || ''}
                   onChange={(e) => setFormData({...formData, price_range: e.target.value})}
                   className="bg-slate-700/50 border-purple-600/30 text-white"
                 />
+                <Input
+                  placeholder="Icon (e.g., settings, code, etc.)"
+                  value={formData.icon || ''}
+                  onChange={(e) => setFormData({...formData, icon: e.target.value})}
+                  className="bg-slate-700/50 border-purple-600/30 text-white"
+                />
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="active"
+                      checked={formData.active !== false}
+                      onCheckedChange={(checked) => setFormData({...formData, active: checked})}
+                    />
+                    <Label htmlFor="active" className="text-white">Active Service</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="featured"
+                      checked={formData.featured || false}
+                      onCheckedChange={(checked) => setFormData({...formData, featured: checked})}
+                    />
+                    <Label htmlFor="featured" className="text-white">Featured Service</Label>
+                  </div>
+                </div>
               </>
             )}
 
@@ -313,17 +395,36 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
                     <SelectItem value="Soft Skills">Soft Skills</SelectItem>
                     <SelectItem value="Tools">Tools</SelectItem>
                     <SelectItem value="Languages">Languages</SelectItem>
+                    <SelectItem value="Business">Business</SelectItem>
+                    <SelectItem value="Management">Management</SelectItem>
                   </SelectContent>
                 </Select>
-                <Input
-                  type="number"
-                  placeholder="Proficiency Level (1-10)"
-                  value={formData.proficiency_level || ''}
-                  onChange={(e) => setFormData({...formData, proficiency_level: parseInt(e.target.value)})}
-                  className="bg-slate-700/50 border-purple-600/30 text-white"
-                />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-white text-sm">Proficiency Level (1-10)</Label>
+                    <Input
+                      type="number"
+                      min="1"
+                      max="10"
+                      placeholder="Proficiency Level"
+                      value={formData.proficiency_level || ''}
+                      onChange={(e) => setFormData({...formData, proficiency_level: parseInt(e.target.value)})}
+                      className="bg-slate-700/50 border-purple-600/30 text-white"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-white text-sm">Years of Experience</Label>
+                    <Input
+                      type="number"
+                      placeholder="Years"
+                      value={formData.years_experience || ''}
+                      onChange={(e) => setFormData({...formData, years_experience: parseInt(e.target.value)})}
+                      className="bg-slate-700/50 border-purple-600/30 text-white"
+                    />
+                  </div>
+                </div>
                 <Textarea
-                  placeholder="Description"
+                  placeholder="Skill Description"
                   value={formData.description || ''}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
                   className="bg-slate-700/50 border-purple-600/30 text-white"
@@ -334,7 +435,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
             {activeContentTab === 'education' && (
               <>
                 <Input
-                  placeholder="Qualification"
+                  placeholder="Qualification/Certification"
                   value={formData.degree || ''}
                   onChange={(e) => setFormData({...formData, degree: e.target.value})}
                   className="bg-slate-700/50 border-purple-600/30 text-white"
@@ -352,21 +453,39 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
                   className="bg-slate-700/50 border-purple-600/30 text-white"
                 />
                 <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    type="number"
-                    placeholder="Start Year"
-                    value={formData.start_year || ''}
-                    onChange={(e) => setFormData({...formData, start_year: parseInt(e.target.value)})}
-                    className="bg-slate-700/50 border-purple-600/30 text-white"
-                  />
-                  <Input
-                    type="number"
-                    placeholder="End Year"
-                    value={formData.end_year || ''}
-                    onChange={(e) => setFormData({...formData, end_year: parseInt(e.target.value)})}
-                    className="bg-slate-700/50 border-purple-600/30 text-white"
-                  />
+                  <div>
+                    <Label className="text-white text-sm">Start Year</Label>
+                    <Input
+                      type="number"
+                      placeholder="Start Year"
+                      value={formData.start_year || ''}
+                      onChange={(e) => setFormData({...formData, start_year: parseInt(e.target.value)})}
+                      className="bg-slate-700/50 border-purple-600/30 text-white"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-white text-sm">End Year (Leave empty if ongoing)</Label>
+                    <Input
+                      type="number"
+                      placeholder="End Year"
+                      value={formData.end_year || ''}
+                      onChange={(e) => setFormData({...formData, end_year: parseInt(e.target.value)})}
+                      className="bg-slate-700/50 border-purple-600/30 text-white"
+                    />
+                  </div>
                 </div>
+                <Input
+                  placeholder="Grade/GPA (optional)"
+                  value={formData.grade || ''}
+                  onChange={(e) => setFormData({...formData, grade: e.target.value})}
+                  className="bg-slate-700/50 border-purple-600/30 text-white"
+                />
+                <Textarea
+                  placeholder="Description/Achievements"
+                  value={formData.description || ''}
+                  onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  className="bg-slate-700/50 border-purple-600/30 text-white"
+                />
               </>
             )}
 
@@ -374,7 +493,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
               <Button
                 variant="outline"
                 onClick={() => setEditingItem(null)}
-                className="border-gray-600"
+                className="border-gray-600 text-gray-300 hover:bg-gray-600/20"
               >
                 Cancel
               </Button>
@@ -386,9 +505,10 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
                     createItem.mutate({ table: activeContentTab, data: formData });
                   }
                 }}
-                className="bg-purple-600 hover:bg-purple-700"
+                className="bg-gradient-to-r from-purple-600 to-red-600 hover:from-purple-700 hover:to-red-700 text-white"
+                disabled={createItem.isPending || updateItem.isPending}
               >
-                {isEditing ? 'Update' : 'Create'}
+                {createItem.isPending || updateItem.isPending ? 'Saving...' : (isEditing ? 'Update' : 'Create')}
               </Button>
             </div>
           </div>
@@ -403,7 +523,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
         <Button
           variant="outline"
           onClick={() => setActiveTab('dashboard')}
-          className="border-purple-600/30 text-purple-300"
+          className="border-purple-600/30 text-purple-300 hover:bg-purple-600/20"
         >
           ← Back to Dashboard
         </Button>
@@ -411,48 +531,71 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
       </div>
 
       {/* Content Type Tabs */}
-      <div className="flex flex-wrap gap-2">
-        {['projects', 'services', 'skills', 'education'].map((tab) => (
+      <div className="flex flex-wrap gap-2 bg-slate-800/50 p-3 rounded-lg border border-purple-600/20">
+        {['projects', 'services', 'skills', 'education', 'contact'].map((tab) => (
           <Button
             key={tab}
             variant={activeContentTab === tab ? 'default' : 'outline'}
             onClick={() => setActiveContentTab(tab as any)}
-            className={`capitalize ${
+            className={`capitalize transition-all duration-300 ${
               activeContentTab === tab 
-                ? 'bg-purple-600 text-white' 
-                : 'border-purple-600/30 text-purple-300'
+                ? 'bg-gradient-to-r from-purple-600 to-red-600 text-white shadow-lg' 
+                : 'border-purple-600/30 text-purple-300 hover:bg-purple-600/20 hover:border-red-400/40'
             }`}
           >
-            {tab}
+            {tab === 'contact' ? 'Contact Messages' : tab}
           </Button>
         ))}
       </div>
 
-      <Card className="bg-slate-800/50 border-purple-800/30">
+      <Card className="bg-slate-800/50 border-purple-800/30 hover:border-red-400/30 transition-all duration-300">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-white flex items-center space-x-2">
-              <Settings className="h-5 w-5" />
+              <Settings className="h-5 w-5 text-purple-400" />
               <span>Manage {activeContentTab.charAt(0).toUpperCase() + activeContentTab.slice(1)}</span>
             </CardTitle>
-            <Button
-              onClick={() => {
-                setEditingItem({});
-                setFormData({});
-              }}
-              className="bg-green-600 hover:bg-green-700"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add New
-            </Button>
+            {activeContentTab !== 'contact' && (
+              <Button
+                onClick={() => {
+                  setEditingItem({});
+                  setFormData({});
+                }}
+                className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white shadow-lg transform hover:scale-105 transition-all duration-300"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add New
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
             {getCurrentData().map(renderItemCard)}
             {getCurrentData().length === 0 && (
-              <div className="text-center py-8 text-gray-400">
-                No {activeContentTab} found. Create your first item!
+              <div className="text-center py-12 text-gray-400">
+                <div className="mb-4">
+                  <Settings className="h-12 w-12 mx-auto text-gray-600" />
+                </div>
+                <h3 className="text-lg font-medium mb-2">No {activeContentTab} found</h3>
+                <p className="mb-4">
+                  {activeContentTab === 'contact' 
+                    ? 'No contact messages received yet.' 
+                    : `Create your first ${activeContentTab.slice(0, -1)} item!`
+                  }
+                </p>
+                {activeContentTab !== 'contact' && (
+                  <Button
+                    onClick={() => {
+                      setEditingItem({});
+                      setFormData({});
+                    }}
+                    className="bg-gradient-to-r from-purple-600 to-red-600 hover:from-purple-700 hover:to-red-700"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Create {activeContentTab.slice(0, -1)}
+                  </Button>
+                )}
               </div>
             )}
           </div>

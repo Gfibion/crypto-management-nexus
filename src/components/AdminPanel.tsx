@@ -4,9 +4,8 @@ import { useConversations } from '@/hooks/useChat';
 import DashboardContent from './admin/DashboardContent';
 import ArticlesSection from './admin/ArticlesSection';
 import MessagesSection from './admin/MessagesSection';
-import ContentSection from './admin/ContentSection';
-import UserManagement from './admin/UserManagement';
 import ContentManagement from './admin/ContentManagement';
+import UserManagement from './admin/UserManagement';
 import EmailLogsSection from './admin/EmailLogsSection';
 
 type TabType = 'dashboard' | 'articles' | 'messages' | 'content' | 'users' | 'emails';

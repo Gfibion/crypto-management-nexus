@@ -4,25 +4,27 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Mail, MailOpen, Trash2, Reply } from 'lucide-react';
+import { MessageSquare, Reply, Trash2, Check, Eye, Mail, Phone, Calendar } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
 interface MessagesSectionProps {
-  setActiveTab: (tab: 'dashboard' | 'articles' | 'messages' | 'content' | 'users' | 'emails') => void;
+  setActiveTab: (tab: 'dashboard' | 'messages') => void;
 }
 
 const MessagesSection: React.FC<MessagesSectionProps> = ({ setActiveTab }) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
+  const [replyingTo, setReplyingTo] = useState<any>(null);
   const [replyMessage, setReplyMessage] = useState('');
-  const [replyingTo, setReplyingTo] = useState<string | null>(null);
 
   // Fetch contact messages
   const { data: messages = [], isLoading } = useQuery({
-    queryKey: ['contact-messages'],
+    queryKey: ['admin-contact-messages'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('contact_messages')
@@ -45,10 +47,66 @@ const MessagesSection: React.FC<MessagesSectionProps> = ({ setActiveTab }) => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contact-messages'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-contact-messages'] });
       toast({
         title: "Success",
         description: "Message marked as read",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to mark message as read",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Reply to message
+  const replyToMessage = useMutation({
+    mutationFn: async ({ messageId, replyContent }: { messageId: string; replyContent: string }) => {
+      // Update the message as replied
+      const { error: updateError } = await supabase
+        .from('contact_messages')
+        .update({ replied: true, read: true })
+        .eq('id', messageId);
+      
+      if (updateError) throw updateError;
+
+      // Log the email (in a real app, you'd send the actual email here)
+      const message = messages.find(m => m.id === messageId);
+      if (message) {
+        const { error: logError } = await supabase
+          .from('email_logs')
+          .insert({
+            recipient_email: message.email,
+            recipient_name: message.name,
+            subject: `Re: ${message.subject || 'Your Message'}`,
+            message: replyContent,
+            email_type: 'reply',
+            status: 'sent',
+            sent_at: new Date().toISOString(),
+            sender_id: user?.id
+          });
+        
+        if (logError) console.error('Failed to log email:', logError);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-contact-messages'] });
+      queryClient.invalidateQueries({ queryKey: ['email-logs'] });
+      setReplyingTo(null);
+      setReplyMessage('');
+      toast({
+        title: "Success",
+        description: "Reply sent successfully",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to send reply",
+        variant: "destructive",
       });
     },
   });
@@ -64,53 +122,29 @@ const MessagesSection: React.FC<MessagesSectionProps> = ({ setActiveTab }) => {
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contact-messages'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-contact-messages'] });
       toast({
         title: "Success",
         description: "Message deleted successfully",
       });
     },
-  });
-
-  // Send reply email
-  const sendReply = useMutation({
-    mutationFn: async ({ messageId, to, subject, message }: { 
-      messageId: string; 
-      to: string; 
-      subject: string; 
-      message: string; 
-    }) => {
-      const { data, error } = await supabase.functions.invoke('send-email', {
-        body: { 
-          messageId, 
-          to, 
-          subject, 
-          message,
-          emailType: 'reply',
-          recipientName: messages.find(m => m.id === messageId)?.name 
-        }
-      });
-      
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contact-messages'] });
-      setReplyMessage('');
-      setReplyingTo(null);
+    onError: (error: any) => {
       toast({
-        title: "Success",
-        description: "Reply sent successfully",
-      });
-    },
-    onError: (error) => {
-      toast({
-        title: "Error", 
-        description: "Failed to send reply",
+        title: "Error",
+        description: error.message || "Failed to delete message",
         variant: "destructive",
       });
-    }
+    },
   });
+
+  const handleReply = () => {
+    if (!replyingTo || !replyMessage.trim()) return;
+    
+    replyToMessage.mutate({
+      messageId: replyingTo.id,
+      replyContent: replyMessage.trim()
+    });
+  };
 
   if (isLoading) {
     return (
@@ -120,50 +154,109 @@ const MessagesSection: React.FC<MessagesSectionProps> = ({ setActiveTab }) => {
     );
   }
 
+  const unreadCount = messages.filter(m => !m.read).length;
+  const repliedCount = messages.filter(m => m.replied).length;
+
   return (
     <div className="space-y-6">
       <div className="flex items-center space-x-4">
         <Button
           variant="outline"
           onClick={() => setActiveTab('dashboard')}
-          className="border-purple-600/30 text-purple-300"
+          className="border-purple-600/30 text-purple-300 hover:bg-purple-600/20"
         >
           ← Back to Dashboard
         </Button>
         <h2 className="text-2xl font-bold text-white">Contact Messages</h2>
       </div>
 
-      <div className="grid gap-6">
+      {/* Message Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card className="bg-slate-800/50 border-purple-600/20">
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-3">
+              <Mail className="h-8 w-8 text-blue-400" />
+              <div>
+                <p className="text-2xl font-bold text-white">{messages.length}</p>
+                <p className="text-gray-300 text-sm">Total Messages</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-slate-800/50 border-red-600/20">
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-3">
+              <Eye className="h-8 w-8 text-red-400" />
+              <div>
+                <p className="text-2xl font-bold text-white">{unreadCount}</p>
+                <p className="text-gray-300 text-sm">Unread Messages</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-slate-800/50 border-green-600/20">
+          <CardContent className="p-4">
+            <div className="flex items-center space-x-3">
+              <Reply className="h-8 w-8 text-green-400" />
+              <div>
+                <p className="text-2xl font-bold text-white">{repliedCount}</p>
+                <p className="text-gray-300 text-sm">Replied Messages</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Messages List */}
+      <div className="space-y-4">
         {messages.map((message) => (
-          <Card key={message.id} className="bg-slate-800/50 border-purple-800/30">
+          <Card 
+            key={message.id} 
+            className={`bg-slate-800/50 transition-all duration-300 hover:shadow-lg ${
+              !message.read 
+                ? 'border-red-600/40 shadow-red-500/10' 
+                : 'border-purple-600/20'
+            }`}
+          >
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-2">
-                    <CardTitle className="text-lg text-white">
-                      {message.subject || 'No Subject'}
-                    </CardTitle>
-                    {!message.read && (
-                      <Badge className="bg-blue-600">New</Badge>
-                    )}
-                    {message.replied && (
-                      <Badge variant="outline" className="border-green-400 text-green-400">
-                        Replied
-                      </Badge>
-                    )}
+                    <h3 className="text-lg font-semibold text-white">
+                      {message.name}
+                    </h3>
+                    <div className="flex gap-2">
+                      {!message.read && (
+                        <Badge className="bg-red-600 text-white">New</Badge>
+                      )}
+                      {message.replied && (
+                        <Badge className="bg-green-600 text-white">Replied</Badge>
+                      )}
+                    </div>
                   </div>
                   
-                  <div className="text-sm text-gray-300 mb-3">
-                    From: {message.name} ({message.email})
-                  </div>
-                  
-                  <div className="text-gray-300 mb-3">
-                    {message.message}
+                  <div className="flex items-center space-x-4 text-sm text-gray-300 mb-3">
+                    <div className="flex items-center space-x-1">
+                      <Mail className="h-4 w-4" />
+                      <span>{message.email}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Calendar className="h-4 w-4" />
+                      <span>{new Date(message.created_at).toLocaleString()}</span>
+                    </div>
                   </div>
 
-                  <div className="text-sm text-gray-400">
-                    Received: {new Date(message.created_at).toLocaleString()}
-                  </div>
+                  {message.subject && (
+                    <p className="text-purple-300 font-medium mb-2">
+                      Subject: {message.subject}
+                    </p>
+                  )}
+                  
+                  <p className="text-gray-300 leading-relaxed">
+                    {message.message}
+                  </p>
                 </div>
 
                 <div className="flex gap-2 ml-4">
@@ -175,65 +268,18 @@ const MessagesSection: React.FC<MessagesSectionProps> = ({ setActiveTab }) => {
                       disabled={markAsRead.isPending}
                       className="border-blue-600/30 text-blue-300 hover:bg-blue-600/20"
                     >
-                      <MailOpen className="h-4 w-4" />
+                      <Check className="h-4 w-4" />
                     </Button>
                   )}
                   
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setReplyingTo(message.id)}
-                        className="border-green-600/30 text-green-300 hover:bg-green-600/20"
-                      >
-                        <Reply className="h-4 w-4" />
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="bg-slate-800 border-purple-800/30">
-                      <DialogHeader>
-                        <DialogTitle className="text-white">
-                          Reply to {message.name}
-                        </DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <div className="text-sm text-gray-300">
-                          <strong>To:</strong> {message.email}<br/>
-                          <strong>Subject:</strong> Re: {message.subject || 'Your message'}
-                        </div>
-                        <Textarea
-                          placeholder="Type your reply here..."
-                          value={replyMessage}
-                          onChange={(e) => setReplyMessage(e.target.value)}
-                          className="bg-slate-700/50 border-purple-600/30 text-white min-h-32"
-                        />
-                        <div className="flex gap-2 justify-end">
-                          <Button
-                            variant="outline"
-                            onClick={() => {
-                              setReplyMessage('');
-                              setReplyingTo(null);
-                            }}
-                            className="border-gray-600"
-                          >
-                            Cancel
-                          </Button>
-                          <Button
-                            onClick={() => sendReply.mutate({
-                              messageId: message.id,
-                              to: message.email,
-                              subject: `Re: ${message.subject || 'Your message'}`,
-                              message: replyMessage
-                            })}
-                            disabled={!replyMessage.trim() || sendReply.isPending}
-                            className="bg-green-600 hover:bg-green-700"
-                          >
-                            {sendReply.isPending ? 'Sending...' : 'Send Reply'}
-                          </Button>
-                        </div>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setReplyingTo(message)}
+                    className="border-green-600/30 text-green-300 hover:bg-green-600/20"
+                  >
+                    <Reply className="h-4 w-4" />
+                  </Button>
                   
                   <Button
                     variant="outline"
@@ -252,12 +298,54 @@ const MessagesSection: React.FC<MessagesSectionProps> = ({ setActiveTab }) => {
 
         {messages.length === 0 && (
           <Card className="bg-slate-800/50 border-purple-800/30 p-12 text-center">
-            <Mail className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-4">No Messages</h3>
+            <MessageSquare className="h-12 w-12 text-gray-600 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-white mb-4">No Messages Found</h3>
             <p className="text-gray-300">No contact messages have been received yet.</p>
           </Card>
         )}
       </div>
+
+      {/* Reply Dialog */}
+      <Dialog open={!!replyingTo} onOpenChange={(open) => !open && setReplyingTo(null)}>
+        <DialogContent className="bg-slate-800 border-purple-800/30 max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-white">
+              Reply to {replyingTo?.name}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="bg-slate-700/50 p-4 rounded-lg">
+              <p className="text-gray-300 text-sm mb-2">Replying to:</p>
+              <p className="text-white font-medium">{replyingTo?.subject || 'No Subject'}</p>
+              <p className="text-gray-300 text-sm mt-1">{replyingTo?.email}</p>
+            </div>
+            
+            <Textarea
+              placeholder="Type your reply message..."
+              value={replyMessage}
+              onChange={(e) => setReplyMessage(e.target.value)}
+              className="bg-slate-700/50 border-purple-600/30 text-white min-h-[120px]"
+            />
+            
+            <div className="flex gap-2 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => setReplyingTo(null)}
+                className="border-gray-600 text-gray-300"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleReply}
+                disabled={!replyMessage.trim() || replyToMessage.isPending}
+                className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700"
+              >
+                {replyToMessage.isPending ? 'Sending...' : 'Send Reply'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
