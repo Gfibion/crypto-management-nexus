@@ -91,6 +91,7 @@ const MobileNavigation = ({ navItems, isOpen, onClose }: MobileNavigationProps) 
           </Link>
         ))}
         
+        {/* Profile link moved to mobile dropdown */}
         {user && (
           <Link
             to="/profile"

@@ -12,22 +12,30 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const isAdmin = useIsAdmin();
 
-  const navItems = [
+  // Primary navigation items (always visible on desktop)
+  const primaryNavItems = [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
     { name: "Services", path: "/services" },
-    { name: "Skills", path: "/skills" },
-    { name: "Education", path: "/education" },
     { name: "Portfolio", path: "/portfolio" },
     { name: "Articles", path: "/articles" },
     { name: "Chat", path: "/chat" },
+  ];
+
+  // Secondary navigation items (in dropdown on desktop)
+  const secondaryNavItems = [
+    { name: "Skills", path: "/skills" },
+    { name: "Education", path: "/education" },
     { name: "Donate", path: "/donate" },
   ];
 
   // Add admin link if user is admin
   if (isAdmin) {
-    navItems.push({ name: "Admin", path: "/admin" });
+    secondaryNavItems.push({ name: "Admin", path: "/admin" });
   }
+
+  // All nav items for mobile (includes both primary and secondary)
+  const allNavItems = [...primaryNavItems, ...secondaryNavItems];
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-purple-800/30">
@@ -37,7 +45,10 @@ const Navbar = () => {
           <Logo />
 
           {/* Center - Desktop Navigation */}
-          <DesktopNavigation navItems={navItems} />
+          <DesktopNavigation 
+            primaryNavItems={primaryNavItems} 
+            secondaryNavItems={secondaryNavItems} 
+          />
 
           {/* Right side - Auth Section */}
           <AuthSection />
@@ -60,7 +71,7 @@ const Navbar = () => {
 
       {/* Mobile Navigation */}
       <MobileNavigation 
-        navItems={navItems} 
+        navItems={allNavItems} 
         isOpen={isOpen} 
         onClose={() => setIsOpen(false)} 
       />

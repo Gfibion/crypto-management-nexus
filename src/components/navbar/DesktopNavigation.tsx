@@ -1,6 +1,14 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Shield, BookOpen, MessageCircle, Home, User, Briefcase, GraduationCap, Code, FolderOpen, Heart } from "lucide-react";
+import { Shield, BookOpen, MessageCircle, Home, User, Briefcase, GraduationCap, Code, FolderOpen, Heart, ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 interface NavItem {
   name: string;
@@ -8,10 +16,11 @@ interface NavItem {
 }
 
 interface DesktopNavigationProps {
-  navItems: NavItem[];
+  primaryNavItems: NavItem[];
+  secondaryNavItems: NavItem[];
 }
 
-const DesktopNavigation = ({ navItems }: DesktopNavigationProps) => {
+const DesktopNavigation = ({ primaryNavItems, secondaryNavItems }: DesktopNavigationProps) => {
   const location = useLocation();
 
   const getIcon = (itemName: string) => {
@@ -42,9 +51,10 @@ const DesktopNavigation = ({ navItems }: DesktopNavigationProps) => {
   };
 
   return (
-    <div className="hidden md:flex items-center space-x-6">
+    <div className="hidden md:flex items-center space-x-8">
+      {/* Primary navigation items - always visible */}
       <div className="flex items-center space-x-6">
-        {navItems.map((item) => (
+        {primaryNavItems.map((item) => (
           <Link
             key={item.name}
             to={item.path}
@@ -59,6 +69,44 @@ const DesktopNavigation = ({ navItems }: DesktopNavigationProps) => {
           </Link>
         ))}
       </div>
+
+      {/* More dropdown for secondary items */}
+      {secondaryNavItems.length > 0 && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="ghost" 
+              className="text-gray-300 hover:text-purple-400 hover:bg-purple-400/20 flex items-center gap-2"
+            >
+              <span>More</span>
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent 
+            className="w-56 bg-slate-800/95 backdrop-blur-sm border-purple-800/30 shadow-xl z-50" 
+            align="end"
+          >
+            {secondaryNavItems.map((item, index) => (
+              <div key={item.name}>
+                <DropdownMenuItem asChild className="text-gray-300 hover:bg-purple-600/20 cursor-pointer">
+                  <Link 
+                    to={item.path} 
+                    className={`flex items-center gap-3 w-full ${
+                      location.pathname === item.path ? "text-purple-400 bg-purple-600/10" : ""
+                    }`}
+                  >
+                    {getIcon(item.name)}
+                    <span>{item.name}</span>
+                  </Link>
+                </DropdownMenuItem>
+                {index < secondaryNavItems.length - 1 && (
+                  <DropdownMenuSeparator className="bg-purple-800/30" />
+                )}
+              </div>
+            ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
     </div>
   );
 };
