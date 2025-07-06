@@ -15,16 +15,10 @@ const AuthSection = () => {
           <span className="text-sm">Loading...</span>
         </div>
       ) : user ? (
-        // Profile removed from header on desktop - only show sign out button
-        <Link to="/profile">
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-purple-400/30 text-purple-300 hover:bg-purple-400/20"
-          >
-            Profile
-          </Button>
-        </Link>
+        // Profile link removed - only show user status or empty for logged in users
+        <div className="text-sm text-gray-400 hidden md:block">
+          Welcome back!
+        </div>
       ) : (
         <div className="flex items-center space-x-2">
           <Link to="/auth">

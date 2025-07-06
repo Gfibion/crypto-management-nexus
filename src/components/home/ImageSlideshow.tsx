@@ -53,7 +53,7 @@ const ImageSlideshow = () => {
 
   return (
     <div className="relative w-full h-80 md:h-96 mb-16 group">
-      <Card className="relative w-full h-full overflow-hidden bg-slate-800/50 border-purple-800/30 hover:border-red-500/50 transition-all duration-500 shadow-2xl hover:shadow-red-500/20">
+      <Card className="relative w-full h-full overflow-hidden bg-slate-800/50 border-purple-800/30 hover:border-purple-500/50 transition-all duration-500 shadow-2xl hover:shadow-purple-500/20">
         <div 
           className="flex transition-transform duration-700 ease-in-out h-full"
           style={{ transform: `translateX(-${currentSlide * 100}%)` }}
@@ -65,7 +65,7 @@ const ImageSlideshow = () => {
                 alt={slide.title}
                 className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-red-900/40 to-slate-900/40 flex items-center animate-fade-in">
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-purple-900/40 to-slate-900/40 flex items-center animate-fade-in">
                 <div className="max-w-2xl mx-auto px-6 text-center transform transition-all duration-500 hover:scale-105">
                   <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 animate-slide-in">
                     {slide.title}
@@ -82,13 +82,13 @@ const ImageSlideshow = () => {
         {/* Navigation buttons */}
         <button
           onClick={prevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-red-500/80 text-white p-3 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 transform hover:scale-110 backdrop-blur-sm"
+          className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-purple-500/80 text-white p-3 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 transform hover:scale-110 backdrop-blur-sm"
         >
           <ChevronLeft className="h-6 w-6" />
         </button>
         <button
           onClick={nextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-red-500/80 text-white p-3 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 transform hover:scale-110 backdrop-blur-sm"
+          className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-purple-500/80 text-white p-3 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 transform hover:scale-110 backdrop-blur-sm"
         >
           <ChevronRight className="h-6 w-6" />
         </button>
@@ -96,7 +96,7 @@ const ImageSlideshow = () => {
         {/* Play/Pause button */}
         <button
           onClick={togglePlayPause}
-          className="absolute top-4 right-4 bg-white/20 hover:bg-red-500/80 text-white p-2 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 transform hover:scale-110 backdrop-blur-sm"
+          className="absolute top-4 right-4 bg-white/20 hover:bg-purple-500/80 text-white p-2 rounded-full transition-all duration-300 opacity-0 group-hover:opacity-100 transform hover:scale-110 backdrop-blur-sm"
         >
           {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
         </button>
@@ -109,8 +109,8 @@ const ImageSlideshow = () => {
               onClick={() => setCurrentSlide(index)}
               className={`w-3 h-3 rounded-full transition-all duration-300 transform hover:scale-125 ${
                 index === currentSlide 
-                  ? 'bg-red-400 animate-pulse' 
-                  : 'bg-white/40 hover:bg-red-300/70'
+                  ? 'bg-purple-400 animate-pulse' 
+                  : 'bg-white/40 hover:bg-purple-300/70'
               }`}
             />
           ))}
