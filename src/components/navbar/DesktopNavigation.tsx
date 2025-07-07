@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Shield, BookOpen, MessageCircle, Home, User, Briefcase, GraduationCap, Code, FolderOpen, Heart, ChevronDown } from "lucide-react";
+import { Shield, BookOpen, MessageCircle, Home, User, Briefcase, GraduationCap, Code, FolderOpen, Heart, Menu } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -79,8 +79,8 @@ const DesktopNavigation = ({ primaryNavItems, secondaryNavItems }: DesktopNaviga
               size="sm"
               className="text-gray-300 hover:text-purple-400 hover:bg-purple-400/20 flex items-center gap-2"
             >
-              <span>More</span>
-              <ChevronDown className="h-4 w-4" />
+              <Menu className="h-4 w-4" />
+              <span className="sr-only">More options</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent 

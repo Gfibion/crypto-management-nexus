@@ -8,15 +8,15 @@ const AuthSection = () => {
   const { user, loading } = useAuth();
 
   return (
-    <div className="hidden lg:flex items-center space-x-3">
+    <div className="flex items-center space-x-3">
       {loading ? (
         <div className="flex items-center space-x-2 text-gray-300">
           <Loader2 className="h-4 w-4 animate-spin" />
-          <span className="text-sm">Loading...</span>
+          <span className="text-sm hidden xl:block">Loading...</span>
         </div>
       ) : user ? (
-        <div className="text-sm text-purple-300 font-medium">
-          Welcome back!
+        <div className="text-sm text-gray-400 hidden xl:block">
+          Welcome!
         </div>
       ) : (
         <div className="flex items-center space-x-2">
