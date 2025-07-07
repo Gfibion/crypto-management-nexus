@@ -80,7 +80,7 @@ const DesktopNavigation = ({ primaryNavItems, secondaryNavItems }: DesktopNaviga
               className="text-gray-300 hover:text-purple-400 hover:bg-purple-400/20 flex items-center gap-2"
             >
               <Menu className="h-4 w-4" />
-              <span className="sr-only">More options</span>
+              <span className="text-sm">More</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent 
