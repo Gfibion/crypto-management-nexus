@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Shield, BookOpen, MessageCircle, Home, User, Briefcase, GraduationCap, Code, FolderOpen, Heart, ChevronDown } from "lucide-react";
+import { Shield, BookOpen, MessageCircle, Home, User, Briefcase, GraduationCap, Code, FolderOpen, Heart, Menu } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -51,21 +51,21 @@ const DesktopNavigation = ({ primaryNavItems, secondaryNavItems }: DesktopNaviga
   };
 
   return (
-    <div className="hidden md:flex items-center space-x-8">
+    <div className="hidden lg:flex items-center space-x-6">
       {/* Primary navigation items - always visible */}
-      <div className="flex items-center space-x-6">
+      <div className="flex items-center space-x-4">
         {primaryNavItems.map((item) => (
           <Link
             key={item.name}
             to={item.path}
-            className={`transition-colors flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-purple-400/20 ${
+            className={`transition-colors flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-purple-400/20 text-sm ${
               location.pathname === item.path
                 ? "text-purple-400 bg-purple-400/10"
                 : "text-gray-300 hover:text-purple-400"
             }`}
           >
             {getIcon(item.name)}
-            <span className="font-medium">{item.name}</span>
+            <span className="font-medium whitespace-nowrap">{item.name}</span>
           </Link>
         ))}
       </div>
@@ -76,10 +76,11 @@ const DesktopNavigation = ({ primaryNavItems, secondaryNavItems }: DesktopNaviga
           <DropdownMenuTrigger asChild>
             <Button 
               variant="ghost" 
+              size="sm"
               className="text-gray-300 hover:text-purple-400 hover:bg-purple-400/20 flex items-center gap-2"
             >
-              <span>More</span>
-              <ChevronDown className="h-4 w-4" />
+              <Menu className="h-4 w-4" />
+              <span className="sr-only">More options</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent 

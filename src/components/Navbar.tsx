@@ -42,19 +42,25 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Left side - Logo */}
-          <Logo />
+          <div className="flex-shrink-0">
+            <Logo />
+          </div>
 
           {/* Center - Desktop Navigation */}
-          <DesktopNavigation 
-            primaryNavItems={primaryNavItems} 
-            secondaryNavItems={secondaryNavItems} 
-          />
+          <div className="flex-1 flex justify-center">
+            <DesktopNavigation 
+              primaryNavItems={primaryNavItems} 
+              secondaryNavItems={secondaryNavItems} 
+            />
+          </div>
 
           {/* Right side - Auth Section */}
-          <AuthSection />
+          <div className="flex-shrink-0">
+            <AuthSection />
+          </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="lg:hidden ml-4">
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="text-gray-400 hover:text-white hover:bg-gray-700 p-2 rounded-md"
