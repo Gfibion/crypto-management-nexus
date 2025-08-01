@@ -62,7 +62,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, getIcon, onBookServi
   const colors = colorClasses[colorScheme];
 
   return (
-    <Card className={`bg-slate-700/50 ${colors.border} transition-all duration-300 hover:transform hover:scale-105 group`}>
+    <Card className={`bg-slate-700/50 ${colors.border} transition-all duration-300 group`}>
       {service.featured && (
         <div className="absolute top-4 right-4">
           <Badge className={`${colors.badge} text-white`}>

@@ -29,7 +29,7 @@ const ProjectsSection = () => {
       <h2 className="text-3xl font-bold text-center mb-12 text-white">Featured Projects</h2>
       <div className="grid lg:grid-cols-2 gap-8">
         {projects.map((project, index) => (
-          <Card key={index} className="bg-slate-800/60 border-purple-800/40 hover:border-purple-600/60 transition-all duration-300 hover:transform hover:scale-105 backdrop-blur-sm shadow-xl">
+          <Card key={index} className="bg-slate-800/60 border-purple-800/40 hover:border-purple-600/60 transition-all duration-300 backdrop-blur-sm shadow-xl">
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between mb-3">
                 <Badge variant="secondary" className={`bg-${project.color}-800/40 text-${project.color}-300 border-${project.color}-600/30`}>

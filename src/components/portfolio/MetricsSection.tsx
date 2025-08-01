@@ -24,7 +24,7 @@ const MetricsSection = () => {
       {metrics.map((metric, index) => (
         <Card 
           key={index} 
-          className="bg-slate-800/60 border-purple-800/40 text-center hover:border-red-600/60 transition-all duration-500 hover:transform hover:scale-110 hover:-rotate-2 backdrop-blur-sm animate-fade-in group shadow-lg hover:shadow-red-500/20"
+          className="bg-slate-800/60 border-purple-800/40 text-center hover:border-red-600/60 transition-all duration-300 backdrop-blur-sm animate-fade-in group shadow-lg hover:shadow-red-500/20"
           style={{ animationDelay: `${index * 0.1}s` }}
         >
           <CardContent className="p-6">
