@@ -23,7 +23,7 @@ interface Service {
   title: string;
   description: string;
   icon: string;
-  price_range?: string;
+  
   featured?: boolean;
   features: string[];
 }
@@ -123,13 +123,6 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
                 {service.description}
               </p>
 
-              {service.price_range && (
-                <div className="mb-4">
-                  <Badge variant="outline" className={`${colors.badgeOutline} text-xs`}>
-                    {service.price_range}
-                  </Badge>
-                </div>
-              )}
 
               <div className="mb-6">
                 <h4 className="text-gray-200 font-medium mb-3 text-sm">Key Features:</h4>
@@ -143,14 +136,24 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
                 </div>
               </div>
 
-              <Button 
-                onClick={() => handleServiceAction(service.title)}
-                size="sm"
-                className={`w-full ${colors.button} text-white border-0 group`}
-              >
-                Get Started
-                <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => handleServiceAction(service.title)}
+                  size="sm"
+                  className={`flex-1 ${colors.button} text-white border-0 group`}
+                >
+                  Get Quote
+                  <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                </Button>
+                <Button 
+                  onClick={() => window.location.href = '/chat'}
+                  size="sm"
+                  variant="outline"
+                  className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
+                >
+                  Chat
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ))}
