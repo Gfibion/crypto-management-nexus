@@ -62,6 +62,35 @@ export const financialSkills = skillsData.Financial.map((skill, index) => ({
   years_experience: 1
 }));
 
+// Add more skills data for better categorization
+export const entrepreneurshipSkills = skillsData.Entrepreneurship?.map((skill, index) => ({
+  id: `ent-${index}`,
+  name: skill.name,
+  category: "Entrepreneurship",
+  proficiency_level: skill.level,
+  icon: skill.icon,
+  years_experience: 1
+})) || [
+  { id: "ent-0", name: "Business Development", category: "Entrepreneurship", proficiency_level: 75, icon: "rocket", years_experience: 1 },
+  { id: "ent-1", name: "Market Research", category: "Entrepreneurship", proficiency_level: 80, icon: "globe", years_experience: 1 },
+  { id: "ent-2", name: "Innovation Management", category: "Entrepreneurship", proficiency_level: 85, icon: "star", years_experience: 1 },
+  { id: "ent-3", name: "Startup Methodology", category: "Entrepreneurship", proficiency_level: 70, icon: "trending-up", years_experience: 1 }
+];
+
+export const strategySkills = skillsData.Strategy?.map((skill, index) => ({
+  id: `str-${index}`,
+  name: skill.name,
+  category: "Strategy",
+  proficiency_level: skill.level,
+  icon: skill.icon,
+  years_experience: 1
+})) || [
+  { id: "str-0", name: "Strategic Thinking", category: "Strategy", proficiency_level: 80, icon: "pie-chart", years_experience: 1 },
+  { id: "str-1", name: "Competitive Analysis", category: "Strategy", proficiency_level: 75, icon: "shield", years_experience: 1 },
+  { id: "str-2", name: "Digital Transformation", category: "Strategy", proficiency_level: 85, icon: "globe", years_experience: 1 },
+  { id: "str-3", name: "Change Management", category: "Strategy", proficiency_level: 70, icon: "trending-up", years_experience: 1 }
+];
+
 // Category order for consistent display
 export const categoryOrder = ["Management", "ICT", "Financial", "Entrepreneurship", "Strategy"];
 

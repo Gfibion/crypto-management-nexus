@@ -1,6 +1,6 @@
 
 import { useSkills } from "@/hooks/useSupabaseData";
-import { managementSkills, ictSkills, financialSkills, categoryOrder } from "@/components/skills/skillsData";
+import { managementSkills, ictSkills, financialSkills, entrepreneurshipSkills, strategySkills, categoryOrder } from "@/components/skills/skillsData";
 import SkillCategory from "@/components/skills/SkillCategory";
 import SkillsSummary from "@/components/skills/SkillsSummary";
 import ActionCards from "@/components/skills/ActionCards";
@@ -26,6 +26,8 @@ const Skills = () => {
     ...managementSkills,
     ...ictSkills,
     ...financialSkills,
+    ...entrepreneurshipSkills,
+    ...strategySkills,
     ...filteredDatabaseSkills
   ];
 
@@ -67,12 +69,22 @@ const Skills = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
             Comprehensive Skills & Expertise Portfolio
           </h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-            Proven competencies in business management, financial strategy, entrepreneurship, strategic planning, and cutting-edge technology solutions
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+            Proven competencies across {sortedCategories.length} key domains: business management, financial strategy, 
+            entrepreneurship, strategic planning, and cutting-edge technology solutions.
           </p>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-2xl mx-auto mb-8">
+            {sortedCategories.map((category) => (
+              <div key={category} className="text-center p-3 bg-slate-800/50 rounded-lg border border-purple-600/30">
+                <div className="text-lg font-bold text-white">{groupedSkills[category]?.length || 0}</div>
+                <div className="text-sm text-gray-300">{category}</div>
+              </div>
+            ))}
+          </div>
+          <div className="w-24 h-1 bg-gradient-to-r from-purple-400 to-blue-400 mx-auto"></div>
         </div>
 
         {/* Skills by Category - Ordered */}
