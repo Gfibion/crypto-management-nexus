@@ -1,0 +1,35 @@
+{
+  "name": "Gfibion Joseph Mutua - Business Manager",
+  "short_name": "Gfibion JM",
+  "description": "Professional Business Manager specializing in strategic management and digital transformation",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["business", "productivity", "professional"],
+  "icons": [
+    {
+      "src": "/lovable-uploads/8b735fe1-3282-48d6-9daa-a0e5ecb43911.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/lovable-uploads/8b735fe1-3282-48d6-9daa-a0e5ecb43911.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/lovable-uploads/e3e47c12-8857-4731-b46f-75afe5159159.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
+}
