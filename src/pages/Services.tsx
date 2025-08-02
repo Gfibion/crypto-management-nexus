@@ -1,6 +1,9 @@
 
-import { businessServices, ictServices } from "@/components/services/serviceData";
+import { useServices } from "@/hooks/useSupabaseData";
 import ServicesSection from "@/components/services/ServicesSectionNew";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { populateServicesData } from "@/utils/populateServicesData";
+import { useEffect } from "react";
 import ProcessSection from "@/components/services/ProcessSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,6 +13,13 @@ import { generateMailtoLink } from "@/utils/emailTemplates";
 import PageLayout from "@/components/PageLayout";
 
 const Services = () => {
+  const { data: services, isLoading, error } = useServices();
+  
+  useEffect(() => {
+    // Populate services data if not exists
+    populateServicesData().catch(console.error);
+  }, []);
+  
   const handleScheduleConsultation = () => {
     const mailtoLink = generateMailtoLink('Free Consultation', {
       name: '[Your Name]',
@@ -17,6 +27,41 @@ const Services = () => {
     });
     window.open(mailtoLink, '_blank');
   };
+
+  // Filter services by category - handle both database structure and static data structure
+  const businessServices = services?.filter((service: any) => 
+    service.category === 'Business Strategy & Consulting'
+  ).map((service: any) => ({
+    ...service,
+    features: service.features || []
+  })) || [];
+  
+  const ictServices = services?.filter((service: any) => 
+    service.category === 'Information & Communication Technology'
+  ).map((service: any) => ({
+    ...service,
+    features: service.features || []
+  })) || [];
+
+  if (isLoading) {
+    return (
+      <PageLayout>
+        <div className="min-h-screen pt-20 px-4 flex items-center justify-center">
+          <LoadingSpinner message="Loading services..." size="lg" />
+        </div>
+      </PageLayout>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageLayout>
+        <div className="min-h-screen pt-20 px-4 flex items-center justify-center">
+          <div className="text-red-400 text-xl">Error loading services</div>
+        </div>
+      </PageLayout>
+    );
+  }
 
   return (
     <PageLayout>

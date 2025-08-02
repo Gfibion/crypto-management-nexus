@@ -23,9 +23,10 @@ interface Service {
   title: string;
   description: string;
   icon: string;
-  
+  category?: string;
   featured?: boolean;
-  features: string[];
+  features?: string[];
+  active?: boolean;
 }
 
 interface ServicesSectionProps {
@@ -124,17 +125,19 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
               </p>
 
 
-              <div className="mb-6">
-                <h4 className="text-gray-200 font-medium mb-3 text-sm">Key Features:</h4>
-                <div className="space-y-1">
-                  {service.features.slice(0, 3).map((feature, idx) => (
-                    <div key={idx} className="flex items-center text-xs text-gray-400">
-                      <div className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 flex-shrink-0"></div>
-                      {feature}
-                    </div>
-                  ))}
+              {service.features && service.features.length > 0 && (
+                <div className="mb-6">
+                  <h4 className="text-gray-200 font-medium mb-3 text-sm">Key Features:</h4>
+                  <div className="space-y-1">
+                    {service.features.slice(0, 3).map((feature, idx) => (
+                      <div key={idx} className="flex items-center text-xs text-gray-400">
+                        <div className="w-1.5 h-1.5 bg-purple-400 rounded-full mr-2 flex-shrink-0"></div>
+                        {feature}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="flex gap-2">
                 <Button 

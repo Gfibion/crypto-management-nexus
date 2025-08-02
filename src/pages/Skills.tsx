@@ -1,6 +1,8 @@
 
 import { useSkills } from "@/hooks/useSupabaseData";
-import { managementSkills, ictSkills, financialSkills, entrepreneurshipSkills, strategySkills, categoryOrder } from "@/components/skills/skillsData";
+import { categoryOrder } from "@/components/skills/skillsData";
+import { populateSkillsData } from "@/utils/populateSkillsData";
+import { useEffect } from "react";
 import SkillCategory from "@/components/skills/SkillCategory";
 import SkillsSummary from "@/components/skills/SkillsSummary";
 import ActionCards from "@/components/skills/ActionCards";
@@ -10,26 +12,13 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 const Skills = () => {
   const { data: skills, isLoading, error } = useSkills();
 
-  // Filter out the specified skills from database skills and group by category
-  const filteredDatabaseSkills = (skills || []).filter(skill => {
-    const skillsToRemove = [
-      "Business Strategy", "Project Management", "Team Leadership",
-      "React", "Javascript", "Python", "Node.js"
-    ];
-    return !skillsToRemove.some(removeSkill => 
-      skill.name.toLowerCase().includes(removeSkill.toLowerCase())
-    );
-  });
+  useEffect(() => {
+    // Populate skills data if not exists
+    populateSkillsData().catch(console.error);
+  }, []);
 
-  // Group skills by category with custom order
-  const allSkills = [
-    ...managementSkills,
-    ...ictSkills,
-    ...financialSkills,
-    ...entrepreneurshipSkills,
-    ...strategySkills,
-    ...filteredDatabaseSkills
-  ];
+  // Use all skills from database
+  const allSkills = skills || [];
 
   const groupedSkills = allSkills.reduce((acc, skill) => {
     if (!acc[skill.category]) {
@@ -37,7 +26,7 @@ const Skills = () => {
     }
     acc[skill.category].push(skill);
     return acc;
-  }, {} as Record<string, typeof allSkills>);
+  }, {} as Record<string, any[]>);
 
   // Sort categories according to the specified order
   const sortedCategories = Object.keys(groupedSkills).sort((a, b) => {

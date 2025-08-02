@@ -342,14 +342,26 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
                   className="bg-slate-700/50 border-purple-600/30 text-white min-h-[100px]"
                 />
-                <Input
-                  placeholder="Price Range (e.g., $100-$500)"
-                  value={formData.price_range || ''}
-                  onChange={(e) => setFormData({...formData, price_range: e.target.value})}
-                  className="bg-slate-700/50 border-purple-600/30 text-white"
+                <Select
+                  value={formData.category || ''}
+                  onValueChange={(value) => setFormData({...formData, category: value})}
+                >
+                  <SelectTrigger className="bg-slate-700/50 border-purple-600/30 text-white">
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Business Strategy & Consulting">Business Strategy & Consulting</SelectItem>
+                    <SelectItem value="Information & Communication Technology">Information & Communication Technology</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Textarea
+                  placeholder="Features (one per line)"
+                  value={Array.isArray(formData.features) ? formData.features.join('\n') : ''}
+                  onChange={(e) => setFormData({...formData, features: e.target.value.split('\n').filter(f => f.trim())})}
+                  className="bg-slate-700/50 border-purple-600/30 text-white min-h-[100px]"
                 />
                 <Input
-                  placeholder="Icon (e.g., settings, code, etc.)"
+                  placeholder="Icon (e.g., pie-chart, code, etc.)"
                   value={formData.icon || ''}
                   onChange={(e) => setFormData({...formData, icon: e.target.value})}
                   className="bg-slate-700/50 border-purple-600/30 text-white"
@@ -391,12 +403,11 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Technical">Technical</SelectItem>
-                    <SelectItem value="Soft Skills">Soft Skills</SelectItem>
-                    <SelectItem value="Tools">Tools</SelectItem>
-                    <SelectItem value="Languages">Languages</SelectItem>
-                    <SelectItem value="Business">Business</SelectItem>
                     <SelectItem value="Management">Management</SelectItem>
+                    <SelectItem value="ICT">ICT</SelectItem>
+                    <SelectItem value="Financial">Financial</SelectItem>
+                    <SelectItem value="Entrepreneurship">Entrepreneurship</SelectItem>
+                    <SelectItem value="Strategy">Strategy</SelectItem>
                   </SelectContent>
                 </Select>
                 <div className="grid grid-cols-2 gap-4">
