@@ -16,15 +16,15 @@ const Navbar = () => {
   const primaryNavItems = [
     { name: "Home", path: "/" },
     { name: "About", path: "/about" },
-    { name: "Services", path: "/services" },
     { name: "Portfolio", path: "/portfolio" },
-    { name: "Articles", path: "/articles" },
+    { name: "Services", path: "/services" },
+    { name: "Skills", path: "/skills" },
     { name: "Chat", path: "/chat" },
   ];
 
   // Secondary navigation items (in dropdown on desktop)
   const secondaryNavItems = [
-    { name: "Skills", path: "/skills" },
+    { name: "Articles", path: "/articles" },
     { name: "Education", path: "/education" },
     { name: "Donate", path: "/donate" },
   ];

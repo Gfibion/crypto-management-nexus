@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { User, MapPin, Globe, Mail, Calendar } from "lucide-react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import AvatarUpload from "@/components/AvatarUpload";
+import TestimonialForm from "@/components/testimonials/TestimonialForm";
 
 interface Profile {
   id: string;
@@ -331,6 +332,11 @@ const Profile = () => {
               )}
             </CardContent>
           </Card>
+        </div>
+
+        {/* Testimonial Section */}
+        <div className="mt-8">
+          <TestimonialForm />
         </div>
       </div>
     </div>
