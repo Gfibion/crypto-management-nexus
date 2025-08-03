@@ -19,11 +19,11 @@ const AIPrompt: React.FC<AIPromptProps> = ({ onUseAI, onWaitForHuman, waitTime }
         </div>
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            No response yet?
+            Need immediate assistance?
           </h3>
           <p className="text-gray-600 mb-4">
-            It's been {waitTime} since your last message. Our human consultant might be busy. 
-            Would you like to try our AI assistant for quick answers, or continue waiting?
+            It's been {waitTime} since your last message. Our AI assistant is ready to help you right away, 
+            or you can continue with live support.
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <Button 
@@ -39,7 +39,7 @@ const AIPrompt: React.FC<AIPromptProps> = ({ onUseAI, onWaitForHuman, waitTime }
               className="border-gray-300"
             >
               <Clock className="h-4 w-4 mr-2" />
-              Continue waiting for human
+              Continue with live support
             </Button>
           </div>
         </div>

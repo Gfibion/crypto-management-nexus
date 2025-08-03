@@ -4,6 +4,7 @@ import { ChatHeader } from './chat/ChatHeader';
 import { MessagesList } from './chat/MessagesList';
 import { ChatInput } from './chat/ChatInput';
 import { AdminChatControls } from './chat/AdminChatControls';
+import ConversationActions from './chat/ConversationActions';
 import { useChatLogic } from './chat/useChatLogic';
 import { useIsAdmin } from '@/hooks/useUserRole';
 import { useQuery } from '@tanstack/react-query';
@@ -54,11 +55,19 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ conversationId, onBack })
 
   return (
     <div className="flex flex-col h-full">
-      <ChatHeader 
-        onBack={onBack} 
-        aiMode={aiMode} 
-        conversationStatus={conversation?.status}
-      />
+      <div className="flex items-center justify-between px-4 py-2 border-b border-purple-800/30">
+        <ChatHeader 
+          onBack={onBack} 
+          aiMode={aiMode} 
+          conversationStatus={conversation?.status}
+        />
+        {!isAdmin && conversation && (
+          <ConversationActions 
+            conversationId={conversationId}
+            onConversationDeleted={onBack}
+          />
+        )}
+      </div>
 
       {showAIPrompt && lastHumanMessageTime && !isAdmin && (
         <div className="p-4">

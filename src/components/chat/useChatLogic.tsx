@@ -39,14 +39,14 @@ export const useChatLogic = (conversationId: string) => {
       
       const checkTime = () => {
         const now = new Date();
-        const hoursSinceMessage = (now.getTime() - messageTime.getTime()) / (1000 * 60 * 60);
+        const minutesSinceMessage = (now.getTime() - messageTime.getTime()) / (1000 * 60);
         
-        if (hoursSinceMessage >= 1 && !aiMode) {
+        if (minutesSinceMessage >= 10 && !aiMode) {
           setShowAIPrompt(true);
         }
       };
 
-      const timer = setInterval(checkTime, 60000); // Check every minute
+      const timer = setInterval(checkTime, 30000); // Check every 30 seconds for faster response
       checkTime(); // Check immediately
 
       return () => clearInterval(timer);
@@ -120,9 +120,9 @@ export const useChatLogic = (conversationId: string) => {
 
   const getTimeAgo = (date: Date) => {
     const now = new Date();
-    const hours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    if (hours < 1) return 'less than an hour';
-    return `${hours} hour${hours > 1 ? 's' : ''}`;
+    const minutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    if (minutes < 10) return 'a few minutes';
+    return `${minutes} minutes`;
   };
 
   return {

@@ -2,11 +2,12 @@
 import { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, MessageCircle, Clock, Loader2 } from "lucide-react";
+import { Plus, MessageCircle, Clock, Loader2, Star } from "lucide-react";
 import { useGuestMode } from "@/hooks/useGuestMode";
 import { useConversations, useCreateConversation } from "@/hooks/useChat";
 import GuestModePrompt from "@/components/GuestModePrompt";
 import ChatInterface from "@/components/ChatInterface";
+import ConversationActions from "@/components/chat/ConversationActions";
 
 const Chat = () => {
   const { requireAuth, showPrompt, closePrompt, pendingAction, isAuthenticated } = useGuestMode();
@@ -155,7 +156,12 @@ const Chat = () => {
                           </span>
                         </div>
                       </div>
-                      <div className="text-purple-400">→</div>
+                      <div className="flex items-center gap-2">
+                        <ConversationActions 
+                          conversationId={conversation.id}
+                        />
+                        <div className="text-purple-400">→</div>
+                      </div>
                     </div>
                   </div>
                 ))}
