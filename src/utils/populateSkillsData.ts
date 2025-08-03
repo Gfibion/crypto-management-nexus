@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { managementSkills, ictSkills, financialSkills, entrepreneurshipSkills, strategySkills } from '@/components/skills/skillsData';
+import { skillsData, categoryOrder } from '@/components/skills/skillsData';
 
 export const populateSkillsData = async () => {
   try {
@@ -14,21 +14,17 @@ export const populateSkillsData = async () => {
       return;
     }
 
-    // Prepare skills data for database insertion
-    const allSkillsData = [
-      ...managementSkills,
-      ...ictSkills,
-      ...financialSkills,
-      ...entrepreneurshipSkills,
-      ...strategySkills
-    ].map(skill => ({
-      name: skill.name,
-      category: skill.category,
-      proficiency_level: skill.proficiency_level,
-      years_experience: skill.years_experience,
-      description: null,
-      icon: skill.icon
-    }));
+    // Transform static skills data to database format
+    const allSkillsData = Object.entries(skillsData).flatMap(([category, skills]) =>
+      skills.map(skill => ({
+        name: skill.name,
+        category,
+        proficiency_level: skill.level,
+        years_experience: 1,
+        description: null,
+        icon: skill.icon || 'star'
+      }))
+    );
 
     // Insert skills into database
     const { error } = await supabase

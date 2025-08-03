@@ -17,8 +17,16 @@ const Skills = () => {
     populateSkillsData().catch(console.error);
   }, []);
 
-  // Use all skills from database
-  const allSkills = skills || [];
+  // Use skills from database or provide fallback data
+  const allSkills = skills && skills.length > 0 
+    ? skills 
+    : [
+        { name: "Strategic Planning", category: "Management", proficiency_level: 85, icon: "target" },
+        { name: "Project Management", category: "Management", proficiency_level: 90, icon: "users" },
+        { name: "Financial Analysis", category: "Financial", proficiency_level: 85, icon: "trending-up" },
+        { name: "Web Development", category: "ICT", proficiency_level: 80, icon: "code" },
+        { name: "Business Development", category: "Entrepreneurship", proficiency_level: 75, icon: "rocket" }
+      ];
 
   const groupedSkills = allSkills.reduce((acc, skill) => {
     if (!acc[skill.category]) {

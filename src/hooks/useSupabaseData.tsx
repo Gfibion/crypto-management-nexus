@@ -17,8 +17,15 @@ export const useServices = () => {
       
       if (error) {
         console.error('Error fetching services:', error);
-        throw error;
+        // Don't throw error, return empty array to allow populate function to run
+        return [];
       }
+      
+      if (!data || data.length === 0) {
+        console.log('No services in database, returning empty array');
+        return [];
+      }
+      
       console.log('Services fetched successfully:', data);
       return data;
     },
@@ -40,23 +47,10 @@ export const useSkills = () => {
         throw error;
       }
       
-      // If no skills in database, return transformed static data
+      // If no skills in database, return empty array to let populate function run
       if (!data || data.length === 0) {
-        console.log('No skills in database, using static data');
-        const transformedSkills = Object.entries(skillsData).flatMap(([category, skills]) =>
-          skills.map((skill, index) => ({
-            id: `${category.toLowerCase()}-${index}`,
-            name: skill.name,
-            category,
-            proficiency_level: skill.level,
-            icon: skill.icon,
-            years_experience: 1,
-            description: null,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }))
-        );
-        return transformedSkills;
+        console.log('No skills in database, returning empty array');
+        return [];
       }
       
       console.log('Skills fetched from database:', data);
