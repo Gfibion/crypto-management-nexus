@@ -11,6 +11,8 @@ import { Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { generateMailtoLink } from "@/utils/emailTemplates";
 import PageLayout from "@/components/PageLayout";
+import ConsultationLinks from "@/components/services/ConsultationLinks";
+import { businessServices, ictServices } from "@/components/services/serviceData";
 
 const Services = () => {
   const { data: services, isLoading, error } = useServices();
@@ -27,42 +29,29 @@ const Services = () => {
     window.open(mailtoLink, '_blank');
   };
 
-  // Filter services by category - provide fallback data if empty
-  const businessServices = services && services.length > 0 
+  // Use static data with database fallback for consistency
+  const displayBusinessServices = services && services.length > 0 
     ? services.filter((service: any) => 
-        service.category === 'Business Strategy & Consulting'
+        service.category === 'Business Strategy & Consulting' || 
+        service.category === 'Management' ||
+        service.category === 'Financial' ||
+        service.category === 'Entrepreneurship' ||
+        service.category === 'Strategy'
       ).map((service: any) => ({
         ...service,
         features: service.features || []
       }))
-    : [
-        {
-          id: "strategic-planning",
-          title: "Strategic Planning",
-          description: "Comprehensive strategic planning to transform your business vision into actionable roadmaps",
-          icon: "pie-chart",
-          featured: true,
-          features: ["Market Analysis", "Strategic Roadmaps", "Competitive Intelligence", "Business Modeling"]
-        }
-      ];
+    : businessServices;
   
-  const ictServices = services && services.length > 0
+  const displayIctServices = services && services.length > 0
     ? services.filter((service: any) => 
-        service.category === 'Information & Communication Technology'
+        service.category === 'Information & Communication Technology' ||
+        service.category === 'ICT'
       ).map((service: any) => ({
         ...service,
         features: service.features || []
       }))
-    : [
-        {
-          id: "system-analysis",
-          title: "System Analysis",
-          description: "Comprehensive system analysis to optimize technology infrastructure and performance",
-          icon: "code",
-          featured: true,
-          features: ["Requirements Analysis", "System Design", "Architecture Planning", "Performance Optimization"]
-        }
-      ];
+    : ictServices;
 
   if (isLoading) {
     return (
@@ -94,7 +83,7 @@ const Services = () => {
           <ServicesSection
             title="Business Strategy & Consulting"
             description="Strategic business solutions to accelerate growth and optimize operations"
-            services={businessServices}
+            services={displayBusinessServices}
             colorScheme="purple"
           />
 
@@ -102,9 +91,21 @@ const Services = () => {
           <ServicesSection
             title="Information & Communication Technology"
             description="Cutting-edge technology solutions for modern digital transformation"
-            services={ictServices}
+            services={displayIctServices}
             colorScheme="blue"
           />
+
+          {/* Consultation Links Section */}
+          <div className="mb-16">
+            <h2 className="text-3xl font-bold text-center text-white mb-8">
+              Need Personalized Consultation?
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <ConsultationLinks serviceName="Business Strategy" />
+              <ConsultationLinks serviceName="Technology Solutions" />
+              <ConsultationLinks serviceName="General Consultation" />
+            </div>
+          </div>
 
           {/* Process Section */}
           <ProcessSection />

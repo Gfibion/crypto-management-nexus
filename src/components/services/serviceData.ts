@@ -1,18 +1,22 @@
 export const businessServices = [
-  // Management Services
+  // Management & Strategy Services
   {
     id: "strategic-planning",
     title: "Strategic Planning",
     description: "Comprehensive strategic planning to transform your business vision into actionable roadmaps",
-    icon: "pie-chart",
+    icon: "target",
+    category: "Management",
     featured: true,
+    price_range: "$2,000 - $10,000",
     features: ["Market Analysis", "Strategic Roadmaps", "Competitive Intelligence", "Business Modeling"]
   },
   {
     id: "team-leadership",
     title: "Team Leadership",
     description: "Expert guidance on building, managing, and leading high-performing teams",
-    icon: "shield",
+    icon: "users",
+    category: "Management",
+    price_range: "$1,500 - $5,000",
     features: ["Leadership Development", "Team Building", "Performance Management", "Communication Enhancement"]
   },
   {

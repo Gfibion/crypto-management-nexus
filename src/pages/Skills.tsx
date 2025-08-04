@@ -8,6 +8,7 @@ import SkillsSummary from "@/components/skills/SkillsSummary";
 import ActionCards from "@/components/skills/ActionCards";
 import SkillsCTA from "@/components/skills/SkillsCTA";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import ConsultationLinks from "@/components/services/ConsultationLinks";
 
 const Skills = () => {
   const { data: skills, isLoading, error } = useSkills();
@@ -97,6 +98,22 @@ const Skills = () => {
 
         {/* Skills Summary */}
         <SkillsSummary groupedSkills={groupedSkills} sortedCategories={sortedCategories} />
+
+        {/* Consultation Links Section */}
+        <div className="mb-16">
+          <h2 className="text-3xl font-bold text-center text-white mb-8">
+            Leverage My Expertise
+          </h2>
+          <p className="text-gray-300 text-center mb-8 max-w-2xl mx-auto">
+            Ready to apply these skills to your business? Get personalized consultation 
+            tailored to your specific challenges and goals.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <ConsultationLinks serviceName="Business Consulting" />
+            <ConsultationLinks serviceName="Strategic Planning" />
+            <ConsultationLinks serviceName="Technology Solutions" />
+          </div>
+        </div>
 
         {/* Action Cards */}
         <ActionCards />

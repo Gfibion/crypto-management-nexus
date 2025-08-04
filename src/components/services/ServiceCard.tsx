@@ -3,7 +3,10 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MessageCircle, Mail } from "lucide-react";
+import { generateMailtoLink } from "@/utils/emailTemplates";
+import { useNavigate } from "react-router-dom";
+import { generateChatMessage } from "@/utils/emailTemplates";
 
 interface ServiceCardProps {
   service: {
@@ -13,6 +16,8 @@ interface ServiceCardProps {
     icon: string;
     price_range?: string;
     featured?: boolean;
+    category?: string;
+    features?: string[];
   };
   getIcon: (iconName: string) => React.ReactNode;
   onBookService: (serviceName: string) => void;
@@ -20,6 +25,19 @@ interface ServiceCardProps {
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ service, getIcon, onBookService, colorScheme }) => {
+  const navigate = useNavigate();
+
+  const handleEmailConsultation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const mailtoLink = generateMailtoLink(service.title);
+    window.open(mailtoLink, '_blank');
+  };
+
+  const handleChatConsultation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const chatMessage = generateChatMessage(service.title);
+    navigate('/chat', { state: { initialMessage: chatMessage } });
+  };
   const colorClasses = {
     purple: {
       border: 'border-purple-700/30 hover:border-purple-600/50',
@@ -91,14 +109,50 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, getIcon, onBookServi
             </Badge>
           </div>
         )}
-        <Button 
-          onClick={() => onBookService(service.title)}
-          size="sm"
-          className={`w-full ${colors.button} text-white border-0 group`}
-        >
-          Get Started
-          <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
-        </Button>
+        {service.features && (
+          <div className="mb-4">
+            <div className="text-xs text-gray-400 mb-2">Key Features:</div>
+            <div className="flex flex-wrap gap-1">
+              {service.features.slice(0, 3).map((feature, index) => (
+                <Badge key={index} variant="outline" className="text-xs border-gray-600 text-gray-300">
+                  {feature}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        <div className="space-y-2">
+          <Button 
+            onClick={() => onBookService(service.title)}
+            size="sm"
+            className={`w-full ${colors.button} text-white border-0 group`}
+          >
+            Get Started
+            <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+          </Button>
+          
+          <div className="flex gap-2">
+            <Button
+              onClick={handleChatConsultation}
+              size="sm"
+              variant="outline"
+              className="flex-1 border-blue-400/50 text-blue-300 hover:bg-blue-400/20 text-xs"
+            >
+              <MessageCircle className="mr-1 h-3 w-3" />
+              Chat
+            </Button>
+            <Button
+              onClick={handleEmailConsultation}
+              size="sm"
+              variant="outline"
+              className="flex-1 border-purple-400/50 text-purple-300 hover:bg-purple-400/20 text-xs"
+            >
+              <Mail className="mr-1 h-3 w-3" />
+              Email
+            </Button>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
