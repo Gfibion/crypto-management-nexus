@@ -1,40 +1,25 @@
-
+import { useState } from "react";
 import { useServices } from "@/hooks/useSupabaseData";
-import ServicesSection from "@/components/services/ServicesSectionNew";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { populateServicesData } from "@/utils/populateServicesData";
 import { useEffect } from "react";
 import ProcessSection from "@/components/services/ProcessSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Calendar, Search as SearchIcon, Filter } from "lucide-react";
 import { Link } from "react-router-dom";
 import { generateMailtoLink } from "@/utils/emailTemplates";
 import PageLayout from "@/components/PageLayout";
-import ConsultationLinks from "@/components/services/ConsultationLinks";
-import ServiceCategorySection from "@/components/services/ServiceCategorySection";
-import { 
-  strategicManagementServices, 
-  operationsLeadershipServices, 
-  financialManagementServices,
-  businessDevelopmentServices,
-  innovationEntrepreneurshipServices,
-  softwareDevelopmentServices,
-  systemArchitectureServices,
-  dataAnalyticsServices,
-  infrastructureSecurityServices
-} from "@/components/services/expandedServiceData";
-import { 
-  Target, Users, TrendingUp, Building, Rocket, Settings, RefreshCw,
-  DollarSign, PieChart, TrendingDown, Search, Lightbulb, Zap, Monitor,
-  Code, Smartphone, Plug, Cpu, Cloud, Database, BarChart, Bot, Lock, Server,
-  Eye, Building2, Brain, Banknote, Calculator, FileText, Gem, Send,
-  Handshake, Layers, Globe, Merge, Award, Shield, Network, Activity, HardDrive,
-  ShieldCheck, Wifi, Workflow, Briefcase, Laptop, UserCog, ChartLine
-} from "lucide-react";
+import { businessManagementServices, ictTechnologyServices } from "@/components/services/serviceData";
+import ServiceCard from "@/components/services/ServiceCard";
+import { getIcon } from "@/components/services/ServiceIcons";
 
 const Services = () => {
   const { data: services, isLoading, error } = useServices();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
   useEffect(() => {
     populateServicesData().catch(console.error);
@@ -48,53 +33,33 @@ const Services = () => {
     window.open(mailtoLink, '_blank');
   };
 
-  // Use expanded service data with detailed breakdowns
-  const businessCategories = [
-    { services: strategicManagementServices, title: "Strategic Management", colorScheme: "purple" as const },
-    { services: operationsLeadershipServices, title: "Operations & Leadership", colorScheme: "blue" as const },
-    { services: financialManagementServices, title: "Financial Management", colorScheme: "green" as const },
-    { services: businessDevelopmentServices, title: "Business Development", colorScheme: "orange" as const },
-    { services: innovationEntrepreneurshipServices, title: "Innovation & Entrepreneurship", colorScheme: "indigo" as const }
-  ];
-  
-  const ictCategories = [
-    { services: softwareDevelopmentServices, title: "Software Development", colorScheme: "cyan" as const },
-    { services: systemArchitectureServices, title: "System Architecture", colorScheme: "blue" as const },
-    { services: dataAnalyticsServices, title: "Data & Analytics", colorScheme: "purple" as const },
-    { services: infrastructureSecurityServices, title: "Infrastructure & Security", colorScheme: "orange" as const }
-  ];
-  const getIcon = (iconName: string) => {
-    const iconMap: Record<string, React.ReactNode> = {
-      target: <Target size={24} />,
-      users: <Users size={24} />,
-      'trending-up': <TrendingUp size={24} />,
-      building: <Building size={24} />,
-      rocket: <Rocket size={24} />,
-      settings: <Settings size={24} />,
-      'refresh-cw': <RefreshCw size={24} />,
-      'dollar-sign': <DollarSign size={24} />,
-      'pie-chart': <PieChart size={24} />,
-      'trending-down': <TrendingDown size={24} />,
-      search: <Search size={24} />,
-      lightbulb: <Lightbulb size={24} />,
-      zap: <Zap size={24} />,
-      monitor: <Monitor size={24} />,
-      code: <Code size={24} />,
-      smartphone: <Smartphone size={24} />,
-      plug: <Plug size={24} />,
-      cpu: <Cpu size={24} />,
-      cloud: <Cloud size={24} />,
-      database: <Database size={24} />,
-      'bar-chart': <BarChart size={24} />,
-      bot: <Bot size={24} />,
-      lock: <Lock size={24} />,
-      server: <Server size={24} />,
-      eye: <Eye size={24} />,
-      'building-2': <Building2 size={24} />,
-      brain: <Brain size={24} />
-    };
-    return iconMap[iconName] || <Target size={24} />;
+  const handleBookService = (serviceName: string) => {
+    const mailtoLink = generateMailtoLink(`Service Inquiry - ${serviceName}`);
+    window.open(mailtoLink, '_blank');
   };
+
+  // Filter services based on search term and category
+  const filteredBusinessServices = businessManagementServices.filter(service => {
+    const matchesSearch = !searchTerm || 
+      service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      service.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      service.features.some(feature => feature.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesCategory = !selectedCategory || selectedCategory === 'Business Management';
+    
+    return matchesSearch && matchesCategory;
+  });
+
+  const filteredIctServices = ictTechnologyServices.filter(service => {
+    const matchesSearch = !searchTerm || 
+      service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      service.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      service.features.some(feature => feature.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesCategory = !selectedCategory || selectedCategory === 'ICT & Technology';
+    
+    return matchesSearch && matchesCategory;
+  });
 
   if (isLoading) {
     return (
@@ -122,53 +87,133 @@ const Services = () => {
             <div className="w-24 h-1 bg-gradient-to-r from-purple-400 to-blue-400 mx-auto"></div>
           </div>
 
-          {/* Business Services Breakdown */}
-          <div className="mb-20">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-white mb-4">
-                Business Solutions & Consulting
-              </h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                Comprehensive business solutions across strategic management, operations, 
-                financial planning, business development, and innovation initiatives.
-              </p>
+          {/* Search and Filter Section */}
+          <div className="mb-12">
+            <div className="flex flex-col md:flex-row gap-4 items-center justify-center">
+              <div className="relative flex-1 max-w-md">
+                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="Search services..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-slate-800/50 border-slate-600 text-white placeholder:text-gray-400"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Badge
+                  variant={selectedCategory === null ? "default" : "outline"}
+                  className="cursor-pointer hover:bg-primary/80 transition-colors"
+                  onClick={() => setSelectedCategory(null)}
+                >
+                  All Services
+                </Badge>
+                <Badge
+                  variant={selectedCategory === 'Business Management' ? "default" : "outline"}
+                  className="cursor-pointer hover:bg-primary/80 transition-colors"
+                  onClick={() => setSelectedCategory('Business Management')}
+                >
+                  Business Management
+                </Badge>
+                <Badge
+                  variant={selectedCategory === 'ICT & Technology' ? "default" : "outline"}
+                  className="cursor-pointer hover:bg-primary/80 transition-colors"
+                  onClick={() => setSelectedCategory('ICT & Technology')}
+                >
+                  ICT & Technology
+                </Badge>
+              </div>
             </div>
-            
-            {businessCategories.map((category, index) => (
-              <ServiceCategorySection
-                key={index}
-                title={category.title}
-                description={`Professional ${category.title.toLowerCase()} solutions to drive business growth and excellence`}
-                services={category.services}
-                colorScheme={category.colorScheme}
-                getIcon={getIcon}
-              />
-            ))}
           </div>
 
-          {/* ICT Services Breakdown */}
-          <div className="mb-20">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-white mb-4">
-                Technology Solutions & Development
-              </h2>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                Cutting-edge technology solutions covering software development, system architecture, 
-                data analytics, and infrastructure security for digital transformation.
-              </p>
+          {/* Business Management Services */}
+          {(!selectedCategory || selectedCategory === 'Business Management') && filteredBusinessServices.length > 0 && (
+            <div className="mb-20">
+              <div className="text-center mb-12">
+                <h2 className="text-4xl font-bold text-white mb-4">
+                  Business Management Services
+                </h2>
+                <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+                  Comprehensive business solutions across strategic management, operations, 
+                  financial planning, business development, and innovation initiatives.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredBusinessServices.map((service) => (
+                  <ServiceCard
+                    key={service.id}
+                    service={service}
+                    getIcon={getIcon}
+                    onBookService={handleBookService}
+                    colorScheme="purple"
+                  />
+                ))}
+              </div>
+              
+              <div className="text-center mt-8">
+                <Button 
+                  onClick={handleScheduleConsultation}
+                  size="lg" 
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white border-0"
+                >
+                  <Calendar className="mr-2 h-5 w-5" />
+                  Book Business Consultation
+                </Button>
+              </div>
             </div>
-            
-            {ictCategories.map((category, index) => (
-              <ServiceCategorySection
-                key={index}
-                title={category.title}
-                description={`Advanced ${category.title.toLowerCase()} solutions for modern digital infrastructure`}
-                services={category.services}
-                colorScheme={category.colorScheme}
-                getIcon={getIcon}
-              />
-            ))}
-          </div>
+          )}
+
+          {/* ICT & Technology Services */}
+          {(!selectedCategory || selectedCategory === 'ICT & Technology') && filteredIctServices.length > 0 && (
+            <div className="mb-20">
+              <div className="text-center mb-12">
+                <h2 className="text-4xl font-bold text-white mb-4">
+                  ICT & Technology Integration Services
+                </h2>
+                <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+                  Cutting-edge technology solutions covering software development, system architecture, 
+                  data analytics, and infrastructure security for digital transformation.
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredIctServices.map((service) => (
+                  <ServiceCard
+                    key={service.id}
+                    service={service}
+                    getIcon={getIcon}
+                    onBookService={handleBookService}
+                    colorScheme="blue"
+                  />
+                ))}
+              </div>
+              
+              <div className="text-center mt-8">
+                <Button 
+                  onClick={handleScheduleConsultation}
+                  size="lg" 
+                  className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white border-0"
+                >
+                  <Calendar className="mr-2 h-5 w-5" />
+                  Book Technology Consultation
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* No Results Message */}
+          {searchTerm && filteredBusinessServices.length === 0 && filteredIctServices.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-xl text-gray-300 mb-4">No services found matching your search.</p>
+              <Button 
+                onClick={() => setSearchTerm("")}
+                variant="outline"
+                className="border-purple-400 text-purple-400 hover:bg-purple-400 hover:text-white"
+              >
+                Clear Search
+              </Button>
+            </div>
+          )}
 
           {/* Process Section */}
           <ProcessSection />
