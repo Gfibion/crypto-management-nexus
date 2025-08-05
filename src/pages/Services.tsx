@@ -28,9 +28,9 @@ import {
   Target, Users, TrendingUp, Building, Rocket, Settings, RefreshCw,
   DollarSign, PieChart, TrendingDown, Search, Lightbulb, Zap, Monitor,
   Code, Smartphone, Plug, Cpu, Cloud, Database, BarChart, Bot, Lock, Server,
-  Eye, Building2, Brain, Banknote, Calculator, FileText, CrystalBall, Send,
+  Eye, Building2, Brain, Banknote, Calculator, FileText, Gem, Send,
   Handshake, Layers, Globe, Merge, Award, Shield, Network, Activity, HardDrive,
-  ShieldCheck, Wifi, Workflow, Briefcase, Laptop, UsersCog, ChartLine
+  ShieldCheck, Wifi, Workflow, Briefcase, Laptop, UserCog, ChartLine
 } from "lucide-react";
 
 const Services = () => {
@@ -63,36 +63,6 @@ const Services = () => {
     { services: dataAnalyticsServices, title: "Data & Analytics", colorScheme: "purple" as const },
     { services: infrastructureSecurityServices, title: "Infrastructure & Security", colorScheme: "orange" as const }
   ];
-    const iconMap: Record<string, React.ReactNode> = {
-      target: <Target size={24} />,
-      users: <Users size={24} />,
-      'trending-up': <TrendingUp size={24} />,
-      building: <Building size={24} />,
-      rocket: <Rocket size={24} />,
-      settings: <Settings size={24} />,
-      'refresh-cw': <RefreshCw size={24} />,
-      'dollar-sign': <DollarSign size={24} />,
-      'pie-chart': <PieChart size={24} />,
-      'trending-down': <TrendingDown size={24} />,
-      search: <Search size={24} />,
-      lightbulb: <Lightbulb size={24} />,
-      zap: <Zap size={24} />,
-      monitor: <Monitor size={24} />,
-      code: <Code size={24} />,
-      smartphone: <Smartphone size={24} />,
-      plug: <Plug size={24} />,
-      cpu: <Cpu size={24} />,
-      cloud: <Cloud size={24} />,
-      database: <Database size={24} />,
-      'bar-chart': <BarChart size={24} />,
-      bot: <Bot size={24} />,
-      lock: <Lock size={24} />,
-      server: <Server size={24} />,
-      eye: <Eye size={24} />,
-      'building-2': <Building2 size={24} />,
-      brain: <Brain size={24} />
-    };
-    return iconMap[iconName] || <Target size={24} />;
   const getIcon = (iconName: string) => {
     const iconMap: Record<string, React.ReactNode> = {
       target: <Target size={24} />,
