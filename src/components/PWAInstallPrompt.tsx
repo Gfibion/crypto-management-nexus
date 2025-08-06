@@ -12,6 +12,7 @@ export const PWAInstallPrompt = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [showInstallPrompt, setShowInstallPrompt] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [dismissedRecently, setDismissedRecently] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -22,6 +23,16 @@ export const PWAInstallPrompt = () => {
     if (isStandalone || isInWebAppiOS) {
       setIsInstalled(true);
       return;
+    }
+
+    // Check if recently dismissed
+    try {
+      const recentlyDismissed = localStorage.getItem('pwa-install-dismissed');
+      const dismissed = recentlyDismissed && 
+        (Date.now() - parseInt(recentlyDismissed)) < 7 * 24 * 60 * 60 * 1000; // 7 days
+      setDismissedRecently(!!dismissed);
+    } catch (error) {
+      console.warn('Failed to check dismissal status:', error);
     }
 
     // Listen for the beforeinstallprompt event
@@ -77,13 +88,13 @@ export const PWAInstallPrompt = () => {
 
   const handleDismiss = () => {
     setShowInstallPrompt(false);
-    localStorage.setItem('pwa-install-dismissed', Date.now().toString());
+    setDismissedRecently(true);
+    try {
+      localStorage.setItem('pwa-install-dismissed', Date.now().toString());
+    } catch (error) {
+      console.warn('Failed to save dismissal status:', error);
+    }
   };
-
-  // Don't show if already installed or recently dismissed
-  const recentlyDismissed = localStorage.getItem('pwa-install-dismissed');
-  const dismissedRecently = recentlyDismissed && 
-    (Date.now() - parseInt(recentlyDismissed)) < 7 * 24 * 60 * 60 * 1000; // 7 days
 
   if (isInstalled || !showInstallPrompt || !deferredPrompt || dismissedRecently) {
     return null;
