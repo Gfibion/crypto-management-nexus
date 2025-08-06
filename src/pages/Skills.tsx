@@ -1,33 +1,22 @@
 
-import { useSkills } from "@/hooks/useSupabaseData";
-import { categoryOrder } from "@/components/skills/skillsData";
-import { populateSkillsData } from "@/utils/populateSkillsData";
-import { useEffect } from "react";
+import { skillsData, categoryOrder } from "@/components/skills/skillsData";
 import SkillCategory from "@/components/skills/SkillCategory";
 import SkillsSummary from "@/components/skills/SkillsSummary";
 import ActionCards from "@/components/skills/ActionCards";
 import SkillsCTA from "@/components/skills/SkillsCTA";
-import LoadingSpinner from "@/components/LoadingSpinner";
 import ConsultationLinks from "@/components/services/ConsultationLinks";
 
 const Skills = () => {
-  const { data: skills, isLoading, error } = useSkills();
-
-  useEffect(() => {
-    // Populate skills data if not exists
-    populateSkillsData().catch(console.error);
-  }, []);
-
-  // Use skills from database or provide fallback data
-  const allSkills = skills && skills.length > 0 
-    ? skills 
-    : [
-        { name: "Strategic Planning", category: "Management", proficiency_level: 85, icon: "target" },
-        { name: "Project Management", category: "Management", proficiency_level: 90, icon: "users" },
-        { name: "Financial Analysis", category: "Financial", proficiency_level: 85, icon: "trending-up" },
-        { name: "Web Development", category: "ICT", proficiency_level: 80, icon: "code" },
-        { name: "Business Development", category: "Entrepreneurship", proficiency_level: 75, icon: "rocket" }
-      ];
+  // Convert skillsData to the expected format
+  const allSkills = Object.entries(skillsData).flatMap(([category, skills]) => 
+    skills.map((skill) => ({
+      name: skill.name,
+      category,
+      proficiency_level: skill.level,
+      icon: skill.icon,
+      description: skill.description
+    }))
+  );
 
   const groupedSkills = allSkills.reduce((acc, skill) => {
     if (!acc[skill.category]) {
@@ -46,21 +35,6 @@ const Skills = () => {
     return indexA - indexB;
   });
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen pt-20 px-4 flex items-center justify-center">
-        <LoadingSpinner message="Loading skills..." size="lg" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen pt-20 px-4 flex items-center justify-center">
-        <div className="text-red-400 text-xl">Error loading skills</div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen pt-20 px-4">

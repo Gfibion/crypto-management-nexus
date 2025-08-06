@@ -1,8 +1,4 @@
 import { useState } from "react";
-import { useServices } from "@/hooks/useSupabaseData";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import { populateServicesData } from "@/utils/populateServicesData";
-import { useEffect } from "react";
 import ProcessSection from "@/components/services/ProcessSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,13 +13,8 @@ import ServiceCard from "@/components/services/ServiceCard";
 import { getIcon } from "@/components/services/ServiceIcons";
 
 const Services = () => {
-  const { data: services, isLoading, error } = useServices();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  
-  useEffect(() => {
-    populateServicesData().catch(console.error);
-  }, []);
   
   const handleScheduleConsultation = () => {
     const mailtoLink = generateMailtoLink('Free Consultation', {
@@ -61,15 +52,6 @@ const Services = () => {
     return matchesSearch && matchesCategory;
   });
 
-  if (isLoading) {
-    return (
-      <PageLayout>
-        <div className="min-h-screen pt-20 px-4 flex items-center justify-center">
-          <LoadingSpinner message="Loading services..." size="lg" />
-        </div>
-      </PageLayout>
-    );
-  }
 
   return (
     <PageLayout>
