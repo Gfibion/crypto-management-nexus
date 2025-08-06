@@ -11,9 +11,10 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Settings, Edit, Trash2, Plus, Upload, Eye, EyeOff } from 'lucide-react';
+import { Settings, Edit, Trash2, Plus, Upload, Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { populateAllAdminData } from '@/utils/populateAdminData';
 
 interface ContentManagementProps {
   setActiveTab: (tab: 'dashboard' | 'content') => void;
@@ -26,6 +27,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
   const [activeContentTab, setActiveContentTab] = useState<'projects' | 'services' | 'skills' | 'education' | 'contact'>('projects');
   const [editingItem, setEditingItem] = useState<any>(null);
   const [formData, setFormData] = useState<any>({});
+  const [isPopulating, setIsPopulating] = useState(false);
 
   // Fetch different content types
   const { data: projects = [] } = useQuery({
@@ -160,6 +162,29 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
       });
     }
   });
+
+  // Populate admin data function
+  const handlePopulateData = async () => {
+    setIsPopulating(true);
+    try {
+      await populateAllAdminData();
+      // Refresh all queries
+      queryClient.invalidateQueries({ queryKey: ['admin-services'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-skills'] });
+      toast({
+        title: "Success",
+        description: "Admin data populated successfully with comprehensive services and skills",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to populate admin data",
+        variant: "destructive"
+      });
+    } finally {
+      setIsPopulating(false);
+    }
+  };
 
   const getCurrentData = () => {
     switch (activeContentTab) {
@@ -350,8 +375,8 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Business Strategy & Consulting">Business Strategy & Consulting</SelectItem>
-                    <SelectItem value="Information & Communication Technology">Information & Communication Technology</SelectItem>
+                    <SelectItem value="Business Management">Business Management</SelectItem>
+                    <SelectItem value="ICT & Technology">ICT & Technology</SelectItem>
                   </SelectContent>
                 </Select>
                 <Textarea
@@ -359,6 +384,12 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
                   value={Array.isArray(formData.features) ? formData.features.join('\n') : ''}
                   onChange={(e) => setFormData({...formData, features: e.target.value.split('\n').filter(f => f.trim())})}
                   className="bg-slate-700/50 border-purple-600/30 text-white min-h-[100px]"
+                />
+                <Input
+                  placeholder="Price Range (e.g., $1,000 - $5,000)"
+                  value={formData.price_range || ''}
+                  onChange={(e) => setFormData({...formData, price_range: e.target.value})}
+                  className="bg-slate-700/50 border-purple-600/30 text-white"
                 />
                 <Input
                   placeholder="Icon (e.g., pie-chart, code, etc.)"
@@ -403,11 +434,16 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Management">Management</SelectItem>
-                    <SelectItem value="ICT">ICT</SelectItem>
-                    <SelectItem value="Financial">Financial</SelectItem>
-                    <SelectItem value="Entrepreneurship">Entrepreneurship</SelectItem>
-                    <SelectItem value="Strategy">Strategy</SelectItem>
+                    <SelectItem value="Strategic Management">Strategic Management</SelectItem>
+                    <SelectItem value="Operations & Leadership">Operations & Leadership</SelectItem>
+                    <SelectItem value="Financial Management">Financial Management</SelectItem>
+                    <SelectItem value="Business Development">Business Development</SelectItem>
+                    <SelectItem value="Innovation & Entrepreneurship">Innovation & Entrepreneurship</SelectItem>
+                    <SelectItem value="Software Development">Software Development</SelectItem>
+                    <SelectItem value="System Architecture">System Architecture</SelectItem>
+                    <SelectItem value="Data & Analytics">Data & Analytics</SelectItem>
+                    <SelectItem value="Infrastructure & Security">Infrastructure & Security</SelectItem>
+                    <SelectItem value="Consulting">Consulting</SelectItem>
                   </SelectContent>
                 </Select>
                 <div className="grid grid-cols-2 gap-4">
@@ -438,6 +474,12 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
                   placeholder="Skill Description"
                   value={formData.description || ''}
                   onChange={(e) => setFormData({...formData, description: e.target.value})}
+                  className="bg-slate-700/50 border-purple-600/30 text-white"
+                />
+                <Input
+                  placeholder="Icon (e.g., target, users, etc.)"
+                  value={formData.icon || ''}
+                  onChange={(e) => setFormData({...formData, icon: e.target.value})}
                   className="bg-slate-700/50 border-purple-600/30 text-white"
                 />
               </>
@@ -566,18 +608,30 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
               <Settings className="h-5 w-5 text-purple-400" />
               <span>Manage {activeContentTab.charAt(0).toUpperCase() + activeContentTab.slice(1)}</span>
             </CardTitle>
-            {activeContentTab !== 'contact' && (
-              <Button
-                onClick={() => {
-                  setEditingItem({});
-                  setFormData({});
-                }}
-                className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white shadow-lg transform hover:scale-105 transition-all duration-300"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add New
-              </Button>
-            )}
+            <div className="flex gap-2">
+              {(activeContentTab === 'services' || activeContentTab === 'skills') && (
+                <Button
+                  onClick={handlePopulateData}
+                  disabled={isPopulating}
+                  className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
+                >
+                  <RefreshCw className={`h-4 w-4 mr-2 ${isPopulating ? 'animate-spin' : ''}`} />
+                  {isPopulating ? 'Populating...' : 'Populate Data'}
+                </Button>
+              )}
+              {activeContentTab !== 'contact' && (
+                <Button
+                  onClick={() => {
+                    setEditingItem({});
+                    setFormData({});
+                  }}
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg transform hover:scale-105 transition-all duration-300"
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add New
+                </Button>
+              )}
+            </div>
           </div>
         </CardHeader>
         <CardContent>
