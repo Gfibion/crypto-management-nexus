@@ -11,6 +11,7 @@ import PageLayout from "@/components/PageLayout";
 import { businessManagementServices, ictTechnologyServices } from "@/components/services/serviceData";
 import ServiceCard from "@/components/services/ServiceCard";
 import { getIcon } from "@/components/services/ServiceIcons";
+import SEOHead from "@/components/SEOHead";
 
 const Services = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -54,7 +55,25 @@ const Services = () => {
 
 
   return (
-    <PageLayout>
+    <>
+      <SEOHead 
+        title="Business Management & ICT Technology Services - Gfibion Joseph Mutua"
+        description="Comprehensive business management consulting and ICT technology services by Gfibion Joseph Mutua. Strategic planning, digital transformation, technology integration, business analytics, and professional consulting solutions."
+        keywords="business management services, ICT technology services, business consulting, strategic planning, digital transformation, technology integration, business analytics, process optimization, organizational development, technology consulting, business strategy services"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "name": "Business Management & ICT Services",
+          "provider": {
+            "@type": "Person",
+            "name": "Gfibion Joseph Mutua"
+          },
+          "serviceType": ["Business Management Consulting", "ICT Technology Services", "Strategic Planning", "Digital Transformation"],
+          "description": "Professional business management and ICT consulting services",
+          "url": "https://gfibionjosephmutua.lovable.app/services"
+        }}
+      />
+      <PageLayout>
       <div className="px-4 py-16">
         <div className="max-w-6xl mx-auto">
           {/* Header Section */}
@@ -225,8 +244,9 @@ const Services = () => {
             </CardContent>
           </Card>
         </div>
-      </div>
-    </PageLayout>
+        </div>
+      </PageLayout>
+    </>
   );
 };
 

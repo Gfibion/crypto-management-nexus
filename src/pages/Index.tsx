@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import ParticleBackground from "@/components/ParticleBackground";
 import ImageSlideshow from "@/components/home/ImageSlideshow";
 import { ArrowDown, Briefcase, Star, TrendingUp, Sparkles } from "lucide-react";
+import SEOHead from "@/components/SEOHead";
 
 const Index = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -19,7 +20,24 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <>
+      <SEOHead 
+        title="Gfibion Joseph Mutua - Professional Business Manager & ICT Consultant | Strategic Management & Digital Solutions"
+        description="Welcome to the professional portfolio of Gfibion Joseph Mutua, expert business manager and ICT consultant specializing in strategic management, digital transformation, business consulting, and innovative technology solutions. Discover comprehensive business and ICT services."
+        keywords="Gfibion Joseph Mutua, business manager, ICT consultant, strategic management, digital transformation, business consulting, technology integration, professional portfolio, business strategy, digital solutions, Kenya business expert, entrepreneurship, strategic planning"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": "Gfibion Joseph Mutua Portfolio",
+          "description": "Professional business manager and ICT consultant portfolio",
+          "url": "https://gfibionjosephmutua.lovable.app",
+          "author": {
+            "@type": "Person",
+            "name": "Gfibion Joseph Mutua"
+          }
+        }}
+      />
+      <div className="min-h-screen relative overflow-hidden">
       <ParticleBackground />
       
       {/* Hero Section with Slideshow */}
@@ -136,6 +154,7 @@ const Index = () => {
         </div>
       </section>
     </div>
+    </>
   );
 };
 

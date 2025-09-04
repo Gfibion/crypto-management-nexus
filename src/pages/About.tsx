@@ -1,10 +1,28 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import SEOHead from "@/components/SEOHead";
 
 const About = () => {
   return (
-    <div className="min-h-screen pt-20 px-4">
+    <>
+      <SEOHead 
+        title="About Gfibion Joseph Mutua - Professional Business Manager & ICT Consultant"
+        description="Learn about Gfibion Joseph Mutua, emerging business professional and tech enthusiast specializing in strategic management, digital innovation, and technology integration. Fresh graduate with modern business knowledge."
+        keywords="Gfibion Joseph Mutua, about, business professional, tech enthusiast, strategic management, digital innovation, technology integration, fresh graduate, business management, ICT specialist"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Person",
+          "name": "Gfibion Joseph Mutua",
+          "alternateName": "Joseph Mutua",
+          "jobTitle": "Business Manager & ICT Consultant",
+          "description": "Emerging business professional and tech enthusiast ready to drive innovation",
+          "alumniOf": "Business Management Program",
+          "knowsAbout": ["Business Management", "ICT", "Innovation", "Strategic Thinking", "Digital Innovation", "Technology Integration"],
+          "url": "https://gfibionjosephmutua.lovable.app/about"
+        }}
+      />
+      <div className="min-h-screen pt-20 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-16">
@@ -103,8 +121,9 @@ const About = () => {
             </Card>
           </div>
         </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

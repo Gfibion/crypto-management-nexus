@@ -5,6 +5,7 @@ import SkillsSummary from "@/components/skills/SkillsSummary";
 import ActionCards from "@/components/skills/ActionCards";
 import SkillsCTA from "@/components/skills/SkillsCTA";
 import ConsultationLinks from "@/components/services/ConsultationLinks";
+import SEOHead from "@/components/SEOHead";
 
 const Skills = () => {
   // Convert skillsData to the expected format
@@ -37,7 +38,25 @@ const Skills = () => {
 
 
   return (
-    <div className="min-h-screen pt-20 px-4">
+    <>
+      <SEOHead 
+        title="Professional Skills & Expertise Portfolio - Gfibion Joseph Mutua"
+        description="Comprehensive skills portfolio of Gfibion Joseph Mutua showcasing expertise in business management, financial strategy, entrepreneurship, strategic planning, and cutting-edge technology solutions. Professional competencies across multiple domains."
+        keywords="professional skills, business management skills, financial strategy, entrepreneurship skills, strategic planning, technology solutions, business competencies, ICT skills, leadership abilities, project management, business analytics, digital transformation skills"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Person",
+          "name": "Gfibion Joseph Mutua",
+          "hasOccupation": {
+            "@type": "Occupation",
+            "name": "Business Manager & ICT Consultant"
+          },
+          "knowsAbout": Object.keys(skillsData),
+          "description": "Professional skills and expertise portfolio",
+          "url": "https://gfibionjosephmutua.lovable.app/skills"
+        }}
+      />
+      <div className="min-h-screen pt-20 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-16">
@@ -95,7 +114,8 @@ const Skills = () => {
         {/* Call to Action */}
         <SkillsCTA />
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 
