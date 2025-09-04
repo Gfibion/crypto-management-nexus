@@ -8,6 +8,7 @@ import { useConversations, useCreateConversation } from "@/hooks/useChat";
 import GuestModePrompt from "@/components/GuestModePrompt";
 import ChatInterface from "@/components/ChatInterface";
 import ConversationActions from "@/components/chat/ConversationActions";
+import SEOHead from "@/components/SEOHead";
 
 const Chat = () => {
   const { requireAuth, showPrompt, closePrompt, pendingAction, isAuthenticated } = useGuestMode();
@@ -66,7 +67,23 @@ const Chat = () => {
   }
 
   return (
-    <div className="min-h-screen pt-20 px-4">
+    <>
+      <SEOHead 
+        title="Live Business Consulting Chat with Gfibion Joseph Mutua | Get Expert ICT & Management Advice"
+        description="Connect directly with professional business manager and ICT consultant Gfibion Joseph Mutua through live chat. Get expert advice on business strategy, digital transformation, technology integration, and management consulting."
+        keywords="business consulting chat, ICT consultant contact, live business advice, management consulting chat, Joseph Mutua contact, Gfibion consultation, business strategy chat, technology consulting support, professional business help, Kenya business consultant"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          "name": "Live Chat with Gfibion Joseph Mutua",
+          "description": "Professional business and ICT consulting chat support",
+          "provider": {
+            "@type": "Person",
+            "name": "Gfibion Joseph Mutua"
+          }
+        }}
+      />
+      <div className="min-h-screen pt-20 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
@@ -197,7 +214,8 @@ const Chat = () => {
           actionName={pendingAction} 
         />
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

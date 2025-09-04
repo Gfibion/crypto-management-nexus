@@ -8,6 +8,7 @@ import { BookOpen, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import PageLayout from "@/components/PageLayout";
+import SEOHead from "@/components/SEOHead";
 
 const Articles = () => {
   const { data: articles, isLoading, error } = useArticles();
@@ -38,7 +39,23 @@ const Articles = () => {
   }
 
   return (
-    <PageLayout>
+    <>
+      <SEOHead 
+        title="Business Management & ICT Articles by Gfibion Joseph Mutua | Expert Insights & Analysis"
+        description="Read expert articles and insights on business management, ICT consulting, digital transformation, and strategic planning by Gfibion Joseph Mutua. Get valuable business advice and technology trends analysis from a professional business consultant."
+        keywords="business management articles, ICT consulting insights, digital transformation blog, strategic planning advice, business strategy articles, Joseph Mutua articles, Gfibion business insights, Kenya business consultant blog, technology consulting articles, business development insights"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          "name": "Gfibion Joseph Mutua Business & ICT Articles",
+          "description": "Expert articles on business management and ICT consulting",
+          "author": {
+            "@type": "Person",
+            "name": "Gfibion Joseph Mutua"
+          }
+        }}
+      />
+      <PageLayout>
       <div className="max-w-6xl mx-auto px-4">
         {/* Header Section */}
         <div className="text-center mb-16 animate-fade-in">
@@ -109,7 +126,8 @@ const Articles = () => {
           actionName={pendingAction}
         />
       </div>
-    </PageLayout>
+      </PageLayout>
+    </>
   );
 };
 

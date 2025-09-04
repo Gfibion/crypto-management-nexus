@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { useEducation } from "@/hooks/useSupabaseData";
 import { GraduationCap, Calendar, Award } from "lucide-react";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import SEOHead from "@/components/SEOHead";
 
 const Education = () => {
   const { data: education, isLoading, error } = useEducation();
@@ -24,7 +25,20 @@ const Education = () => {
   }
 
   return (
-    <div className="min-h-screen pt-20 px-4">
+    <>
+      <SEOHead 
+        title="Gfibion Joseph Mutua Education & Qualifications | Business Management & ICT Academic Background"
+        description="Discover the educational background and academic qualifications of Gfibion Joseph Mutua, professional business manager and ICT consultant. View degrees, certifications, and academic achievements in business management and technology."
+        keywords="Gfibion Joseph Mutua education, business management degree, ICT qualifications, academic background, business consultant education, Kenya business graduate, management studies, technology education, professional qualifications, academic achievements"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "EducationalOccupationalCredential",
+          "name": "Gfibion Joseph Mutua Educational Background",
+          "description": "Academic qualifications and educational achievements",
+          "credentialCategory": "Business Management & ICT"
+        }}
+      />
+      <div className="min-h-screen pt-20 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-16">
@@ -149,7 +163,8 @@ const Education = () => {
           </CardContent>
         </Card>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 
