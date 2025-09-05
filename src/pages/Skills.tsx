@@ -3,7 +3,7 @@ import { skillsData, categoryOrder } from "@/components/skills/skillsData";
 import SkillCategory from "@/components/skills/SkillCategory";
 import SkillsSummary from "@/components/skills/SkillsSummary";
 import ActionCards from "@/components/skills/ActionCards";
-import SkillsCTA from "@/components/skills/SkillsCTA";
+
 import ConsultationLinks from "@/components/services/ConsultationLinks";
 import SEOHead from "@/components/SEOHead";
 
@@ -110,9 +110,6 @@ const Skills = () => {
 
         {/* Action Cards */}
         <ActionCards />
-
-        {/* Call to Action */}
-        <SkillsCTA />
       </div>
       </div>
     </>
