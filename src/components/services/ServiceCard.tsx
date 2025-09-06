@@ -88,33 +88,25 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, getIcon, onBookServi
           </Badge>
         </div>
       )}
-      <CardHeader className="text-center">
-        <div className={`mx-auto mb-4 p-4 bg-gradient-to-r ${colors.gradient} rounded-full w-fit transition-all duration-300`}>
-          <div className={`${colors.text} transition-colors`}>
+      <CardHeader className="text-center p-3 sm:p-6 pb-2 sm:pb-3">
+        <div className={`mx-auto mb-2 sm:mb-3 p-3 bg-gradient-to-r ${colors.gradient} rounded-full w-fit transition-all duration-300`}>
+          <div className={`${colors.text} transition-colors [&>svg]:w-4 [&>svg]:h-4 sm:[&>svg]:w-5 sm:[&>svg]:h-5`}>
             {getIcon(service.icon)}
           </div>
         </div>
-        <CardTitle className={`text-base sm:text-lg font-medium text-white ${colors.titleHover} transition-colors leading-tight`}>
+        <CardTitle className={`text-sm sm:text-base font-medium text-white ${colors.titleHover} transition-colors leading-tight px-1`}>
           {service.title}
         </CardTitle>
       </CardHeader>
-      <CardContent className="text-center">
-        <p className="text-gray-300 mb-3 sm:mb-4 text-xs sm:text-sm leading-tight">
+      <CardContent className="text-center p-3 sm:p-6">
+        <p className="text-gray-300 mb-2 sm:mb-3 text-xs leading-tight">
           {service.description}
         </p>
-        {service.price_range && (
-          <div className="mb-4">
-            <Badge variant="outline" className={`${colors.badgeOutline} text-xs`}>
-              {service.price_range}
-            </Badge>
-          </div>
-        )}
         {service.features && (
-          <div className="mb-4">
-            <div className="text-xs text-gray-400 mb-2">Key Features:</div>
-            <div className="flex flex-wrap gap-1">
-              {service.features.slice(0, 3).map((feature, index) => (
-                <Badge key={index} variant="outline" className="text-xs border-gray-600 text-gray-300">
+          <div className="mb-3">
+            <div className="flex flex-wrap gap-1 justify-center">
+              {service.features.slice(0, 2).map((feature, index) => (
+                <Badge key={index} variant="outline" className="text-xs border-gray-600 text-gray-300 px-1 py-0">
                   {feature}
                 </Badge>
               ))}
