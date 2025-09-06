@@ -22,39 +22,39 @@ const SkillCard = ({ skill }: SkillCardProps) => {
   const categoryColor = getCategoryColor(skill.category);
 
   return (
-    <div className="space-y-3 p-4 bg-slate-700/30 rounded-lg border border-slate-600/30">
-      <div className="flex items-start gap-3">
+    <div className="space-y-2 sm:space-y-3 p-3 sm:p-4 bg-slate-700/30 rounded-lg border border-slate-600/30">
+      <div className="flex items-start gap-2 sm:gap-3">
         {skill.icon && (
-          <div className={`text-${categoryColor}-400 mt-1`}>
+          <div className={`text-${categoryColor}-400 mt-1 text-sm sm:text-base`}>
             {getSkillIcon(skill.icon)}
           </div>
         )}
-        <div className="flex-1">
-          <div className="flex justify-between items-start mb-2">
-            <h3 className="text-lg font-semibold text-white">{skill.name}</h3>
-            <div className="flex items-center gap-2">
-              <span className={`text-${categoryColor}-400 font-bold`}>
+        <div className="flex-1 min-w-0">
+          <div className="flex justify-between items-start mb-1 sm:mb-2">
+            <h3 className="text-sm sm:text-lg font-semibold text-white truncate pr-2">{skill.name}</h3>
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+              <span className={`text-${categoryColor}-400 font-bold text-xs sm:text-sm`}>
                 {skill.proficiency_level}%
               </span>
               {skill.years_experience && (
-                <Badge variant="outline" className={`border-${categoryColor}-400/30 text-${categoryColor}-300 text-xs`}>
+                <Badge variant="outline" className={`border-${categoryColor}-400/30 text-${categoryColor}-300 text-xs hidden sm:inline-flex`}>
                   {skill.years_experience}y exp
                 </Badge>
               )}
             </div>
           </div>
-          <Progress value={skill.proficiency_level} className="h-2 mb-3" />
+          <Progress value={skill.proficiency_level} className="h-1.5 sm:h-2 mb-2 sm:mb-3" />
           {skill.description && (
-            <p className="text-gray-400 text-sm mb-3">{skill.description}</p>
+            <p className="text-gray-400 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2">{skill.description}</p>
           )}
           {skill.competencies && (
             <>
-              <h4 className="text-white font-medium mb-2 text-sm">Key Competencies:</h4>
-              <div className="grid grid-cols-2 gap-1">
-                {skill.competencies.map((competency: string, idx: number) => (
+              <h4 className="text-white font-medium mb-1 sm:mb-2 text-xs sm:text-sm">Key Skills:</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-0.5 sm:gap-1">
+                {skill.competencies.slice(0, 4).map((competency: string, idx: number) => (
                   <div key={idx} className="flex items-center text-xs">
-                    <Star className={`h-3 w-3 mr-2 text-${categoryColor}-400`} />
-                    <span className="text-gray-300">{competency}</span>
+                    <Star className={`h-2.5 w-2.5 sm:h-3 sm:w-3 mr-1 sm:mr-2 text-${categoryColor}-400 shrink-0`} />
+                    <span className="text-gray-300 truncate">{competency}</span>
                   </div>
                 ))}
               </div>
