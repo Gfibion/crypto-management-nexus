@@ -94,12 +94,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, getIcon, onBookServi
             {getIcon(service.icon)}
           </div>
         </div>
-        <CardTitle className={`text-lg text-white ${colors.titleHover} transition-colors`}>
+        <CardTitle className={`text-base sm:text-lg font-medium text-white ${colors.titleHover} transition-colors leading-tight`}>
           {service.title}
         </CardTitle>
       </CardHeader>
       <CardContent className="text-center">
-        <p className="text-gray-300 mb-4 text-sm">
+        <p className="text-gray-300 mb-3 sm:mb-4 text-xs sm:text-sm leading-tight">
           {service.description}
         </p>
         {service.price_range && (
