@@ -30,10 +30,10 @@ const SkillCard = ({ skill }: SkillCardProps) => {
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <div className="flex justify-between items-start mb-1 sm:mb-2">
-            <h3 className="text-xs sm:text-base font-medium text-purple-200 leading-tight pr-2 flex-1">{skill.name}</h3>
-            <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-              <span className={`text-${categoryColor}-400 font-bold text-xs sm:text-sm`}>
+          <div className="flex justify-between items-start mb-1 sm:mb-2 gap-2">
+            <h3 className="text-xs sm:text-base font-medium text-purple-200 leading-tight flex-1 min-w-0">{skill.name}</h3>
+            <div className="flex items-center gap-1 sm:gap-2 shrink-0 min-w-fit">
+              <span className={`text-${categoryColor}-400 font-bold text-xs sm:text-sm whitespace-nowrap`}>
                 {skill.proficiency_level}%
               </span>
               {skill.years_experience && (
