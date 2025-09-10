@@ -91,7 +91,8 @@ export const skillsData = {
     { name: "Management Consulting", level: 88, icon: "users-cog", description: "Organizational effectiveness consulting" },
     { name: "Digital Consulting", level: 87, icon: "wifi", description: "Digital transformation consulting" },
     { name: "Process Consulting", level: 82, icon: "workflow", description: "Business process improvement" },
-    { name: "Technology Advisory", level: 85, icon: "lightbulb", description: "Strategic technology guidance" }
+    { name: "Technology Advisory", level: 85, icon: "lightbulb", description: "Strategic technology guidance" },
+    { name: "Guidance and Counseling", level: 88, icon: "heart-handshake", description: "Peer counseling and guidance services for personal and professional development" }
   ]
 };
 // Individual skill arrays for import - Updated for new categories

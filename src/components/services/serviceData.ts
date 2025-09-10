@@ -94,6 +94,16 @@ export const businessManagementServices = [
     category: 'Business Management',
     price_range: '$2,500 - $18,000',
     features: ['Project Planning', 'Resource Management', 'Timeline Management', 'Quality Assurance']
+  },
+  {
+    id: 'guidance-counseling',
+    title: 'Guidance and Counseling Services',
+    description: 'Professional peer counseling and guidance services providing personalized support for personal development, career guidance, and life transitions.',
+    icon: 'heart-handshake',
+    category: 'Business Management',
+    featured: true,
+    price_range: '$800 - $5,000',
+    features: ['Peer Counseling', 'Career Guidance', 'Personal Development', 'Life Coaching']
   }
 ];
 
