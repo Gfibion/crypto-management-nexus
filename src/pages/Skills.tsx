@@ -2,9 +2,6 @@
 import { skillsData, categoryOrder } from "@/components/skills/skillsData";
 import SkillCategory from "@/components/skills/SkillCategory";
 import SkillsSummary from "@/components/skills/SkillsSummary";
-
-
-import ConsultationLinks from "@/components/services/ConsultationLinks";
 import SEOHead from "@/components/SEOHead";
 
 const Skills = () => {
@@ -67,14 +64,6 @@ const Skills = () => {
             Proven competencies across {sortedCategories.length} key domains: business management, financial strategy, 
             entrepreneurship, strategic planning, and cutting-edge technology solutions.
           </p>
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4 max-w-2xl mx-auto mb-8">
-            {sortedCategories.map((category) => (
-              <div key={category} className="text-center p-3 bg-slate-800/50 rounded-lg border border-purple-600/30">
-                <div className="text-lg font-bold text-white">{groupedSkills[category]?.length || 0}</div>
-                <div className="text-sm text-gray-300">{category}</div>
-              </div>
-            ))}
-          </div>
           <div className="w-24 h-1 bg-gradient-to-r from-purple-400 to-blue-400 mx-auto"></div>
         </div>
 
@@ -89,24 +78,8 @@ const Skills = () => {
           ))}
         </div>
 
-        {/* Skills Summary */}
+        {/* Skills Overview & Summary */}
         <SkillsSummary groupedSkills={groupedSkills} sortedCategories={sortedCategories} />
-
-        {/* Consultation Links Section */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-center text-white mb-8">
-            Leverage My Expertise
-          </h2>
-          <p className="text-gray-300 text-center mb-8 max-w-2xl mx-auto">
-            Ready to apply these skills to your business? Get personalized consultation 
-            tailored to your specific challenges and goals.
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            <ConsultationLinks serviceName="Business Consulting" />
-            <ConsultationLinks serviceName="Strategic Planning" />
-            <ConsultationLinks serviceName="Technology Solutions" />
-          </div>
-        </div>
 
       </div>
       </div>
