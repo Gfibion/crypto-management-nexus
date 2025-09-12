@@ -10,6 +10,7 @@
   "scope": "/",
   "lang": "en",
   "categories": ["business", "productivity", "professional"],
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/lovable-uploads/8b735fe1-3282-48d6-9daa-a0e5ecb43911.png",

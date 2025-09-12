@@ -1,8 +1,6 @@
-const CACHE_NAME = 'gfibion-jm-v1';
+const CACHE_NAME = 'gfibion-jm-v2';
 const urlsToCache = [
   '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
   '/manifest.json',
   '/lovable-uploads/8b735fe1-3282-48d6-9daa-a0e5ecb43911.png',
   '/lovable-uploads/e3e47c12-8857-4731-b46f-75afe5159159.png',
@@ -18,6 +16,10 @@ self.addEventListener('install', (event) => {
       .then((cache) => {
         console.log('Opened cache');
         return cache.addAll(urlsToCache);
+      })
+      .then(() => {
+        // Force the waiting service worker to become the active service worker
+        self.skipWaiting();
       })
   );
 });
@@ -78,6 +80,9 @@ self.addEventListener('activate', (event) => {
           }
         })
       );
+    }).then(() => {
+      // Take control of all clients
+      return self.clients.claim();
     })
   );
 });
