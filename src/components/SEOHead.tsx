@@ -46,10 +46,21 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     updateMetaTag('name', 'twitter:description', ogDescription || description);
     updateMetaTag('name', 'twitter:image', ogImage);
 
-    // Update canonical URL if provided
-    if (canonical) {
-      updateCanonicalTag(canonical);
+    // Update canonical URL automatically if not provided
+    const currentUrl = typeof window !== 'undefined'
+      ? window.location.origin + window.location.pathname + window.location.search
+      : (canonical || '');
+    const canonicalUrl = canonical || currentUrl;
+    if (canonicalUrl) {
+      updateCanonicalTag(canonicalUrl);
+      // Keep URL consistency across social tags
+      updateMetaTag('property', 'og:url', canonicalUrl);
+      updateMetaTag('name', 'twitter:url', canonicalUrl);
     }
+
+    // Robots directives
+    updateMetaTag('name', 'robots', 'index, follow');
+    updateMetaTag('name', 'googlebot', 'index, follow');
 
     // Add structured data if provided
     if (structuredData) {
