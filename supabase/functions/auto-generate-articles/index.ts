@@ -170,6 +170,24 @@ async function generateEnhancedArticle(newsItem: any, openAIApiKey: string) {
   // Extract featured image
   const featuredImage = await extractFeaturedImage(newsItem.link);
 
+  // Fallback path when no OpenAI key is configured
+  if (!openAIApiKey) {
+    const content = baseContent || `${newsItem.description || ''}`;
+    const read_time = estimateReadTime(content);
+    return {
+      title: newsItem.title,
+      content,
+      excerpt: (newsItem.description || content).slice(0, 150),
+      category: newsItem.industry,
+      tags: [newsItem.industry, 'market'],
+      read_time,
+      source_url: newsItem.link,
+      featured_image: featuredImage,
+      published: true,
+      featured: Math.random() > 0.7,
+    };
+  }
+
   const system = 'You are a business editor. Append concise, factual context and implications. Do NOT rewrite or change the original article. No fabrication.';
 
   const userPrompt = `We have an original article from ${newsItem.industry}.
@@ -198,7 +216,7 @@ Rules:
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4.1-2025-04-14',
+        model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: system },
           { role: 'user', content: userPrompt }
@@ -207,6 +225,11 @@ Rules:
         temperature: 0.5,
       }),
     });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`OpenAI API error: ${response.status} ${errText}`);
+    }
 
     const data = await response.json();
     const raw = data?.choices?.[0]?.message?.content || '{}';
@@ -273,9 +296,10 @@ serve(async (req) => {
   }
 
   try {
-    const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
-    if (!openAIApiKey) {
-      throw new Error('OpenAI API key not configured');
+    const openAIApiKey = Deno.env.get('OPENAI_API_KEY') ?? '';
+    const aiEnabled = Boolean(openAIApiKey);
+    if (!aiEnabled) {
+      console.log('OPENAI_API_KEY not configured. Proceeding with fallback generation (no AI).');
     }
 
     const supabaseClient = createClient(

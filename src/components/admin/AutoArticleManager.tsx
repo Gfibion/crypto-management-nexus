@@ -20,17 +20,22 @@ const AutoArticleManager: React.FC = () => {
       });
 
       if (error) throw error;
+      if (!data || (data as any).success === false) {
+        const errMsg = (data as any)?.error || 'Function returned an error';
+        throw new Error(errMsg);
+      }
 
+      const count = (data as any).articlesCreated ?? 0;
       toast({
         title: "Success",
-        description: `Generated ${data.articlesCreated} new articles successfully`,
+        description: `Generated ${count} new articles successfully`,
         duration: 5000,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating articles:', error);
       toast({
         title: "Error",
-        description: "Failed to generate articles. Please try again.",
+        description: error?.message ? `Failed to generate articles: ${error.message}` : "Failed to generate articles. Please try again.",
         variant: "destructive",
         duration: 5000,
       });
