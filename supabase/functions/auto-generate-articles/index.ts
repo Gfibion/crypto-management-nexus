@@ -103,6 +103,62 @@ async function generateEnhancedArticle(newsItem: any, openAIApiKey: string) {
     }
   }
 
+  // Helper: extract featured image from article URL
+  async function extractFeaturedImage(url: string): Promise<string> {
+    try {
+      if (!url) return '';
+      const res = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; SupabaseEdgeBot/1.0)'
+        }
+      });
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      if (!doc) return '';
+
+      // Check for Open Graph image first
+      const ogImage = doc.querySelector('meta[property="og:image"]')?.getAttribute('content');
+      if (ogImage && ogImage.startsWith('http')) return ogImage;
+
+      // Check for Twitter card image
+      const twitterImage = doc.querySelector('meta[name="twitter:image"]')?.getAttribute('content');
+      if (twitterImage && twitterImage.startsWith('http')) return twitterImage;
+
+      // Look for featured image in common selectors
+      const imageSelectors = [
+        'article img[src]',
+        '.featured-image img[src]',
+        '.post-thumbnail img[src]',
+        '.entry-image img[src]',
+        'header img[src]',
+        '.hero-image img[src]',
+        'main img[src]',
+        '.article-image img[src]',
+        '.story-image img[src]'
+      ];
+
+      for (const selector of imageSelectors) {
+        const img = doc.querySelector(selector);
+        if (img) {
+          const src = img.getAttribute('src');
+          if (src) {
+            // Convert relative URLs to absolute
+            const imageUrl = src.startsWith('http') ? src : new URL(src, url).href;
+            // Basic validation: check if it looks like an image URL
+            if (/\.(jpg|jpeg|png|webp|gif)(\?.*)?$/i.test(imageUrl)) {
+              return imageUrl;
+            }
+          }
+        }
+      }
+
+      return '';
+    } catch (error) {
+      console.error('extractFeaturedImage error:', error);
+      return '';
+    }
+  }
+
   function estimateReadTime(text: string) {
     const words = (text.match(/\b\w+\b/g) || []).length;
     return Math.max(1, Math.ceil(words / 200));
@@ -110,6 +166,9 @@ async function generateEnhancedArticle(newsItem: any, openAIApiKey: string) {
 
   const originalText = (await extractArticleText(newsItem.link)) || (newsItem.description || '');
   const baseContent = originalText.trim();
+  
+  // Extract featured image
+  const featuredImage = await extractFeaturedImage(newsItem.link);
 
   const system = 'You are a business editor. Append concise, factual context and implications. Do NOT rewrite or change the original article. No fabrication.';
 
@@ -178,6 +237,7 @@ Rules:
       tags: Array.isArray(articleData.tags) ? articleData.tags : [newsItem.industry],
       read_time,
       source_url: newsItem.link,
+      featured_image: featuredImage,
       published: true,
       featured: Math.random() > 0.7,
     };
@@ -254,6 +314,7 @@ serve(async (req) => {
             published: enhancedArticle.published,
             featured: enhancedArticle.featured,
             source_url: enhancedArticle.source_url,
+            featured_image: enhancedArticle.featured_image,
           })
           .select()
           .single();

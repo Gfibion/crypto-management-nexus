@@ -24,7 +24,20 @@ const ArticleCard: React.FC<ArticleCardProps> = ({ article, onRead, showFullCont
   };
 
   return (
-    <Card className="bg-slate-800/50 border-purple-800/30 hover:border-purple-600/50 transition-all duration-300 hover:transform hover:scale-105">
+    <Card className="bg-slate-800/50 border-purple-800/30 hover:border-purple-600/50 transition-all duration-300 hover:transform hover:scale-105 overflow-hidden">
+      {article.featured_image && (
+        <div className="relative w-full h-48 sm:h-56 md:h-64 overflow-hidden">
+          <img 
+            src={article.featured_image} 
+            alt={article.title}
+            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-800/80 to-transparent"></div>
+        </div>
+      )}
       <CardHeader>
         <div className="flex items-start justify-between gap-2 mb-2">
           <CardTitle className="text-lg text-white line-clamp-2">
