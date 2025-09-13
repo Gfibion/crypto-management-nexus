@@ -55,8 +55,7 @@ const TestimonialForm = () => {
           name: user.email?.split('@')[0] || 'Anonymous',
           email: user.email || '',
           subject: `${formData.category} - ${formData.title} (Rating: ${formData.rating}/5)`,
-          message: `${formData.message}\n\n--- Additional Feedback ---\nSuggestions: ${formData.suggestions || 'None provided'}`,
-          type: 'testimonial'
+          message: `${formData.message}\n\n--- Additional Feedback ---\nSuggestions: ${formData.suggestions || 'None provided'}`
         });
 
       if (error) throw error;
