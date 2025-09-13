@@ -1,5 +1,6 @@
 
-import React, { useState, useEffect, useContext, createContext } from "react";
+import * as React from "react";
+import { useState, useEffect, useContext, createContext } from "react";
 
 type Theme = "dark" | "light";
 
@@ -27,6 +28,12 @@ export function ThemeProvider({
   storageKey = "vite-ui-theme",
   ...props
 }: ThemeProviderProps) {
+  // Add error boundary for useState
+  if (typeof useState !== 'function') {
+    console.error('React hooks not available');
+    return React.createElement('div', { className: 'min-h-screen bg-slate-900 text-white' }, children);
+  }
+
   const [theme, setTheme] = useState<Theme>(defaultTheme);
 
   useEffect(() => {
@@ -61,7 +68,9 @@ export function ThemeProvider({
 
   return (
     <ThemeProviderContext.Provider value={value}>
-      {children}
+      <div className={theme}>
+        {children}
+      </div>
     </ThemeProviderContext.Provider>
   );
 }
