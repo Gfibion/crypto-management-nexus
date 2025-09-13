@@ -9,33 +9,42 @@ const corsHeaders = {
 
 interface NewsSource {
   name: string;
-  url: string;
+  urls: string[];
   industry: string;
 }
 
 const newsSources: NewsSource[] = [
-  { name: 'TechCrunch', url: 'https://techcrunch.com/feed/', industry: 'Technology' },
-  { name: 'Google Finance', url: 'https://news.google.com/rss/search?q=finance&hl=en-US&gl=US&ceid=US:en', industry: 'Finance' },
-  { name: 'Yahoo Finance', url: 'https://feeds.finance.yahoo.com/rss/2.0/headline', industry: 'Business' }
+  { name: 'TechCrunch', urls: ['https://techcrunch.com/feed/'], industry: 'Technology' },
+  { name: 'Google Finance', urls: ['https://news.google.com/rss/search?q=finance&hl=en-US&gl=US&ceid=US:en'], industry: 'Finance' },
+  { name: 'Yahoo Finance', urls: ['https://finance.yahoo.com/news/rssindex','https://finance.yahoo.com/rss/','https://feeds.finance.yahoo.com/rss/2.0/headline?s=^GSPC','https://feeds.finance.yahoo.com/rss/2.0/headline?s=AAPL'], industry: 'Business' }
 ];
 
 async function fetchLatestNews(source: NewsSource) {
   try {
-    console.log(`Fetching news from ${source.name}...`);
-    const response = await fetch(source.url);
-    const xmlText = await response.text();
-    
-    // Parse RSS feed to extract latest article
-    const titleMatch = xmlText.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/);
-    const linkMatch = xmlText.match(/<link>(.*?)<\/link>/);
-    const descMatch = xmlText.match(/<description><!\[CDATA\[(.*?)\]\]><\/description>/);
-    
-    return {
-      title: titleMatch ? titleMatch[1] : `Latest ${source.industry} News`,
-      link: linkMatch ? linkMatch[1] : '',
-      description: descMatch ? descMatch[1] : '',
-      industry: source.industry
-    };
+    for (const url of source.urls) {
+      console.log(`Fetching RSS from ${source.name}: ${url}`);
+      const response = await fetch(url);
+      const xmlText = await response.text();
+      const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+      if (!doc) continue;
+
+      const items = Array.from(doc.getElementsByTagName('item'));
+      if (items.length === 0) continue;
+
+      const sorted = items
+        .map((item) => ({
+          title: item.getElementsByTagName('title')[0]?.textContent?.trim() || `Latest ${source.industry} News`,
+          link: item.getElementsByTagName('link')[0]?.textContent?.trim() || '',
+          description: item.getElementsByTagName('description')[0]?.textContent?.trim() || '',
+          pubDate: new Date(item.getElementsByTagName('pubDate')[0]?.textContent || Date.now()),
+          industry: source.industry,
+        }))
+        .sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
+
+      if (sorted[0]) return sorted[0];
+    }
+
+    throw new Error(`No items found for ${source.name}`);
   } catch (error) {
     console.error(`Error fetching from ${source.name}:`, error);
     return {
@@ -48,29 +57,79 @@ async function fetchLatestNews(source: NewsSource) {
 }
 
 async function generateEnhancedArticle(newsItem: any, openAIApiKey: string) {
-  const prompt = `
-Based on this news item from ${newsItem.industry}, create a comprehensive article:
+  // Helper: extract readable text from an article URL
+  async function extractArticleText(url: string): Promise<string> {
+    try {
+      if (!url) return '';
+      const res = await fetch(url, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; SupabaseEdgeBot/1.0)'
+        }
+      });
+      const html = await res.text();
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      if (!doc) return '';
+
+      const candidates = [
+        'article',
+        'main article',
+        'main .article-content',
+        '.post-content',
+        '.entry-content',
+        '#main-content',
+        'main',
+        '.StoryBody',
+        '.caas-body'
+      ];
+
+      for (const sel of candidates) {
+        const el = doc.querySelector(sel);
+        if (el && (el.textContent || '').trim().length > 300) {
+          const paragraphs = Array.from(el.querySelectorAll('p'))
+            .map(p => p.textContent?.trim() || '')
+            .filter(Boolean);
+          if (paragraphs.length > 0) return paragraphs.join('\n\n');
+        }
+      }
+
+      // Fallback: use all paragraphs
+      const paras = Array.from(doc.querySelectorAll('p'))
+        .map(p => p.textContent?.trim() || '')
+        .filter(t => t.length > 0);
+      return paras.join('\n\n');
+    } catch (error) {
+      console.error('extractArticleText error:', error);
+      return '';
+    }
+  }
+
+  function estimateReadTime(text: string) {
+    const words = (text.match(/\b\w+\b/g) || []).length;
+    return Math.max(1, Math.ceil(words / 200));
+  }
+
+  const originalText = (await extractArticleText(newsItem.link)) || (newsItem.description || '');
+  const baseContent = originalText.trim();
+
+  const system = 'You are a business editor. Append concise, factual context and implications. Do NOT rewrite or change the original article. No fabrication.';
+
+  const userPrompt = `We have an original article from ${newsItem.industry}.
 Title: ${newsItem.title}
-Description: ${newsItem.description}
-Industry: ${newsItem.industry}
+Original content (do not change, for context only): """${baseContent.slice(0, 8000)}"""
 
-Please create a detailed, professional article (800-1200 words) that:
-1. Expands on the original content with industry context
-2. Adds relevant market analysis and implications
-3. Includes potential future trends and considerations
-4. Maintains journalistic integrity and factual accuracy
-5. Uses engaging, professional tone suitable for business readers
-
-Format the response as JSON:
+Task: Produce JSON ONLY with keys:
 {
-  "title": "Enhanced article title",
-  "content": "Full article content with proper paragraphs",
-  "excerpt": "Brief summary (150 characters max)",
+  "title": "${newsItem.title}",
+  "content": "Additional context, analysis, and industry implications to append after the original content. 4-6 short paragraphs.",
+  "excerpt": "A brief summary under 150 characters highlighting the news and context.",
   "category": "${newsItem.industry}",
-  "tags": ["relevant", "tags", "array"],
-  "read_time": estimated_minutes
+  "tags": ["${newsItem.industry}", "market", "insight"],
+  "read_time": 0
 }
-`;
+
+Rules:
+- Return ONLY valid JSON (no backticks, no text before/after).
+- Keep neutral, journalistic tone.`;
 
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -82,28 +141,45 @@ Format the response as JSON:
       body: JSON.stringify({
         model: 'gpt-4.1-2025-04-14',
         messages: [
-          {
-            role: 'system',
-            content: 'You are a professional business journalist. Create comprehensive, well-researched articles based on news items.'
-          },
-          {
-            role: 'user',
-            content: prompt
-          }
+          { role: 'system', content: system },
+          { role: 'user', content: userPrompt }
         ],
-        max_tokens: 2000,
-        temperature: 0.7,
+        max_tokens: 1500,
+        temperature: 0.5,
       }),
     });
 
     const data = await response.json();
-    const articleData = JSON.parse(data.choices[0].message.content);
-    
+    const raw = data?.choices?.[0]?.message?.content || '{}';
+
+    let articleData: any;
+    try {
+      articleData = JSON.parse(raw);
+    } catch (_) {
+      const jsonSlice = raw.substring(raw.indexOf('{'), raw.lastIndexOf('}') + 1);
+      articleData = JSON.parse(jsonSlice);
+    }
+
+    const addedContext = (articleData.content || '').trim();
+    const combinedContent = baseContent
+      ? `${baseContent}\n\n---\n\n${addedContext}`
+      : addedContext;
+
+    const read_time = articleData.read_time && Number(articleData.read_time) > 0
+      ? Number(articleData.read_time)
+      : estimateReadTime(combinedContent);
+
     return {
       ...articleData,
+      title: articleData.title || newsItem.title,
+      content: combinedContent,
+      excerpt: (articleData.excerpt || newsItem.description || '').slice(0, 150),
+      category: articleData.category || newsItem.industry,
+      tags: Array.isArray(articleData.tags) ? articleData.tags : [newsItem.industry],
+      read_time,
       source_url: newsItem.link,
       published: true,
-      featured: Math.random() > 0.7, // 30% chance of being featured
+      featured: Math.random() > 0.7,
     };
   } catch (error) {
     console.error('Error generating article:', error);
