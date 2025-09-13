@@ -1,6 +1,5 @@
 
-import * as React from "react";
-import { useState, useEffect, useContext, createContext } from "react";
+import React from "react";
 
 type Theme = "dark" | "light";
 
@@ -20,7 +19,7 @@ const initialState: ThemeProviderState = {
   setTheme: () => null,
 };
 
-const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
+const ThemeProviderContext = React.createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
@@ -29,14 +28,14 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   // Add error boundary for useState
-  if (typeof useState !== 'function') {
+  if (typeof React.useState !== 'function') {
     console.error('React hooks not available');
     return React.createElement('div', { className: 'min-h-screen bg-slate-900 text-white' }, children);
   }
 
-  const [theme, setTheme] = useState<Theme>(defaultTheme);
+  const [theme, setTheme] = React.useState<Theme>(defaultTheme);
 
-  useEffect(() => {
+  React.useEffect(() => {
     try {
       const storedTheme = localStorage.getItem(storageKey) as Theme;
       if (storedTheme && (storedTheme === "dark" || storedTheme === "light")) {
@@ -47,7 +46,7 @@ export function ThemeProvider({
     }
   }, [storageKey]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
     root.classList.add(theme);
@@ -76,7 +75,7 @@ export function ThemeProvider({
 }
 
 export const useTheme = () => {
-  const context = useContext(ThemeProviderContext);
+  const context = React.useContext(ThemeProviderContext);
 
   if (context === undefined)
     throw new Error("useTheme must be used within a ThemeProvider");
