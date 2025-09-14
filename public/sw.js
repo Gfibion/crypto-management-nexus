@@ -24,8 +24,13 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Fetch event - serve cached content when offline
+// Fetch event - serve cached content when offline (GET requests only)
 self.addEventListener('fetch', (event) => {
+  // Do not intercept non-GET requests to avoid breaking API/Edge Function calls
+  if (event.request.method !== 'GET') {
+    return; // let the browser handle POST/PUT/etc normally
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then((response) => {

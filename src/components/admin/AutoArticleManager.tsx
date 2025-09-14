@@ -15,8 +15,10 @@ const AutoArticleManager: React.FC = () => {
   const handleGenerateArticles = async () => {
     setIsGenerating(true);
     try {
+      // 1) Try the official Supabase client first
       const { data, error } = await supabase.functions.invoke('auto-generate-articles', {
-        body: {}
+        body: {},
+        headers: { 'Content-Type': 'application/json' },
       });
 
       if (error) throw error;
@@ -31,14 +33,54 @@ const AutoArticleManager: React.FC = () => {
         description: `Generated ${count} new articles successfully`,
         duration: 5000,
       });
-    } catch (error: any) {
-      console.error('Error generating articles:', error);
-      toast({
-        title: "Error",
-        description: error?.message ? `Failed to generate articles: ${error.message}` : "Failed to generate articles. Please try again.",
-        variant: "destructive",
-        duration: 5000,
-      });
+    } catch (primaryError: any) {
+      console.warn('Supabase SDK invoke failed, attempting direct fetch fallback:', primaryError);
+
+      // 2) Fallback: direct fetch to Edge Function with explicit headers and timeout
+      try {
+        const SUPABASE_URL = 'https://plnoqiktsyqwcwzlueri.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsbm9xaWt0c3lxd2N3emx1ZXJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4OTIzNzQsImV4cCI6MjA2NTQ2ODM3NH0.s4K-4IorBrQmjcHOqYj1qjaHyjoYMPRQKksdobQ-Cw0';
+
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData?.session?.access_token || SUPABASE_ANON_KEY;
+
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 60000);
+
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/auto-generate-articles`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+            'apikey': SUPABASE_ANON_KEY,
+            'x-client-info': 'lovable-app',
+          },
+          body: JSON.stringify({}),
+          signal: controller.signal,
+        });
+        clearTimeout(timeout);
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`HTTP ${res.status}: ${text}`);
+        }
+
+        const json = await res.json();
+        const count = json.articlesCreated ?? 0;
+        toast({
+          title: 'Success',
+          description: `Generated ${count} new articles successfully`,
+          duration: 5000,
+        });
+      } catch (fallbackError: any) {
+        console.error('Direct fetch fallback failed:', fallbackError);
+        toast({
+          title: "Error",
+          description: fallbackError?.message ? `Failed to generate articles: ${fallbackError.message}` : "Failed to generate articles. Please try again.",
+          variant: "destructive",
+          duration: 5000,
+        });
+      }
     } finally {
       setIsGenerating(false);
     }
