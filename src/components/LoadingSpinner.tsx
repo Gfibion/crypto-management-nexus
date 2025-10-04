@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { getMediaAsset } from '@/config/mediaAssets';
 
 interface LoadingSpinnerProps {
   message?: string;
@@ -10,6 +11,8 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   message = "Loading...", 
   size = 'md' 
 }) => {
+  const logoAsset = getMediaAsset('logo_main');
+  
   const sizeClasses = {
     sm: 'w-12 h-12',
     md: 'w-20 h-20',
@@ -29,13 +32,15 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
         <div className={`${sizeClasses[size]} rounded-full border-4 border-gray-600 border-t-green-500 animate-spin`}></div>
         
         {/* Gfibion Genesis logo in the center */}
-        <div className={`absolute inset-0 flex items-center justify-center`}>
-          <img 
-            src="/lovable-uploads/91d89c08-ff38-450a-b2a5-543fb578f2d3.png" 
-            alt="Gfibion Genesis - Venturing half future life" 
-            className={`${size === 'sm' ? 'w-8 h-8' : size === 'md' ? 'w-12 h-12' : 'w-20 h-20'} rounded-full object-cover`}
-          />
-        </div>
+        {logoAsset && (
+          <div className={`absolute inset-0 flex items-center justify-center`}>
+            <img 
+              src={logoAsset.url} 
+              alt={logoAsset.alt} 
+              className={`${size === 'sm' ? 'w-8 h-8' : size === 'md' ? 'w-12 h-12' : 'w-20 h-20'} rounded-full object-cover`}
+            />
+          </div>
+        )}
       </div>
       
       {/* Loading text */}

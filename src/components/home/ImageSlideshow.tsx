@@ -2,33 +2,18 @@
 import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { ChevronLeft, ChevronRight, Play, Pause } from "lucide-react";
+import { getSlides } from "@/config/mediaAssets";
 
 const ImageSlideshow = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
 
-  const slides = [
-    {
-      image: "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-      title: "Strategic Business Management",
-      description: "Fresh perspective on modern business solutions and strategic thinking"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-      title: "Technology Integration",
-      description: "Bridging traditional business with cutting-edge technology solutions"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-      title: "Digital Innovation",
-      description: "Leveraging emerging technologies for business transformation"
-    },
-    {
-      image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-      title: "Professional Development",
-      description: "Continuous learning and adaptation in the evolving business landscape"
-    }
-  ];
+  const slidesData = getSlides();
+  const slides = slidesData.map(asset => ({
+    image: asset.url,
+    title: asset.metadata?.title || asset.alt,
+    description: asset.metadata?.description || ''
+  }));
 
   useEffect(() => {
     if (!isPlaying) return;

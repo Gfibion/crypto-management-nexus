@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { getMediaAsset } from '@/config/mediaAssets';
 
 interface SEOHeadProps {
   title?: string;
@@ -20,11 +21,14 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   canonical,
   ogTitle,
   ogDescription,
-  ogImage = "/lovable-uploads/8b735fe1-3282-48d6-9daa-a0e5ecb43911.png",
+  ogImage,
   ogType = "website",
   twitterCard = "summary_large_image",
   structuredData
 }) => {
+  const defaultOgImage = getMediaAsset('icon_pwa');
+  const finalOgImage = ogImage || defaultOgImage?.url || '/lovable-uploads/8b735fe1-3282-48d6-9daa-a0e5ecb43911.png';
+  
   useEffect(() => {
     // Update page title
     document.title = title;
@@ -37,14 +41,14 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     // Update Open Graph tags
     updateMetaTag('property', 'og:title', ogTitle || title);
     updateMetaTag('property', 'og:description', ogDescription || description);
-    updateMetaTag('property', 'og:image', ogImage);
+    updateMetaTag('property', 'og:image', finalOgImage);
     updateMetaTag('property', 'og:type', ogType);
     
     // Update Twitter tags
     updateMetaTag('name', 'twitter:card', twitterCard);
     updateMetaTag('name', 'twitter:title', ogTitle || title);
     updateMetaTag('name', 'twitter:description', ogDescription || description);
-    updateMetaTag('name', 'twitter:image', ogImage);
+    updateMetaTag('name', 'twitter:image', finalOgImage);
 
     // Update canonical URL automatically if not provided
     const currentUrl = typeof window !== 'undefined'
@@ -66,7 +70,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     if (structuredData) {
       updateStructuredData(structuredData);
     }
-  }, [title, description, keywords, canonical, ogTitle, ogDescription, ogImage, ogType, twitterCard, structuredData]);
+  }, [title, description, keywords, canonical, ogTitle, ogDescription, finalOgImage, ogType, twitterCard, structuredData]);
 
   const updateMetaTag = (attribute: string, name: string, content: string) => {
     let element = document.querySelector(`meta[${attribute}="${name}"]`);
