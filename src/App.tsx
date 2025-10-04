@@ -13,7 +13,6 @@ import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
-import Skills from "./pages/Skills";
 import Education from "./pages/Education";
 import Articles from "./pages/Articles";
 import ArticleReader from "./pages/ArticleReader";
@@ -57,7 +56,6 @@ const App = () => {
                 <Route path="/" element={<Index />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/services" element={<Services />} />
-                <Route path="/skills" element={<Skills />} />
                 <Route path="/education" element={<Education />} />
                 <Route path="/articles" element={<Articles />} />
                 <Route path="/articles/:slug" element={<ArticleReader />} />
