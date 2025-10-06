@@ -11,6 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { ArrowLeft, Save } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import ImageUpload from '@/components/ImageUpload';
 
 interface ArticleFormProps {
   article?: any;
@@ -31,6 +32,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onClose, onSuccess }
     featured: false,
     published: false,
     read_time: '',
+    featured_image: '',
   });
 
   useEffect(() => {
@@ -44,6 +46,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onClose, onSuccess }
         featured: article.featured || false,
         published: article.published || false,
         read_time: article.read_time?.toString() || '',
+        featured_image: article.featured_image || '',
       });
     }
   }, [article]);
@@ -64,6 +67,7 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onClose, onSuccess }
         featured: data.featured,
         published: data.published,
         read_time: data.read_time ? parseInt(data.read_time) : null,
+        featured_image: data.featured_image || null,
         slug,
         author_id: user?.id,
       };
@@ -223,6 +227,21 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onClose, onSuccess }
                   </div>
                 </div>
               </div>
+            </div>
+
+            <div>
+              <Label className="text-white">Featured Image</Label>
+              <ImageUpload
+                bucket="article-images"
+                currentImageUrl={formData.featured_image}
+                onImageUpdate={(url) => handleInputChange('featured_image', url)}
+                onImageRemove={() => handleInputChange('featured_image', '')}
+                path="articles/"
+                className="mt-2"
+              />
+              <p className="text-sm text-gray-400 mt-2">
+                Upload a featured image for your article (like TechCrunch style)
+              </p>
             </div>
 
             <div>
