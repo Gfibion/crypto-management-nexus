@@ -23,27 +23,39 @@ const newsSources: NewsSource[] = [
 
 async function fetchLatestNews(source: NewsSource) {
   try {
+    const fetchWithTimeout = async (u: string, ms = 15000) => {
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), ms);
+      try { return await fetch(u, { signal: controller.signal }); }
+      finally { clearTimeout(t); }
+    };
+
     for (const url of source.urls) {
-      console.log(`Fetching RSS from ${source.name}: ${url}`);
-      const response = await fetch(url);
-      const xmlText = await response.text();
-      const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
-      if (!doc) continue;
+      try {
+        console.log(`Fetching RSS from ${source.name}: ${url}`);
+        const response = await fetchWithTimeout(url);
+        const xml = await response.text();
 
-      const items = Array.from(doc.getElementsByTagName('item'));
-      if (items.length === 0) continue;
+        // Minimal RSS parsing without DOMParser
+        const itemRegex = /<item>[\s\S]*?<\/item>/gi;
+        const items = Array.from(xml.matchAll(itemRegex)).map(m => m[0]);
+        if (items.length === 0) continue;
 
-      const sorted = items
-        .map((item) => ({
-          title: item.getElementsByTagName('title')[0]?.textContent?.trim() || `Latest ${source.industry} News`,
-          link: item.getElementsByTagName('link')[0]?.textContent?.trim() || '',
-          description: item.getElementsByTagName('description')[0]?.textContent?.trim() || '',
-          pubDate: new Date(item.getElementsByTagName('pubDate')[0]?.textContent || Date.now()),
-          industry: source.industry,
-        }))
-        .sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
+        const parse = (itemXml: string) => {
+          const get = (tag: string) => (itemXml.match(new RegExp(`<${tag}>([\\s\\S]*?)<\/${tag}>`, 'i'))?.[1] || '').replace(/<!\[CDATA\[(.*?)\]\]>/gs, '$1').trim();
+          const title = get('title') || `Latest ${source.industry} News`;
+          const link = get('link');
+          const description = get('description');
+          const pub = get('pubDate');
+          return { title, link, description, pubDate: pub ? new Date(pub) : new Date(), industry: source.industry };
+        };
 
-      if (sorted[0]) return sorted[0];
+        const parsed = items.map(parse).sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
+        if (parsed[0]) return parsed[0];
+      } catch (e) {
+        console.warn(`RSS fetch/parse failed for ${url}:`, e);
+        continue;
+      }
     }
 
     throw new Error(`No items found for ${source.name}`);
@@ -59,106 +71,74 @@ async function fetchLatestNews(source: NewsSource) {
 }
 
 async function generateEnhancedArticle(newsItem: any, openAIApiKey: string) {
-  // Helper: extract readable text from an article URL
-  async function extractArticleText(url: string): Promise<string> {
+  // Helper: fetch with timeout
+  async function fetchText(url: string, ms = 15000): Promise<string> {
     try {
       if (!url) return '';
-      const res = await fetch(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; SupabaseEdgeBot/1.0)'
-        }
-      });
-      const html = await res.text();
-      const doc = new DOMParser().parseFromString(html, 'text/html');
-      if (!doc) return '';
-
-      const candidates = [
-        'article',
-        'main article',
-        'main .article-content',
-        '.post-content',
-        '.entry-content',
-        '#main-content',
-        'main',
-        '.StoryBody',
-        '.caas-body'
-      ];
-
-      for (const sel of candidates) {
-        const el = doc.querySelector(sel);
-        if (el && (el.textContent || '').trim().length > 300) {
-          const paragraphs = Array.from(el.querySelectorAll('p'))
-            .map(p => p.textContent?.trim() || '')
-            .filter(Boolean);
-          if (paragraphs.length > 0) return paragraphs.join('\n\n');
-        }
+      const controller = new AbortController();
+      const t = setTimeout(() => controller.abort(), ms);
+      try {
+        const res = await fetch(url, {
+          headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SupabaseEdgeBot/1.0)' },
+          signal: controller.signal,
+        });
+        return await res.text();
+      } finally {
+        clearTimeout(t);
       }
-
-      // Fallback: use all paragraphs
-      const paras = Array.from(doc.querySelectorAll('p'))
-        .map(p => p.textContent?.trim() || '')
-        .filter(t => t.length > 0);
-      return paras.join('\n\n');
-    } catch (error) {
-      console.error('extractArticleText error:', error);
+    } catch (e) {
+      console.error('fetchText error:', e);
       return '';
     }
   }
 
-  // Helper: extract featured image from article URL
-  async function extractFeaturedImage(url: string): Promise<string> {
-    try {
-      if (!url) return '';
-      const res = await fetch(url, {
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; SupabaseEdgeBot/1.0)'
-        }
-      });
-      const html = await res.text();
-      const doc = new DOMParser().parseFromString(html, 'text/html');
-      if (!doc) return '';
-
-      // Check for Open Graph image first
-      const ogImage = doc.querySelector('meta[property="og:image"]')?.getAttribute('content');
-      if (ogImage && ogImage.startsWith('http')) return ogImage;
-
-      // Check for Twitter card image
-      const twitterImage = doc.querySelector('meta[name="twitter:image"]')?.getAttribute('content');
-      if (twitterImage && twitterImage.startsWith('http')) return twitterImage;
-
-      // Look for featured image in common selectors
-      const imageSelectors = [
-        'article img[src]',
-        '.featured-image img[src]',
-        '.post-thumbnail img[src]',
-        '.entry-image img[src]',
-        'header img[src]',
-        '.hero-image img[src]',
-        'main img[src]',
-        '.article-image img[src]',
-        '.story-image img[src]'
-      ];
-
-      for (const selector of imageSelectors) {
-        const img = doc.querySelector(selector);
-        if (img) {
-          const src = img.getAttribute('src');
-          if (src) {
-            // Convert relative URLs to absolute
-            const imageUrl = src.startsWith('http') ? src : new URL(src, url).href;
-            // Basic validation: check if it looks like an image URL
-            if (/\.(jpg|jpeg|png|webp|gif)(\?.*)?$/i.test(imageUrl)) {
-              return imageUrl;
-            }
-          }
-        }
-      }
-
-      return '';
-    } catch (error) {
-      console.error('extractFeaturedImage error:', error);
-      return '';
+  // Helper: extract readable text from an article URL (no DOMParser)
+  async function extractArticleText(url: string): Promise<string> {
+    const html = await fetchText(url);
+    if (!html) return '';
+    // Prefer content inside known wrappers by regex
+    const wrappers = [
+      /<article[\s\S]*?>([\s\S]*?)<\/article>/i,
+      /<main[\s\S]*?>([\s\S]*?)<\/main>/i,
+      /<div[^>]+class=["'][^"']*(article-content|entry-content|post-content|StoryBody|caas-body)[^"']*["'][\s\S]*?>([\s\S]*?)<\/div>/i,
+    ];
+    let section = '';
+    for (const rx of wrappers) {
+      const m = html.match(rx);
+      if (m) { section = (m[1] || m[2] || '').trim(); if (section.length > 300) break; }
     }
+    const source = section || html;
+    const paragraphs = Array.from(source.matchAll(/<p[\s\S]*?>([\s\S]*?)<\/p>/gi))
+      .map(m => m[1]
+        .replace(/<[^>]+>/g, ' ')
+        .replace(/&nbsp;/g, ' ')
+        .replace(/&amp;/g, '&')
+        .replace(/&quot;/g, '"')
+        .trim())
+      .filter(Boolean);
+    return paragraphs.join('\n\n');
+  }
+
+  // Helper: extract featured image from article URL (no DOMParser)
+  async function extractFeaturedImage(url: string): Promise<string> {
+    const html = await fetchText(url);
+    if (!html) return '';
+
+    const abs = (src: string) => {
+      try { return src.startsWith('http') ? src : new URL(src, url).href; }
+      catch { return src; }
+    };
+
+    const og = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["'][^>]*>/i)?.[1];
+    if (og) return abs(og);
+
+    const tw = html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["'][^>]*>/i)?.[1];
+    if (tw) return abs(tw);
+
+    const img = html.match(/<img[^>]+src=["']([^"']+\.(?:jpg|jpeg|png|webp|gif)(?:\?[^"']*)?)["'][^>]*>/i)?.[1];
+    if (img) return abs(img);
+
+    return '';
   }
 
   function estimateReadTime(text: string) {
