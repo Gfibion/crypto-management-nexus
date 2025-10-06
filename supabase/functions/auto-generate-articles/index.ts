@@ -11,186 +11,152 @@ const corsHeaders = {
 
 interface NewsSource {
   name: string;
-  urls: string[];
+  url: string;
   industry: string;
 }
 
+// Simplified news sources with working RSS feeds
 const newsSources: NewsSource[] = [
-  { name: 'TechCrunch', urls: ['https://techcrunch.com/feed/'], industry: 'Technology' },
-  { name: 'Google Finance', urls: ['https://news.google.com/rss/search?q=finance&hl=en-US&gl=US&ceid=US:en'], industry: 'Finance' },
-  { name: 'Yahoo Finance', urls: ['https://finance.yahoo.com/news/rssindex','https://finance.yahoo.com/rss/','https://feeds.finance.yahoo.com/rss/2.0/headline?s=^GSPC','https://feeds.finance.yahoo.com/rss/2.0/headline?s=AAPL'], industry: 'Business' }
+  { name: 'TechCrunch', url: 'https://techcrunch.com/feed/', industry: 'Technology' },
+  { name: 'Reuters Business', url: 'https://www.reutersagency.com/feed/?taxonomy=best-topics&post_type=best', industry: 'Business' },
+  { name: 'BBC Business', url: 'http://feeds.bbci.co.uk/news/business/rss.xml', industry: 'Finance' }
 ];
 
-async function fetchLatestNews(source: NewsSource) {
+interface NewsItem {
+  title: string;
+  link: string;
+  description: string;
+  industry: string;
+  pubDate?: Date;
+}
+
+async function fetchLatestNews(source: NewsSource): Promise<NewsItem> {
+  console.log(`[${source.name}] Starting fetch from: ${source.url}`);
+  
   try {
-    const fetchWithTimeout = async (u: string, ms = 15000) => {
-      const controller = new AbortController();
-      const t = setTimeout(() => controller.abort(), ms);
-      try { return await fetch(u, { signal: controller.signal }); }
-      finally { clearTimeout(t); }
-    };
-
-    for (const url of source.urls) {
-      try {
-        console.log(`Fetching RSS from ${source.name}: ${url}`);
-        const response = await fetchWithTimeout(url);
-        const xml = await response.text();
-
-        // Minimal RSS parsing without DOMParser
-        const itemRegex = /<item>[\s\S]*?<\/item>/gi;
-        const items = Array.from(xml.matchAll(itemRegex)).map(m => m[0]);
-        if (items.length === 0) continue;
-
-        const parse = (itemXml: string) => {
-          const get = (tag: string) => (itemXml.match(new RegExp(`<${tag}>([\\s\\S]*?)<\/${tag}>`, 'i'))?.[1] || '').replace(/<!\[CDATA\[(.*?)\]\]>/gs, '$1').trim();
-          const title = get('title') || `Latest ${source.industry} News`;
-          const link = get('link');
-          const description = get('description');
-          const pub = get('pubDate');
-          return { title, link, description, pubDate: pub ? new Date(pub) : new Date(), industry: source.industry };
-        };
-
-        const parsed = items.map(parse).sort((a, b) => b.pubDate.getTime() - a.pubDate.getTime());
-        if (parsed[0]) return parsed[0];
-      } catch (e) {
-        console.warn(`RSS fetch/parse failed for ${url}:`, e);
-        continue;
-      }
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    
+    const response = await fetch(source.url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; ArticleBot/1.0)',
+        'Accept': 'application/rss+xml, application/xml, text/xml, */*'
+      },
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-
-    throw new Error(`No items found for ${source.name}`);
-  } catch (error) {
-    console.error(`Error fetching from ${source.name}:`, error);
+    
+    const xmlText = await response.text();
+    console.log(`[${source.name}] RSS feed fetched, length: ${xmlText.length}`);
+    
+    // Extract items from RSS feed
+    const itemMatches = xmlText.match(/<item>([\s\S]*?)<\/item>/gi);
+    
+    if (!itemMatches || itemMatches.length === 0) {
+      throw new Error('No items found in RSS feed');
+    }
+    
+    console.log(`[${source.name}] Found ${itemMatches.length} items`);
+    
+    // Parse first item
+    const firstItem = itemMatches[0];
+    
+    const extractTag = (xml: string, tag: string): string => {
+      const cdataMatch = xml.match(new RegExp(`<${tag}[^>]*><!\\[CDATA\\[([\\s\\S]*?)\\]\\]><\/${tag}>`, 'i'));
+      if (cdataMatch) return cdataMatch[1].trim();
+      
+      const regularMatch = xml.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\/${tag}>`, 'i'));
+      if (regularMatch) return regularMatch[1].replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').trim();
+      
+      return '';
+    };
+    
+    const title = extractTag(firstItem, 'title') || `Latest ${source.industry} News`;
+    const link = extractTag(firstItem, 'link') || extractTag(firstItem, 'guid') || '';
+    const description = extractTag(firstItem, 'description') || extractTag(firstItem, 'summary') || '';
+    const pubDateStr = extractTag(firstItem, 'pubDate') || extractTag(firstItem, 'published');
+    
+    console.log(`[${source.name}] Parsed article: "${title.slice(0, 50)}..."`);
+    
     return {
-      title: `${source.industry} Market Update`,
+      title,
+      link: link.trim(),
+      description: description.replace(/<[^>]+>/g, '').slice(0, 500),
+      industry: source.industry,
+      pubDate: pubDateStr ? new Date(pubDateStr) : new Date()
+    };
+    
+  } catch (error) {
+    console.error(`[${source.name}] Error:`, error.message);
+    
+    // Return fallback article
+    return {
+      title: `${source.industry} Market Update - ${new Date().toLocaleDateString()}`,
       link: '',
-      description: `Latest developments in ${source.industry.toLowerCase()} sector`,
-      industry: source.industry
+      description: `Latest developments in the ${source.industry.toLowerCase()} sector. Stay informed with the latest industry trends and analysis.`,
+      industry: source.industry,
+      pubDate: new Date()
     };
   }
 }
 
-async function generateEnhancedArticle(newsItem: any, openAIApiKey: string) {
-  // Helper: fetch with timeout
-  async function fetchText(url: string, ms = 15000): Promise<string> {
-    try {
-      if (!url) return '';
-      const controller = new AbortController();
-      const t = setTimeout(() => controller.abort(), ms);
-      try {
-        const res = await fetch(url, {
-          headers: { 'User-Agent': 'Mozilla/5.0 (compatible; SupabaseEdgeBot/1.0)' },
-          signal: controller.signal,
-        });
-        return await res.text();
-      } finally {
-        clearTimeout(t);
-      }
-    } catch (e) {
-      console.error('fetchText error:', e);
-      return '';
-    }
-  }
-
-  // Helper: extract readable text from an article URL (no DOMParser)
-  async function extractArticleText(url: string): Promise<string> {
-    const html = await fetchText(url);
-    if (!html) return '';
-    // Prefer content inside known wrappers by regex
-    const wrappers = [
-      /<article[\s\S]*?>([\s\S]*?)<\/article>/i,
-      /<main[\s\S]*?>([\s\S]*?)<\/main>/i,
-      /<div[^>]+class=["'][^"']*(article-content|entry-content|post-content|StoryBody|caas-body)[^"']*["'][\s\S]*?>([\s\S]*?)<\/div>/i,
-    ];
-    let section = '';
-    for (const rx of wrappers) {
-      const m = html.match(rx);
-      if (m) { section = (m[1] || m[2] || '').trim(); if (section.length > 300) break; }
-    }
-    const source = section || html;
-    const paragraphs = Array.from(source.matchAll(/<p[\s\S]*?>([\s\S]*?)<\/p>/gi))
-      .map(m => m[1]
-        .replace(/<[^>]+>/g, ' ')
-        .replace(/&nbsp;/g, ' ')
-        .replace(/&amp;/g, '&')
-        .replace(/&quot;/g, '"')
-        .trim())
-      .filter(Boolean);
-    return paragraphs.join('\n\n');
-  }
-
-  // Helper: extract featured image from article URL (no DOMParser)
-  async function extractFeaturedImage(url: string): Promise<string> {
-    const html = await fetchText(url);
-    if (!html) return '';
-
-    const abs = (src: string) => {
-      try { return src.startsWith('http') ? src : new URL(src, url).href; }
-      catch { return src; }
-    };
-
-    const og = html.match(/<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["'][^>]*>/i)?.[1];
-    if (og) return abs(og);
-
-    const tw = html.match(/<meta[^>]+name=["']twitter:image["'][^>]+content=["']([^"']+)["'][^>]*>/i)?.[1];
-    if (tw) return abs(tw);
-
-    const img = html.match(/<img[^>]+src=["']([^"']+\.(?:jpg|jpeg|png|webp|gif)(?:\?[^"']*)?)["'][^>]*>/i)?.[1];
-    if (img) return abs(img);
-
-    return '';
-  }
-
-  function estimateReadTime(text: string) {
-    const words = (text.match(/\b\w+\b/g) || []).length;
+async function generateEnhancedArticle(newsItem: NewsItem, openAIApiKey: string) {
+  console.log(`[AI] Processing: "${newsItem.title.slice(0, 50)}..."`);
+  
+  function estimateReadTime(text: string): number {
+    const words = text.split(/\s+/).length;
     return Math.max(1, Math.ceil(words / 200));
   }
-
-  const originalText = (await extractArticleText(newsItem.link)) || (newsItem.description || '');
-  const baseContent = originalText.trim();
   
-  // Extract featured image
-  const featuredImage = await extractFeaturedImage(newsItem.link);
-
-  // Fallback path when no OpenAI key is configured
+  const baseContent = newsItem.description || '';
+  
+  // If no OpenAI key, return basic article
   if (!openAIApiKey) {
-    const content = baseContent || `${newsItem.description || ''}`;
-    const read_time = estimateReadTime(content);
+    console.log('[AI] No OpenAI key configured, using basic article');
     return {
       title: newsItem.title,
-      content,
-      excerpt: (newsItem.description || content).slice(0, 150),
+      content: baseContent || `# ${newsItem.title}\n\n${newsItem.description}`,
+      excerpt: newsItem.description.slice(0, 150),
       category: newsItem.industry,
-      tags: [newsItem.industry, 'market'],
-      read_time,
+      tags: [newsItem.industry.toLowerCase(), 'news', 'market'],
+      read_time: estimateReadTime(baseContent),
       source_url: newsItem.link,
-      featured_image: featuredImage,
+      featured_image: null,
       published: true,
-      featured: Math.random() > 0.7,
+      featured: Math.random() > 0.7
     };
   }
-
-  const system = 'You are a business editor. Append concise, factual context and implications. Do NOT rewrite or change the original article. No fabrication.';
-
-  const userPrompt = `We have an original article from ${newsItem.industry}.
-Title: ${newsItem.title}
-Original content (do not change, for context only): """${baseContent.slice(0, 8000)}"""
-
-Task: Produce JSON ONLY with keys:
-{
-  "title": "${newsItem.title}",
-  "content": "Additional context, analysis, and industry implications to append after the original content. 4-6 short paragraphs.",
-  "excerpt": "A brief summary under 150 characters highlighting the news and context.",
-  "category": "${newsItem.industry}",
-  "tags": ["${newsItem.industry}", "market", "insight"],
-  "read_time": 0
-}
-
-Rules:
-- Return ONLY valid JSON (no backticks, no text before/after).
-- Keep neutral, journalistic tone.`;
-
+  
+  // Generate enhanced content with AI
   try {
+    console.log('[AI] Calling OpenAI API...');
+    
+    const systemPrompt = `You are a professional business journalist. Create engaging, factual articles based on news headlines. Keep the tone professional and informative.`;
+    
+    const userPrompt = `Based on this news headline, write a comprehensive article:
+
+Title: ${newsItem.title}
+Summary: ${newsItem.description}
+Category: ${newsItem.industry}
+
+Write a 400-500 word article in markdown format. Include:
+- An engaging introduction
+- Key facts and implications
+- Industry context
+- A brief conclusion
+
+Return ONLY valid JSON with this structure:
+{
+  "content": "markdown article content here",
+  "excerpt": "brief 1-2 sentence summary under 150 characters",
+  "tags": ["${newsItem.industry.toLowerCase()}", "tag2", "tag3"]
+}`;
+
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -200,75 +166,89 @@ Rules:
       body: JSON.stringify({
         model: 'gpt-4o-mini',
         messages: [
-          { role: 'system', content: system },
+          { role: 'system', content: systemPrompt },
           { role: 'user', content: userPrompt }
         ],
-        max_tokens: 1500,
-        temperature: 0.5,
+        max_tokens: 1200,
+        temperature: 0.7,
       }),
     });
-
+    
     if (!response.ok) {
-      const errText = await response.text();
-      throw new Error(`OpenAI API error: ${response.status} ${errText}`);
+      const errorText = await response.text();
+      console.error('[AI] OpenAI API error:', response.status, errorText);
+      throw new Error(`OpenAI API error: ${response.status}`);
     }
-
+    
     const data = await response.json();
-    const raw = data?.choices?.[0]?.message?.content || '{}';
-
-    let articleData: any;
+    const rawContent = data?.choices?.[0]?.message?.content || '{}';
+    
+    console.log('[AI] Response received, parsing...');
+    
+    let aiData;
     try {
-      articleData = JSON.parse(raw);
-    } catch (_) {
-      const jsonSlice = raw.substring(raw.indexOf('{'), raw.lastIndexOf('}') + 1);
-      articleData = JSON.parse(jsonSlice);
+      // Try to parse as JSON
+      const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
+      aiData = JSON.parse(jsonMatch ? jsonMatch[0] : rawContent);
+    } catch {
+      console.error('[AI] Failed to parse JSON response');
+      throw new Error('Invalid JSON response from AI');
     }
-
-    const addedContext = (articleData.content || '').trim();
-    const combinedContent = baseContent
-      ? `${baseContent}\n\n---\n\n${addedContext}`
-      : addedContext;
-
-    const read_time = articleData.read_time && Number(articleData.read_time) > 0
-      ? Number(articleData.read_time)
-      : estimateReadTime(combinedContent);
-
+    
+    const content = aiData.content || baseContent;
+    const excerpt = aiData.excerpt || newsItem.description.slice(0, 150);
+    const tags = Array.isArray(aiData.tags) ? aiData.tags : [newsItem.industry.toLowerCase(), 'news'];
+    
+    console.log('[AI] Article enhanced successfully');
+    
     return {
-      ...articleData,
-      title: articleData.title || newsItem.title,
-      content: combinedContent,
-      excerpt: (articleData.excerpt || newsItem.description || '').slice(0, 150),
-      category: articleData.category || newsItem.industry,
-      tags: Array.isArray(articleData.tags) ? articleData.tags : [newsItem.industry],
-      read_time,
+      title: newsItem.title,
+      content,
+      excerpt,
+      category: newsItem.industry,
+      tags,
+      read_time: estimateReadTime(content),
       source_url: newsItem.link,
-      featured_image: featuredImage,
+      featured_image: null,
       published: true,
-      featured: Math.random() > 0.7,
+      featured: Math.random() > 0.7
     };
+    
   } catch (error) {
-    console.error('Error generating article:', error);
-    throw error;
+    console.error('[AI] Enhancement failed:', error.message);
+    
+    // Fallback to basic article
+    return {
+      title: newsItem.title,
+      content: baseContent || `# ${newsItem.title}\n\n${newsItem.description}`,
+      excerpt: newsItem.description.slice(0, 150),
+      category: newsItem.industry,
+      tags: [newsItem.industry.toLowerCase(), 'news', 'market'],
+      read_time: estimateReadTime(baseContent),
+      source_url: newsItem.link,
+      featured_image: null,
+      published: true,
+      featured: Math.random() > 0.7
+    };
   }
 }
 
 async function deleteOldArticles(supabaseClient: any) {
   try {
+    console.log('[Cleanup] Deleting articles older than 2 months...');
     const twoMonthsAgo = new Date();
     twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
     
-    const { data, error } = await supabaseClient
+    const { error } = await supabaseClient
       .from('articles')
       .delete()
       .lt('created_at', twoMonthsAgo.toISOString());
     
     if (error) throw error;
     
-    console.log(`Deleted ${data?.length || 0} articles older than 2 months`);
-    return data;
+    console.log('[Cleanup] Old articles deleted successfully');
   } catch (error) {
-    console.error('Error deleting old articles:', error);
-    throw error;
+    console.error('[Cleanup] Error:', error.message);
   }
 }
 
@@ -278,36 +258,42 @@ serve(async (req) => {
   }
 
   try {
+    console.log('=== Article Generation Started ===');
+    
     const openAIApiKey = Deno.env.get('OPENAI_API_KEY') ?? '';
     const aiEnabled = Boolean(openAIApiKey);
+    
     if (!aiEnabled) {
-      console.log('OPENAI_API_KEY not configured. Proceeding with fallback generation (no AI).');
+      console.log('[Warning] OPENAI_API_KEY not configured. Articles will be basic summaries.');
+    } else {
+      console.log('[Info] OpenAI API key configured - enhanced articles will be generated');
     }
 
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    
+    if (!supabaseUrl || !supabaseKey) {
+      throw new Error('Supabase configuration missing');
+    }
+    
+    const supabaseClient = createClient(supabaseUrl, supabaseKey);
+    console.log('[Info] Supabase client initialized');
 
-    console.log('Starting automated article generation...');
-
-    // First, clean up old articles
+    // Clean up old articles first
     await deleteOldArticles(supabaseClient);
 
-    // Generate 3 new articles from different sources
+    // Generate articles from each source
     const articles = [];
+    const errors = [];
     
     for (const source of newsSources) {
       try {
-        console.log(`Processing ${source.name} for ${source.industry}...`);
+        console.log(`\n[${source.name}] Starting processing...`);
         
-        // Fetch latest news
         const newsItem = await fetchLatestNews(source);
-        
-        // Generate enhanced article
         const enhancedArticle = await generateEnhancedArticle(newsItem, openAIApiKey);
         
-        // Save to database
+        console.log(`[${source.name}] Saving to database...`);
         const { data, error } = await supabaseClient
           .from('articles')
           .insert({
@@ -325,35 +311,46 @@ serve(async (req) => {
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          console.error(`[${source.name}] Database error:`, error.message);
+          errors.push({ source: source.name, error: error.message });
+        } else {
+          articles.push(data);
+          console.log(`[${source.name}] ✓ Article created: ${data.id}`);
+        }
         
-        articles.push(data);
-        console.log(`Successfully created article: ${data.title}`);
-        
-        // Add delay between requests to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Delay to avoid rate limiting
+        if (newsSources.indexOf(source) < newsSources.length - 1) {
+          await new Promise(resolve => setTimeout(resolve, 1500));
+        }
         
       } catch (error) {
-        console.error(`Error processing ${source.name}:`, error);
-        // Continue with other sources even if one fails
+        console.error(`[${source.name}] Failed:`, error.message);
+        errors.push({ source: source.name, error: error.message });
       }
     }
 
-    console.log(`Article generation complete. Created ${articles.length} articles.`);
+    console.log(`\n=== Generation Complete ===`);
+    console.log(`Created: ${articles.length} articles`);
+    console.log(`Errors: ${errors.length}`);
 
     return new Response(JSON.stringify({ 
       success: true, 
       articlesCreated: articles.length,
-      articles: articles.map(a => ({ id: a.id, title: a.title, category: a.category }))
+      articles: articles.map(a => ({ id: a.id, title: a.title, category: a.category })),
+      errors: errors.length > 0 ? errors : undefined
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
 
   } catch (error) {
-    console.error('Error in auto-generate-articles:', error);
+    console.error('=== Fatal Error ===');
+    console.error(error);
+    
     return new Response(JSON.stringify({ 
       success: false, 
-      error: error.message 
+      error: error.message,
+      stack: error.stack
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
