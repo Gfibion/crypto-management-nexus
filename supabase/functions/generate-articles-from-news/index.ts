@@ -29,15 +29,21 @@ serve(async (req) => {
 
     console.log(`Fetching ${count} news articles from category: ${category}`);
 
-    // Fetch news from NewsAPI
-    const newsResponse = await fetch(
-      `https://newsapi.org/v2/top-headlines?category=${category}&language=en&pageSize=${count}&apiKey=${NEWS_API_KEY}`
-    );
+    // Fetch news from NewsAPI with proper error handling
+    let newsResponse;
+    try {
+      newsResponse = await fetch(
+        `https://newsapi.org/v2/top-headlines?category=${category}&language=en&pageSize=${count}&apiKey=${NEWS_API_KEY}`
+      );
+    } catch (fetchError) {
+      console.error('NewsAPI fetch error:', fetchError);
+      throw new Error('Failed to connect to NewsAPI. Please check your internet connection.');
+    }
 
     if (!newsResponse.ok) {
       const errorText = await newsResponse.text();
-      console.error('NewsAPI error:', errorText);
-      throw new Error(`NewsAPI request failed: ${newsResponse.status}`);
+      console.error('NewsAPI error response:', errorText);
+      throw new Error(`NewsAPI returned error ${newsResponse.status}. Check your NEWS_API_KEY.`);
     }
 
     const newsData = await newsResponse.json();
@@ -89,19 +95,21 @@ Format your response as JSON:
   "content": "Full HTML formatted article here"
 }`;
 
-        // Call OpenAI
-        const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${OPENAI_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: 'gpt-5-mini-2025-08-07',
-            messages: [
-              {
-                role: 'system',
-                content: `You are an expert business and technology journalist. When prompted, your job is to generate an original, insightful, and well-structured article based on the latest relevant news content.
+        // Call OpenAI with proper error handling
+        let openaiResponse;
+        try {
+          openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${OPENAI_API_KEY}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              model: 'gpt-5-mini-2025-08-07',
+              messages: [
+                {
+                  role: 'system',
+                  content: `You are an expert business and technology journalist. When prompted, your job is to generate an original, insightful, and well-structured article based on the latest relevant news content.
 
 1. Use the provided news content to extract key facts, themes, events, and developments.
 
@@ -114,24 +122,34 @@ Format your response as JSON:
 3. Maintain accuracy and cite the event or topic context (e.g., "According to reports published on [date]…").
 
 Only generate content based on recent, verifiable data from the news. Avoid fabricating facts. Always respond with valid JSON.`
-              },
-              {
-                role: 'user',
-                content: prompt
-              }
-            ],
-            max_completion_tokens: 2000,
-            response_format: { type: "json_object" }
-          }),
-        });
+                },
+                {
+                  role: 'user',
+                  content: prompt
+                }
+              ],
+              max_completion_tokens: 2000,
+              response_format: { type: "json_object" }
+            }),
+          });
+        } catch (fetchError) {
+          console.error('OpenAI fetch error:', fetchError);
+          throw new Error('Failed to connect to OpenAI API');
+        }
 
         if (!openaiResponse.ok) {
           const errorText = await openaiResponse.text();
-          console.error('OpenAI error:', errorText);
-          throw new Error(`OpenAI request failed: ${openaiResponse.status}`);
+          console.error('OpenAI error response:', errorText);
+          throw new Error(`OpenAI API error ${openaiResponse.status}. Check your OPENAI_API_KEY.`);
         }
 
         const openaiData = await openaiResponse.json();
+        
+        if (!openaiData.choices || !openaiData.choices[0]?.message?.content) {
+          console.error('Invalid OpenAI response structure:', openaiData);
+          throw new Error('OpenAI returned invalid response structure');
+        }
+
         const generatedContent = JSON.parse(openaiData.choices[0].message.content);
 
         // Calculate read time (average 200 words per minute)

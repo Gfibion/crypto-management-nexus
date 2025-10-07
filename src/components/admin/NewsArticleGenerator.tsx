@@ -30,22 +30,43 @@ const NewsArticleGenerator: React.FC = () => {
         }
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Edge function error:', error);
+        throw new Error(error.message || 'Failed to invoke edge function');
+      }
 
-      if (data.success) {
+      if (data?.success) {
         toast({
           title: "Articles Generated Successfully",
           description: `Created ${data.generated} new articles from latest news!`,
         });
+        
+        // Refresh the page to show new articles
+        window.location.reload();
       } else {
-        throw new Error(data.error || 'Failed to generate articles');
+        const errorMsg = data?.error || 'Failed to generate articles';
+        console.error('Generation failed:', errorMsg);
+        throw new Error(errorMsg);
       }
 
     } catch (error: any) {
       console.error('Article generation error:', error);
+      
+      let errorMessage = "Failed to generate articles. ";
+      
+      if (error.message?.includes('NEWS_API_KEY')) {
+        errorMessage += "Please check your NewsAPI key in Lovable Cloud secrets.";
+      } else if (error.message?.includes('OPENAI_API_KEY')) {
+        errorMessage += "Please check your OpenAI API key in Lovable Cloud secrets.";
+      } else if (error.message?.includes('Rate limit')) {
+        errorMessage += "Rate limit exceeded. Please try again later.";
+      } else {
+        errorMessage += error.message || "Unknown error occurred.";
+      }
+      
       toast({
         title: "Generation Failed",
-        description: error.message || "Failed to generate articles. Check your API keys.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
