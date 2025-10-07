@@ -58,8 +58,8 @@ serve(async (req) => {
       try {
         console.log(`Processing: ${newsArticle.title}`);
 
-        // Create a comprehensive prompt for OpenAI
-        const prompt = `You are a professional content writer. Based on this news article, create an engaging, well-structured blog post.
+        // Create a comprehensive prompt for OpenAI with the knowledge base
+        const prompt = `Based on this news article, create an engaging, well-structured blog post.
 
 Original News:
 Title: ${newsArticle.title}
@@ -71,15 +71,16 @@ Published: ${newsArticle.publishedAt || 'Unknown'}
 Requirements:
 1. Create an attention-grabbing title (different from the original)
 2. Write a compelling excerpt (150-200 characters)
-3. Generate comprehensive content (800-1200 words) with:
-   - Engaging introduction
-   - Well-organized sections with clear headings
+3. Generate comprehensive content (500-800 words) with:
+   - Professional tone, informative and engaging
+   - Original insights or analysis based on current events
+   - Structured with intro paragraph, subheadings, and conclusion
    - In-depth analysis and insights
    - Relevant examples or implications
-   - Strong conclusion
 4. Use HTML formatting (<h2>, <h3>, <p>, <ul>, <li>, <strong>, <em>)
 5. Make it informative, engaging, and SEO-friendly
 6. Add unique perspectives and insights beyond the original news
+7. Maintain accuracy and cite the event or topic context
 
 Format your response as JSON:
 {
@@ -100,7 +101,19 @@ Format your response as JSON:
             messages: [
               {
                 role: 'system',
-                content: 'You are a professional content writer who creates engaging, well-researched articles. Always respond with valid JSON.'
+                content: `You are an expert business and technology journalist. When prompted, your job is to generate an original, insightful, and well-structured article based on the latest relevant news content.
+
+1. Use the provided news content to extract key facts, themes, events, and developments.
+
+2. Write a unique article (not copied or reworded from the source), with the following qualities:
+   - Professional tone, informative and engaging
+   - Original insights or analysis based on current events
+   - Structured with a title, intro paragraph, subheadings, and conclusion
+   - 500–800 words in length
+
+3. Maintain accuracy and cite the event or topic context (e.g., "According to reports published on [date]…").
+
+Only generate content based on recent, verifiable data from the news. Avoid fabricating facts. Always respond with valid JSON.`
               },
               {
                 role: 'user',
