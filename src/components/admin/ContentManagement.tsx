@@ -15,7 +15,6 @@ import { Settings, Edit, Trash2, Plus, Upload, Eye, EyeOff, RefreshCw } from 'lu
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { populateAllAdminData } from '@/utils/populateAdminData';
-import AutoArticleManager from './AutoArticleManager';
 
 interface ContentManagementProps {
   setActiveTab: (tab: 'dashboard' | 'content') => void;
@@ -25,7 +24,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
   const { toast } = useToast();
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [activeContentTab, setActiveContentTab] = useState<'projects' | 'services' | 'skills' | 'education' | 'contact' | 'articles'>('projects');
+  const [activeContentTab, setActiveContentTab] = useState<'projects' | 'services' | 'skills' | 'education' | 'contact'>('projects');
   const [editingItem, setEditingItem] = useState<any>(null);
   const [formData, setFormData] = useState<any>({});
   const [isPopulating, setIsPopulating] = useState(false);
@@ -586,7 +585,7 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
 
       {/* Content Type Tabs */}
       <div className="flex flex-wrap gap-2 bg-slate-800/50 p-3 rounded-lg border border-purple-600/20">
-        {['projects', 'services', 'skills', 'education', 'contact', 'articles'].map((tab) => (
+        {['projects', 'services', 'skills', 'education', 'contact'].map((tab) => (
           <Button
             key={tab}
             variant={activeContentTab === tab ? 'default' : 'outline'}
@@ -597,15 +596,12 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
                 : 'border-purple-600/30 text-purple-300 hover:bg-purple-600/20 hover:border-red-400/40'
             }`}
           >
-            {tab === 'contact' ? 'Contact Messages' : tab === 'articles' ? 'Article Automation' : tab}
+            {tab === 'contact' ? 'Contact Messages' : tab}
           </Button>
         ))}
       </div>
 
-      {activeContentTab === 'articles' ? (
-        <AutoArticleManager />
-      ) : (
-        <Card className="bg-slate-800/50 border-purple-800/30 hover:border-red-400/30 transition-all duration-300">
+      <Card className="bg-slate-800/50 border-purple-800/30 hover:border-red-400/30 transition-all duration-300">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-white flex items-center space-x-2">
@@ -670,7 +666,6 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
           </div>
         </CardContent>
         </Card>
-      )}
 
       {renderForm()}
     </div>
