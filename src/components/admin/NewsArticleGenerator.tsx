@@ -18,6 +18,8 @@ const NewsArticleGenerator: React.FC = () => {
     setIsGenerating(true);
     
     try {
+      console.log('Starting article generation...', { count: articleCount, category });
+      
       toast({
         title: "Generating Articles",
         description: `Fetching news and generating ${articleCount} articles...`,
@@ -29,6 +31,8 @@ const NewsArticleGenerator: React.FC = () => {
           category: category
         }
       });
+      
+      console.log('Edge function response:', { data, error });
 
       if (error) {
         console.error('Edge function error:', error);
@@ -36,13 +40,14 @@ const NewsArticleGenerator: React.FC = () => {
       }
 
       if (data?.success) {
+        console.log(`Successfully generated ${data.generated} articles`);
         toast({
           title: "Articles Generated Successfully",
           description: `Created ${data.generated} new articles from latest news!`,
         });
         
         // Refresh the page to show new articles
-        window.location.reload();
+        setTimeout(() => window.location.reload(), 1500);
       } else {
         const errorMsg = data?.error || 'Failed to generate articles';
         console.error('Generation failed:', errorMsg);
@@ -148,9 +153,14 @@ const NewsArticleGenerator: React.FC = () => {
             </ol>
           </div>
 
-          <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4">
-            <p className="text-sm text-yellow-300">
-              <strong>Note:</strong> Make sure both NEWS_API_KEY and OPENAI_API_KEY are configured in your Lovable Cloud secrets.
+          <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-4 space-y-2">
+            <p className="text-sm text-yellow-300 font-semibold">⚙️ Setup Required:</p>
+            <ul className="text-sm text-gray-300 space-y-1 list-disc list-inside">
+              <li>Add <strong>NEWS_API_KEY</strong> in Lovable Cloud secrets</li>
+              <li>Add <strong>OPENAI_API_KEY</strong> in Lovable Cloud secrets</li>
+            </ul>
+            <p className="text-xs text-gray-400 mt-2">
+              Check the console for detailed logs during generation.
             </p>
           </div>
         </CardContent>

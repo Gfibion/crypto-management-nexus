@@ -20,11 +20,17 @@ serve(async (req) => {
     const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
+    console.log('Checking API keys...');
+    console.log('NEWS_API_KEY configured:', !!NEWS_API_KEY);
+    console.log('OPENAI_API_KEY configured:', !!OPENAI_API_KEY);
+    
     if (!NEWS_API_KEY) {
-      throw new Error('NEWS_API_KEY not configured');
+      console.error('NEWS_API_KEY is not configured in Lovable Cloud secrets');
+      throw new Error('NEWS_API_KEY not configured. Please add it in Lovable Cloud secrets.');
     }
     if (!OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY not configured');
+      console.error('OPENAI_API_KEY is not configured in Lovable Cloud secrets');
+      throw new Error('OPENAI_API_KEY not configured. Please add it in Lovable Cloud secrets.');
     }
 
     console.log(`Fetching ${count} news articles from category: ${category}`);
@@ -96,6 +102,7 @@ Format your response as JSON:
 }`;
 
         // Call OpenAI with proper error handling
+        console.log('Calling OpenAI API for article generation...');
         let openaiResponse;
         try {
           openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -144,13 +151,16 @@ Only generate content based on recent, verifiable data from the news. Avoid fabr
         }
 
         const openaiData = await openaiResponse.json();
+        console.log('OpenAI response received');
         
         if (!openaiData.choices || !openaiData.choices[0]?.message?.content) {
           console.error('Invalid OpenAI response structure:', openaiData);
           throw new Error('OpenAI returned invalid response structure');
         }
 
+        console.log('Parsing generated content...');
         const generatedContent = JSON.parse(openaiData.choices[0].message.content);
+        console.log('Generated article title:', generatedContent.title);
 
         // Calculate read time (average 200 words per minute)
         const wordCount = generatedContent.content.split(/\s+/).length;
