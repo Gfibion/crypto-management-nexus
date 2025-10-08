@@ -16,17 +16,26 @@ const ArticleManager: React.FC = () => {
   const queryClient = useQueryClient();
 
   // Fetch all articles (including unpublished ones for admin)
-  const { data: articles = [], isLoading } = useQuery({
+  const { data: articles = [], isLoading, refetch } = useQuery({
     queryKey: ['admin-articles'],
     queryFn: async () => {
+      console.log('Fetching all articles for admin...');
       const { data, error } = await supabase
         .from('articles')
         .select('*')
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching articles:', error);
+        throw error;
+      }
+      
+      console.log(`Loaded ${data?.length || 0} articles`);
       return data;
     },
+    // Enable automatic refetching
+    refetchOnWindowFocus: true,
+    refetchInterval: 30000, // Refetch every 30 seconds
   });
 
   // Delete article mutation
@@ -111,7 +120,12 @@ const ArticleManager: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white">Article Management</h2>
+        <div>
+          <h2 className="text-2xl font-bold text-white">Article Management</h2>
+          <p className="text-sm text-gray-400 mt-1">
+            Total: {articles.length} articles • Published: {articles.filter(a => a.published).length}
+          </p>
+        </div>
         <Button
           onClick={() => setShowForm(true)}
           className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700"
@@ -143,6 +157,12 @@ const ArticleManager: React.FC = () => {
                     {article.featured && (
                       <Badge variant="outline" className="border-yellow-400 text-yellow-400">
                         Featured
+                      </Badge>
+                    )}
+                    
+                    {article.tags?.includes('AI Generated') && (
+                      <Badge variant="outline" className="border-blue-400 text-blue-300">
+                        AI Generated
                       </Badge>
                     )}
                     

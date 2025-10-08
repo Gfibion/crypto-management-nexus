@@ -173,13 +173,13 @@ Only generate content based on recent, verifiable data from the news. Avoid fabr
             title: generatedContent.title,
             excerpt: generatedContent.excerpt,
             content: generatedContent.content,
-            author: 'AI Generated',
             category: category.charAt(0).toUpperCase() + category.slice(1),
             featured_image: newsArticle.urlToImage || '/lovable-uploads/8b735fe1-3282-48d6-9daa-a0e5ecb43911.png',
             published: true,
             featured: false,
             read_time: readTime,
             tags: [category, 'AI Generated', 'News'],
+            slug: generatedContent.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
           })
           .select()
           .single();

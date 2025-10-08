@@ -6,13 +6,20 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Sparkles, Newspaper } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
+import { Loader2, Sparkles, Newspaper, CheckCircle } from 'lucide-react';
 
-const NewsArticleGenerator: React.FC = () => {
+interface NewsArticleGeneratorProps {
+  onSuccess?: () => void;
+}
+
+const NewsArticleGenerator: React.FC<NewsArticleGeneratorProps> = ({ onSuccess }) => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [isGenerating, setIsGenerating] = useState(false);
   const [articleCount, setArticleCount] = useState('3');
   const [category, setCategory] = useState('technology');
+  const [lastGenerationResult, setLastGenerationResult] = useState<{ count: number; timestamp: Date } | null>(null);
 
   const handleGenerate = async () => {
     setIsGenerating(true);
@@ -41,13 +48,27 @@ const NewsArticleGenerator: React.FC = () => {
 
       if (data?.success) {
         console.log(`Successfully generated ${data.generated} articles`);
+        
+        // Update last generation result
+        setLastGenerationResult({
+          count: data.generated,
+          timestamp: new Date()
+        });
+        
+        // Invalidate all article queries to refresh the data
+        queryClient.invalidateQueries({ queryKey: ['articles'] });
+        queryClient.invalidateQueries({ queryKey: ['admin-articles'] });
+        queryClient.invalidateQueries({ queryKey: ['dashboard-article-stats'] });
+        
         toast({
           title: "Articles Generated Successfully",
           description: `Created ${data.generated} new articles from latest news!`,
         });
         
-        // Refresh the page to show new articles
-        setTimeout(() => window.location.reload(), 1500);
+        // Call onSuccess callback if provided
+        if (onSuccess) {
+          setTimeout(() => onSuccess(), 1000);
+        }
       } else {
         const errorMsg = data?.error || 'Failed to generate articles';
         console.error('Generation failed:', errorMsg);
@@ -81,6 +102,24 @@ const NewsArticleGenerator: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {lastGenerationResult && (
+        <Card className="bg-green-900/20 border-green-500/30">
+          <CardContent className="pt-6">
+            <div className="flex items-start space-x-3">
+              <CheckCircle className="h-5 w-5 text-green-400 mt-0.5" />
+              <div>
+                <p className="text-green-300 font-semibold">
+                  Last generation completed successfully!
+                </p>
+                <p className="text-sm text-gray-300 mt-1">
+                  Generated {lastGenerationResult.count} articles at {lastGenerationResult.timestamp.toLocaleTimeString()}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card className="bg-slate-800/50 border-purple-800/30">
         <CardHeader>
           <div className="flex items-center space-x-2">
@@ -88,7 +127,7 @@ const NewsArticleGenerator: React.FC = () => {
             <CardTitle className="text-white">AI Article Generator</CardTitle>
           </div>
           <CardDescription className="text-gray-400">
-            Generate articles from latest news using NewsAPI and OpenAI
+            Generate articles from latest news using NewsAPI and OpenAI GPT-5
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -144,12 +183,13 @@ const NewsArticleGenerator: React.FC = () => {
           </Button>
 
           <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4 space-y-2">
-            <p className="text-sm text-blue-300 font-semibold">📋 How it works:</p>
+            <p className="text-sm text-blue-300 font-semibold">📋 Generation Process:</p>
             <ol className="text-sm text-gray-300 space-y-1 list-decimal list-inside">
-              <li>Fetches latest news from NewsAPI</li>
-              <li>OpenAI analyzes and enhances each article</li>
-              <li>Generates comprehensive, SEO-friendly content</li>
-              <li>Automatically publishes to your blog</li>
+              <li>Fetches latest news from NewsAPI in selected category</li>
+              <li>OpenAI GPT-5 analyzes and enhances each article with insights</li>
+              <li>Generates 500-800 word articles with proper structure</li>
+              <li>Automatically creates and publishes articles to your blog</li>
+              <li>All articles are tagged as "AI Generated" for transparency</li>
             </ol>
           </div>
 
