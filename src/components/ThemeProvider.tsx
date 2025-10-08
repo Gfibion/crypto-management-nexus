@@ -27,12 +27,6 @@ export function ThemeProvider({
   storageKey = "vite-ui-theme",
   ...props
 }: ThemeProviderProps) {
-  // Add error boundary for useState
-  if (typeof React.useState !== 'function') {
-    console.error('React hooks not available');
-    return React.createElement('div', { className: 'min-h-screen bg-slate-900 text-white' }, children);
-  }
-
   const [theme, setTheme] = React.useState<Theme>(defaultTheme);
 
   React.useEffect(() => {
