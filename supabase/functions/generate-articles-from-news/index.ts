@@ -97,35 +97,46 @@ Format your response as JSON:
 }`;
 
         // Generate article content via Lovable AI Gateway
-        let aiResponse;
-        try {
-          aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${LOVABLE_API_KEY}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              model: 'google/gemini-2.5-flash',
-              messages: [
-                { role: 'system', content: 'You are an expert journalist. Produce valid JSON only.' },
-                { role: 'user', content: prompt }
-              ]
-            }),
-          });
-        } catch (_) {
-          throw new Error('Failed to connect to AI gateway');
-        }
+        const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            model: 'google/gemini-2.5-flash',
+            messages: [
+              { role: 'system', content: 'You are an expert journalist who creates engaging blog posts. Always respond with valid JSON in the exact format requested.' },
+              { role: 'user', content: prompt }
+            ]
+          }),
+        });
         if (!aiResponse.ok) {
-          if (aiResponse.status === 429) throw new Error('AI rate limit exceeded. Please try again later.');
-          if (aiResponse.status === 402) throw new Error('Payment required for AI usage.');
-          const t = await aiResponse.text();
-          throw new Error(`AI gateway error ${aiResponse.status}: ${t}`);
+          const errorText = await aiResponse.text();
+          if (aiResponse.status === 429) {
+            throw new Error('AI rate limit exceeded. Please try again later.');
+          }
+          if (aiResponse.status === 402) {
+            throw new Error('Payment required for AI usage. Please add credits to your workspace.');
+          }
+          throw new Error(`AI gateway error (${aiResponse.status}): ${errorText}`);
         }
+        
         const aiData = await aiResponse.json();
         const contentStr = aiData.choices?.[0]?.message?.content;
-        if (!contentStr) throw new Error('AI returned empty content');
-        const generatedContent = JSON.parse(contentStr);
+        if (!contentStr) {
+          throw new Error('AI returned empty response');
+        }
+        
+        // Parse JSON response from AI
+        let generatedContent;
+        try {
+          // Remove markdown code blocks if present
+          const cleanedContent = contentStr.replace(/```json\n?|\n?```/g, '').trim();
+          generatedContent = JSON.parse(cleanedContent);
+        } catch (parseError) {
+          throw new Error(`Failed to parse AI response as JSON: ${parseError.message}`);
+        }
 
         // Calculate read time (average 200 words per minute)
         const wordCount = generatedContent.content.split(/\s+/).length;

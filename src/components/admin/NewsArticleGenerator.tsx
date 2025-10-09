@@ -184,7 +184,7 @@ const NewsArticleGenerator: React.FC<NewsArticleGeneratorProps> = ({ onSuccess }
             <p className="text-sm text-blue-300 font-semibold">📋 Generation Process:</p>
             <ol className="text-sm text-gray-300 space-y-1 list-decimal list-inside">
               <li>Fetches latest news from NewsAPI in selected category</li>
-              <li>OpenAI GPT-5 analyzes and enhances each article with insights</li>
+              <li>AI analyzes and enhances each article with insights</li>
               <li>Generates 500-800 word articles with proper structure</li>
               <li>Automatically creates and publishes articles to your blog</li>
               <li>All articles are tagged as "AI Generated" for transparency</li>
