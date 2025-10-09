@@ -110,9 +110,7 @@ Format your response as JSON:
               messages: [
                 { role: 'system', content: 'You are an expert journalist. Produce valid JSON only.' },
                 { role: 'user', content: prompt }
-              ],
-              response_format: { type: 'json_object' },
-              max_completion_tokens: 2000
+              ]
             }),
           });
         } catch (_) {
