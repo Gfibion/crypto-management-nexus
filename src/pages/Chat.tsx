@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, MessageCircle, Clock, Loader2, Star } from "lucide-react";
+import { Plus, MessageCircle, Clock, Loader2, HelpCircle, Bot } from "lucide-react";
 import { useGuestMode } from "@/hooks/useGuestMode";
 import { useConversations, useCreateConversation } from "@/hooks/useChat";
 import GuestModePrompt from "@/components/GuestModePrompt";
@@ -13,16 +13,26 @@ import SEOHead from "@/components/SEOHead";
 const Chat = () => {
   const { requireAuth, showPrompt, closePrompt, pendingAction, isAuthenticated } = useGuestMode();
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
+  const [showChatTypeSelection, setShowChatTypeSelection] = useState(false);
+  const [selectedChatType, setSelectedChatType] = useState<'site-questions' | 'general' | null>(null);
   
   const { data: conversations = [], isLoading } = useConversations();
   const createConversation = useCreateConversation();
 
-  const handleStartNewChat = async () => {
+  const handleStartNewChat = () => {
     if (!requireAuth('start a new conversation')) return;
-    
+    setShowChatTypeSelection(true);
+  };
+
+  const handleChatTypeSelection = async (chatType: 'site-questions' | 'general') => {
     try {
-      const newConversation = await createConversation.mutateAsync('New Conversation');
+      const title = chatType === 'site-questions' 
+        ? 'Website & Services Questions' 
+        : 'General Consultation';
+      const newConversation = await createConversation.mutateAsync(title);
+      setSelectedChatType(chatType);
       setSelectedConversationId(newConversation.id);
+      setShowChatTypeSelection(false);
     } catch (error) {
       console.error('Error creating conversation:', error);
     }
@@ -58,11 +68,109 @@ const Chat = () => {
           <Card className="bg-slate-800/50 border-purple-800/30 h-full flex flex-col">
             <ChatInterface 
               conversationId={selectedConversationId}
-              onBack={() => setSelectedConversationId(null)}
+              chatType={selectedChatType}
+              onBack={() => {
+                setSelectedConversationId(null);
+                setSelectedChatType(null);
+              }}
             />
           </Card>
         </div>
       </div>
+    );
+  }
+
+  if (showChatTypeSelection) {
+    return (
+      <>
+        <SEOHead 
+          title="Live Business Consulting Chat with Gfibion Joseph Mutua | Get Expert ICT & Management Advice"
+          description="Connect directly with professional business manager and ICT consultant Gfibion Joseph Mutua through live chat. Get expert advice on business strategy, digital transformation, technology integration, and management consulting."
+          keywords="business consulting chat, ICT consultant contact, live business advice, management consulting chat, Joseph Mutua contact, Gfibion consultation, business strategy chat, technology consulting support, professional business help, Kenya business consultant"
+          structuredData={{
+            "@context": "https://schema.org",
+            "@type": "ContactPage",
+            "name": "Live Chat with Gfibion Joseph Mutua",
+            "description": "Professional business and ICT consulting chat support",
+            "provider": {
+              "@type": "Person",
+              "name": "Gfibion Joseph Mutua"
+            }
+          }}
+        />
+        <div className="min-h-screen pt-20 px-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                Choose Your Chat Type
+              </h1>
+              <p className="text-xl text-gray-300 mb-6">
+                Select how you'd like to get assistance
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <Card 
+                className="bg-slate-800/50 border-purple-800/30 hover:border-purple-600/50 cursor-pointer transition-all duration-300 hover:scale-105"
+                onClick={() => handleChatTypeSelection('site-questions')}
+              >
+                <div className="p-8 text-center">
+                  <div className="bg-gradient-to-br from-blue-500 to-purple-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <HelpCircle className="h-10 w-10 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-white mb-3">
+                    Website & Services Questions
+                  </h3>
+                  <p className="text-gray-300 mb-4">
+                    Get instant answers about our services, expertise, and how we can help your business.
+                  </p>
+                  <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-3">
+                    <p className="text-sm text-blue-300">
+                      ✓ AI-powered with website knowledge base<br/>
+                      ✓ Instant responses 24/7<br/>
+                      ✓ Accurate information about our services
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card 
+                className="bg-slate-800/50 border-purple-800/30 hover:border-purple-600/50 cursor-pointer transition-all duration-300 hover:scale-105"
+                onClick={() => handleChatTypeSelection('general')}
+              >
+                <div className="p-8 text-center">
+                  <div className="bg-gradient-to-br from-purple-500 to-pink-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Bot className="h-10 w-10 text-white" />
+                  </div>
+                  <h3 className="text-2xl font-semibold text-white mb-3">
+                    General AI Assistant
+                  </h3>
+                  <p className="text-gray-300 mb-4">
+                    Chat with our AI assistant for general business and technology consultation.
+                  </p>
+                  <div className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-3">
+                    <p className="text-sm text-purple-300">
+                      ✓ General business advice<br/>
+                      ✓ Technology consultation<br/>
+                      ✓ Professional guidance
+                    </p>
+                  </div>
+                </div>
+              </Card>
+            </div>
+
+            <div className="text-center">
+              <Button
+                variant="outline"
+                onClick={() => setShowChatTypeSelection(false)}
+                className="border-gray-600/30 text-gray-300"
+              >
+                ← Back
+              </Button>
+            </div>
+          </div>
+        </div>
+      </>
     );
   }
 

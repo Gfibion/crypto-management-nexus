@@ -136,9 +136,13 @@ export const useSendMessage = () => {
 
 export const useAIResponse = () => {
   return useMutation({
-    mutationFn: async ({ message, conversationId }: { message: string; conversationId: string }) => {
+    mutationFn: async ({ message, conversationId, chatType }: { 
+      message: string; 
+      conversationId: string;
+      chatType?: 'site-questions' | 'general' | null;
+    }) => {
       const { data, error } = await supabase.functions.invoke('ai-chat', {
-        body: { message, conversationId }
+        body: { message, conversationId, chatType }
       });
 
       if (error) throw error;

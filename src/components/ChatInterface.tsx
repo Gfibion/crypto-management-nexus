@@ -13,10 +13,11 @@ import AIPrompt from './AIPrompt';
 
 interface ChatInterfaceProps {
   conversationId: string;
+  chatType?: 'site-questions' | 'general' | null;
   onBack: () => void;
 }
 
-const ChatInterface: React.FC<ChatInterfaceProps> = ({ conversationId, onBack }) => {
+const ChatInterface: React.FC<ChatInterfaceProps> = ({ conversationId, chatType, onBack }) => {
   const isAdmin = useIsAdmin();
 
   // Get conversation details for admin
@@ -51,7 +52,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ conversationId, onBack })
     handleUseAI,
     handleWaitForHuman,
     getTimeAgo,
-  } = useChatLogic(conversationId);
+  } = useChatLogic(conversationId, chatType);
 
   return (
     <div className="flex flex-col h-full">

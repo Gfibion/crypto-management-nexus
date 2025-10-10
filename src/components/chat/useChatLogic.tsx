@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useMessages, useSendMessage, useAIResponse } from '@/hooks/useChat';
 import { supabase } from '@/integrations/supabase/client';
 
-export const useChatLogic = (conversationId: string) => {
+export const useChatLogic = (conversationId: string, chatType?: 'site-questions' | 'general' | null) => {
   const [inputMessage, setInputMessage] = useState('');
   const [showAIPrompt, setShowAIPrompt] = useState(false);
   const [aiMode, setAiMode] = useState(false);
@@ -94,7 +94,8 @@ export const useChatLogic = (conversationId: string) => {
       if (aiMode) {
         await getAIResponse.mutateAsync({
           message: messageText,
-          conversationId
+          conversationId,
+          chatType
         });
       }
     } catch (error) {
