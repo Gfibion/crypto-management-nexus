@@ -19,7 +19,7 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ article }) => {
   return (
     <>
       {article.featured_image && (
-        <div className="relative w-full h-64 sm:h-80 md:h-96 mb-8 rounded-lg overflow-hidden">
+        <div className="relative w-full h-72 sm:h-96 md:h-[32rem] lg:h-[36rem] mb-8 -mx-6 sm:-mx-8 md:mx-0 md:rounded-xl overflow-hidden shadow-2xl">
           <img 
             src={article.featured_image} 
             alt={article.title}
@@ -28,10 +28,10 @@ const ArticleHeader: React.FC<ArticleHeaderProps> = ({ article }) => {
               e.currentTarget.parentElement!.style.display = 'none';
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent"></div>
           {article.featured && (
-            <div className="absolute top-4 right-4">
-              <Badge variant="outline" className="border-yellow-400 text-yellow-400 bg-slate-900/70">
+            <div className="absolute top-4 right-4 sm:top-6 sm:right-6">
+              <Badge variant="outline" className="border-yellow-400 text-yellow-400 bg-slate-900/80 backdrop-blur-sm px-3 py-1 text-sm font-semibold">
                 Featured
               </Badge>
             </div>

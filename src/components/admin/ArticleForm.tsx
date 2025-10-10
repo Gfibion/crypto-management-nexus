@@ -239,8 +239,21 @@ const ArticleForm: React.FC<ArticleFormProps> = ({ article, onClose, onSuccess }
                 path="articles/"
                 className="mt-2"
               />
+              
+              <div className="mt-4">
+                <Label htmlFor="image_url" className="text-white">Or Enter Image URL</Label>
+                <Input
+                  id="image_url"
+                  type="url"
+                  value={formData.featured_image}
+                  onChange={(e) => handleInputChange('featured_image', e.target.value)}
+                  className="bg-slate-700 border-purple-600/30 text-white mt-2"
+                  placeholder="https://example.com/image.jpg"
+                />
+              </div>
+              
               <p className="text-sm text-gray-400 mt-2">
-                Upload a featured image for your article (like TechCrunch style)
+                Upload or provide a URL for a featured image (like TechCrunch style)
               </p>
             </div>
 
