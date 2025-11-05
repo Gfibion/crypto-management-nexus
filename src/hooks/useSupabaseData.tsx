@@ -141,6 +141,26 @@ export const useContactSubmit = () => {
         throw error;
       }
       console.log('Contact form submitted successfully:', data);
+      
+      // Send admin notification
+      try {
+        await supabase.functions.invoke('notify-admin', {
+          body: {
+            type: 'contact',
+            data: {
+              name: formData.name,
+              email: formData.email,
+              subject: formData.subject,
+              message: formData.message
+            }
+          }
+        });
+        console.log('Admin notification sent for contact form');
+      } catch (notifyError) {
+        console.error('Failed to send admin notification:', notifyError);
+        // Don't throw - contact form still succeeded
+      }
+      
       return data;
     },
     onSuccess: () => {

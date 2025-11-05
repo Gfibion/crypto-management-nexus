@@ -123,6 +123,36 @@ export const useCommentOperations = () => {
         .single();
       
       if (error) throw error;
+      
+      // Fetch article details for notification
+      const { data: article } = await supabase
+        .from('articles')
+        .select('title, slug')
+        .eq('id', articleId)
+        .single();
+      
+      // Fetch user profile for notification
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+      
+      // Send admin notification (don't await to avoid blocking)
+      supabase.functions.invoke('notify-admin', {
+        body: {
+          type: 'comment',
+          data: {
+            name: profile?.full_name || 'Anonymous User',
+            articleTitle: article?.title || 'Unknown Article',
+            commentContent: content,
+            articleId: article?.slug || articleId
+          }
+        }
+      }).catch((notifyError) => {
+        console.error('Failed to send admin notification:', notifyError);
+      });
+      
       return data;
     },
     onSuccess: (_, variables) => {
