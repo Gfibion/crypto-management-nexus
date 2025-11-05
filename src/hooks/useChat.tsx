@@ -13,6 +13,10 @@ export interface ChatMessage {
   message_type: 'user' | 'admin' | 'ai';
   is_read: boolean;
   created_at: string;
+  sender_profile?: {
+    full_name: string | null;
+    avatar_url: string | null;
+  };
 }
 
 export interface Conversation {
@@ -58,12 +62,25 @@ export const useMessages = (conversationId: string | null) => {
       
       const { data, error } = await supabase
         .from('chat_messages')
-        .select('*')
+        .select(`
+          *,
+          sender_profile:profiles(
+            full_name,
+            avatar_url
+          )
+        `)
         .eq('conversation_id', conversationId)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      return (data || []) as ChatMessage[];
+      
+      // Transform the data to match our interface
+      const messages = (data || []).map(msg => ({
+        ...msg,
+        sender_profile: Array.isArray(msg.sender_profile) ? msg.sender_profile[0] : msg.sender_profile
+      }));
+      
+      return messages as ChatMessage[];
     },
     enabled: !!conversationId,
   });
