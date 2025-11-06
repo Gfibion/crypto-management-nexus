@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
@@ -10,6 +9,7 @@ import { ThemeProvider } from "./components/ThemeProvider";
 import Navbar from "./components/Navbar";
 import LoadingOverlay from "./components/LoadingOverlay";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
+import { NotificationPermissionPrompt } from "./components/NotificationPermissionPrompt";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
@@ -49,6 +49,7 @@ const App = () => {
             message="Initializing Business Management Platform..." 
           />
           <PWAInstallPrompt />
+          <NotificationPermissionPrompt />
           <BrowserRouter>
             <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
               <Navbar />

@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 import { useIsAdmin } from './useUserRole';
+import { useNotifications } from './useNotifications';
 
 export interface ChatMessage {
   id: string;
@@ -72,6 +73,50 @@ export const useConversations = () => {
 };
 
 export const useMessages = (conversationId: string | null) => {
+  const { sendNotification } = useNotifications();
+  const isAdmin = useIsAdmin();
+
+  useEffect(() => {
+    if (!conversationId || !isAdmin) return;
+
+    const channel = supabase
+      .channel(`messages-${conversationId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'chat_messages',
+          filter: `conversation_id=eq.${conversationId}`
+        },
+        async (payload) => {
+          const newMessage = payload.new as ChatMessage;
+          
+          // Only notify admin about user messages
+          if (newMessage.message_type === 'user' && newMessage.sender_id) {
+            // Fetch sender profile
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('full_name')
+              .eq('id', newMessage.sender_id)
+              .single();
+
+            sendNotification({
+              title: 'New Chat Message',
+              body: newMessage.content.substring(0, 100),
+              type: 'chat',
+              senderName: profile?.full_name || 'User'
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [conversationId, isAdmin, sendNotification]);
+
   return useQuery({
     queryKey: ['messages', conversationId],
     queryFn: async () => {

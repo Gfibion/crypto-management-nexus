@@ -1,8 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { skillsData } from '@/components/skills/skillsData';
+import { useNotifications } from '@/hooks/useNotifications';
 
 export const useServices = () => {
   return useQuery({
@@ -122,6 +122,7 @@ export const useArticles = () => {
 
 export const useContactSubmit = () => {
   const queryClient = useQueryClient();
+  const { sendNotification } = useNotifications();
 
   const mutation = useMutation({
     mutationFn: async (formData: {
@@ -156,6 +157,14 @@ export const useContactSubmit = () => {
           }
         });
         console.log('Admin notification sent for contact form');
+
+        // Send browser notification
+        sendNotification({
+          title: 'New Contact Form Submission',
+          body: `${formData.subject}: ${formData.message.substring(0, 80)}`,
+          type: 'email',
+          senderName: formData.name
+        });
       } catch (notifyError) {
         console.error('Failed to send admin notification:', notifyError);
         // Don't throw - contact form still succeeded

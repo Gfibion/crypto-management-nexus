@@ -1,8 +1,10 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
+import { useNotifications } from '@/hooks/useNotifications';
+import { useIsAdmin } from '@/hooks/useUserRole';
+import { useEffect } from 'react';
 
 interface CommentWithExtras {
   id: string;
@@ -22,6 +24,53 @@ interface CommentWithExtras {
 }
 
 export const useComments = (articleId: string) => {
+  const { sendNotification } = useNotifications();
+  const isAdmin = useIsAdmin();
+
+  useEffect(() => {
+    if (!articleId || !isAdmin) return;
+
+    const channel = supabase
+      .channel(`comments-${articleId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'comments',
+          filter: `article_id=eq.${articleId}`
+        },
+        async (payload) => {
+          const newComment = payload.new as any;
+          
+          // Fetch user profile and article
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('full_name')
+            .eq('id', newComment.user_id)
+            .single();
+
+          const { data: article } = await supabase
+            .from('articles')
+            .select('title')
+            .eq('id', newComment.article_id)
+            .single();
+
+          sendNotification({
+            title: 'New Comment',
+            body: `On "${article?.title}": ${newComment.content.substring(0, 80)}`,
+            type: 'comment',
+            senderName: profile?.full_name || 'User'
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [articleId, isAdmin, sendNotification]);
+
   return useQuery({
     queryKey: ['comments', articleId],
     queryFn: async () => {

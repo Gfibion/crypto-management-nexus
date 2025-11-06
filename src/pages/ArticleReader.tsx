@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useArticles } from '@/hooks/useArticles';
@@ -13,12 +12,19 @@ import ArticleNavigation from '@/components/article/ArticleNavigation';
 import RelatedArticles from '@/components/article/RelatedArticles';
 import BackButton from '@/components/article/BackButton';
 import CommentsToggle from '@/components/article/CommentsToggle';
+import { useArticleLikesNotifications } from '@/hooks/useArticleLikes';
 
 const ArticleReader: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { data: articles, isLoading } = useArticles();
   const [showComments, setShowComments] = useState(false);
+
+  // Find current article
+  const currentArticle = articles?.find(article => article.slug === slug);
+  
+  // Enable article likes notifications for this article
+  useArticleLikesNotifications(currentArticle?.id);
 
   // Scroll to top when article changes
   useEffect(() => {
@@ -33,8 +39,6 @@ const ArticleReader: React.FC = () => {
     );
   }
 
-  const currentArticle = articles?.find(article => article.slug === slug);
-  
   if (!currentArticle) {
     return (
       <div className="min-h-screen pt-20 px-4 flex items-center justify-center">
