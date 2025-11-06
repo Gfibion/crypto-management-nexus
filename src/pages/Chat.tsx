@@ -2,13 +2,14 @@
 import { useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, MessageCircle, Clock, Loader2, HelpCircle, Bot } from "lucide-react";
+import { Plus, MessageCircle, Clock, Loader2, HelpCircle, Bot, User } from "lucide-react";
 import { useGuestMode } from "@/hooks/useGuestMode";
 import { useConversations, useCreateConversation } from "@/hooks/useChat";
 import GuestModePrompt from "@/components/GuestModePrompt";
 import ChatInterface from "@/components/ChatInterface";
 import ConversationActions from "@/components/chat/ConversationActions";
 import SEOHead from "@/components/SEOHead";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 const Chat = () => {
   const { requireAuth, showPrompt, closePrompt, pendingAction, isAuthenticated } = useGuestMode();
@@ -59,6 +60,15 @@ const Chat = () => {
       case 'closed': return 'Closed';
       default: return status;
     }
+  };
+
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   if (selectedConversationId) {
@@ -266,22 +276,42 @@ const Chat = () => {
                     onClick={() => handleSelectConversation(conversation.id)}
                     className="p-4 bg-slate-700/50 border border-purple-600/30 rounded-lg cursor-pointer hover:bg-slate-700/70 transition-colors"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-medium text-white mb-1">
-                          {conversation.title || 'Untitled Conversation'}
-                        </h3>
-                        <div className="flex items-center space-x-4 text-sm text-gray-400">
-                          <span className={getStatusColor(conversation.status)}>
-                            ● {getStatusText(conversation.status)}
-                          </span>
-                          <span className="flex items-center">
-                            <Clock className="h-4 w-4 mr-1" />
-                            {new Date(conversation.last_message_at).toLocaleDateString()}
-                          </span>
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-3 flex-1">
+                        <Avatar className="h-12 w-12 shrink-0 border-2 border-purple-600/50">
+                          <AvatarImage src={conversation.user_profile?.avatar_url || undefined} />
+                          <AvatarFallback className="bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+                            {conversation.user_profile?.full_name 
+                              ? getInitials(conversation.user_profile.full_name) 
+                              : <User className="h-5 w-5" />
+                            }
+                          </AvatarFallback>
+                        </Avatar>
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="text-lg font-medium text-white truncate">
+                              {conversation.title || 'Untitled Conversation'}
+                            </h3>
+                          </div>
+                          {conversation.user_profile?.full_name && (
+                            <p className="text-sm text-purple-300 mb-1">
+                              {conversation.user_profile.full_name}
+                            </p>
+                          )}
+                          <div className="flex items-center space-x-4 text-sm text-gray-400">
+                            <span className={getStatusColor(conversation.status)}>
+                              ● {getStatusText(conversation.status)}
+                            </span>
+                            <span className="flex items-center">
+                              <Clock className="h-4 w-4 mr-1" />
+                              {new Date(conversation.last_message_at).toLocaleDateString()}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                      
+                      <div className="flex items-center gap-2 shrink-0">
                         <ConversationActions 
                           conversationId={conversation.id}
                         />

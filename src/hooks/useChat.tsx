@@ -27,6 +27,10 @@ export interface Conversation {
   last_message_at: string;
   created_at: string;
   updated_at: string;
+  user_profile?: {
+    full_name: string | null;
+    avatar_url: string | null;
+  };
 }
 
 export const useConversations = () => {
@@ -38,7 +42,13 @@ export const useConversations = () => {
     queryFn: async () => {
       if (!user) return [];
       
-      let query = supabase.from('conversations').select('*');
+      let query = supabase.from('conversations').select(`
+        *,
+        user_profile:profiles(
+          full_name,
+          avatar_url
+        )
+      `);
       
       // If not admin, only get user's own conversations
       if (!isAdmin) {
@@ -48,7 +58,14 @@ export const useConversations = () => {
       const { data, error } = await query.order('last_message_at', { ascending: false });
 
       if (error) throw error;
-      return (data || []) as Conversation[];
+      
+      // Transform the data to match our interface
+      const conversations = (data || []).map(conv => ({
+        ...conv,
+        user_profile: Array.isArray(conv.user_profile) ? conv.user_profile[0] : conv.user_profile
+      }));
+      
+      return conversations as Conversation[];
     },
     enabled: !!user,
   });
