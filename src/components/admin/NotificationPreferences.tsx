@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Bell, Volume2, VolumeX, MessageSquare, Mail, MessageCircle, Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import TestNotification from './TestNotification';
+import SystemDiagnostics from './SystemDiagnostics';
 
 export interface NotificationPreferences {
   enabled: {
@@ -104,6 +105,8 @@ const NotificationPreferences: React.FC = () => {
         <h2 className="text-2xl font-bold text-foreground mb-2">Notification Preferences</h2>
         <p className="text-muted-foreground">Customize which notifications you want to receive and how they sound.</p>
       </div>
+
+      <SystemDiagnostics />
 
       <TestNotification />
 
