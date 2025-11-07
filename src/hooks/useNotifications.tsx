@@ -31,24 +31,33 @@ export const useNotifications = () => {
   }, []);
 
   const sendNotification = useCallback(({ title, body, type, senderName }: NotificationOptions) => {
+    console.log('🔔 Notification triggered:', { title, body, type, senderName, isAdmin, hasUser: !!user });
+    
     // Only send notifications to admins
-    if (!isAdmin || !user) return;
+    if (!isAdmin || !user) {
+      console.log('❌ Notification blocked: Not admin or no user', { isAdmin, hasUser: !!user });
+      return;
+    }
 
     // Check user preferences
     const preferences = getNotificationPreferences();
+    console.log('⚙️ Notification preferences:', preferences);
+    
     if (!preferences.enabled[type]) {
-      console.log(`Notifications disabled for type: ${type}`);
+      console.log(`❌ Notifications disabled for type: ${type}`);
       return;
     }
 
     // Check if notifications are supported and permitted
     if (!('Notification' in window)) {
-      console.log('This browser does not support notifications');
+      console.log('❌ This browser does not support notifications');
       return;
     }
 
+    console.log('🔐 Notification permission status:', Notification.permission);
+    
     if (Notification.permission !== 'granted') {
-      console.log('Notification permission not granted');
+      console.log('❌ Notification permission not granted');
       return;
     }
 
@@ -64,6 +73,7 @@ export const useNotifications = () => {
     const notificationBody = senderName ? `From: ${senderName}\n${body}` : body;
 
     // Create and show notification
+    console.log('✅ Creating notification:', notificationTitle);
     const notification = new Notification(notificationTitle, {
       body: notificationBody,
       icon: '/lovable-uploads/8b735fe1-3282-48d6-9daa-a0e5ecb43911.png',
@@ -74,6 +84,7 @@ export const useNotifications = () => {
     });
 
     // Play sound
+    console.log('🔊 Playing notification sound');
     playNotificationSound();
 
     // Handle notification click

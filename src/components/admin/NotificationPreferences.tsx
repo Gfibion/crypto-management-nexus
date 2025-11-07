@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -6,6 +6,7 @@ import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Bell, Volume2, VolumeX, MessageSquare, Mail, MessageCircle, Heart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import TestNotification from './TestNotification';
 
 export interface NotificationPreferences {
   enabled: {
@@ -103,6 +104,8 @@ const NotificationPreferences: React.FC = () => {
         <h2 className="text-2xl font-bold text-foreground mb-2">Notification Preferences</h2>
         <p className="text-muted-foreground">Customize which notifications you want to receive and how they sound.</p>
       </div>
+
+      <TestNotification />
 
       <Card>
         <CardHeader>
