@@ -1,6 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useAuth } from './useAuth';
 import { useIsAdmin } from './useUserRole';
+import { getNotificationPreferences } from '@/components/admin/NotificationPreferences';
 
 interface NotificationOptions {
   title: string;
@@ -21,14 +22,24 @@ export const useNotifications = () => {
   }, [isAdmin]);
 
   const playNotificationSound = useCallback(() => {
+    const preferences = getNotificationPreferences();
+    if (!preferences.soundEnabled) return;
+    
     const audio = new Audio('/notification-sound.mp3');
-    audio.volume = 0.3; // Subtle volume
+    audio.volume = preferences.soundVolume / 100;
     audio.play().catch(err => console.log('Could not play sound:', err));
   }, []);
 
   const sendNotification = useCallback(({ title, body, type, senderName }: NotificationOptions) => {
     // Only send notifications to admins
     if (!isAdmin || !user) return;
+
+    // Check user preferences
+    const preferences = getNotificationPreferences();
+    if (!preferences.enabled[type]) {
+      console.log(`Notifications disabled for type: ${type}`);
+      return;
+    }
 
     // Check if notifications are supported and permitted
     if (!('Notification' in window)) {
