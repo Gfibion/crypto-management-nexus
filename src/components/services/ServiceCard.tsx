@@ -35,8 +35,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, getIcon, onBookServi
 
   const handleChatConsultation = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const chatMessage = generateChatMessage(service.title);
-    navigate('/chat', { state: { initialMessage: chatMessage } });
+    navigate('/chat', { 
+      state: { 
+        serviceName: service.title,
+        serviceFeatures: service.features 
+      } 
+    });
   };
   const colorClasses = {
     purple: {

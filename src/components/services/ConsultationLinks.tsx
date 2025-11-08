@@ -19,8 +19,11 @@ const ConsultationLinks: React.FC<ConsultationLinksProps> = ({ serviceName, clas
   };
 
   const handleChatConsultation = () => {
-    const chatMessage = generateChatMessage(serviceName);
-    navigate('/chat', { state: { initialMessage: chatMessage } });
+    navigate('/chat', { 
+      state: { 
+        serviceName: serviceName 
+      } 
+    });
   };
 
   const handleScheduleCall = () => {

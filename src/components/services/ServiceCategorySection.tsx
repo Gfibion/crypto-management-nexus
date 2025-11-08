@@ -28,9 +28,13 @@ const ServiceCategorySection: React.FC<ServiceCategoryProps> = ({
     window.open(mailtoLink, '_blank');
   };
 
-  const handleChatConsultation = (serviceName: string) => {
-    const chatMessage = generateChatMessage(serviceName);
-    navigate('/chat', { state: { initialMessage: chatMessage } });
+  const handleChatConsultation = (service: any) => {
+    navigate('/chat', { 
+      state: { 
+        serviceName: service.title,
+        serviceFeatures: service.features 
+      } 
+    });
   };
 
   const colorClasses = {
@@ -129,7 +133,7 @@ const ServiceCategorySection: React.FC<ServiceCategoryProps> = ({
               
               <div className="space-y-3 pt-2">
                 <Button
-                  onClick={() => handleChatConsultation(service.title)}
+                  onClick={() => handleChatConsultation(service)}
                   className={`w-full ${colors.badge} text-white border-0 text-sm`}
                   size="sm"
                 >
@@ -139,7 +143,7 @@ const ServiceCategorySection: React.FC<ServiceCategoryProps> = ({
                 
                 <div className="flex gap-2">
                   <Button
-                    onClick={() => handleChatConsultation(service.title)}
+                    onClick={() => handleChatConsultation(service)}
                     size="sm"
                     variant="outline"
                     className="flex-1 border-blue-400/50 text-blue-300 hover:bg-blue-400/20 text-xs"

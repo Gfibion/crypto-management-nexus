@@ -1,17 +1,20 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, MessageCircle, Clock, Loader2, HelpCircle, Bot, User } from "lucide-react";
 import { useGuestMode } from "@/hooks/useGuestMode";
-import { useConversations, useCreateConversation } from "@/hooks/useChat";
+import { useConversations, useCreateConversation, useSendMessage } from "@/hooks/useChat";
 import GuestModePrompt from "@/components/GuestModePrompt";
 import ChatInterface from "@/components/ChatInterface";
 import ConversationActions from "@/components/chat/ConversationActions";
 import SEOHead from "@/components/SEOHead";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Chat = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const { requireAuth, showPrompt, closePrompt, pendingAction, isAuthenticated } = useGuestMode();
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [showChatTypeSelection, setShowChatTypeSelection] = useState(false);
@@ -19,6 +22,48 @@ const Chat = () => {
   
   const { data: conversations = [], isLoading } = useConversations();
   const createConversation = useCreateConversation();
+  const sendMessage = useSendMessage();
+
+  // Handle incoming service consultation from Services page
+  useEffect(() => {
+    const handleServiceChat = async () => {
+      const serviceName = location.state?.serviceName;
+      const serviceFeatures = location.state?.serviceFeatures;
+      
+      if (serviceName && isAuthenticated && !selectedConversationId) {
+        try {
+          // Create a new conversation with the service name
+          const conversationTitle = `${serviceName} Consultation`;
+          const newConversation = await createConversation.mutateAsync(conversationTitle);
+          setSelectedChatType('general');
+          setSelectedConversationId(newConversation.id);
+          
+          // Create a clean service tag message
+          let serviceMessage = `📋 **Service Inquiry: ${serviceName}**\n\nI'm interested in this service`;
+          
+          if (serviceFeatures && serviceFeatures.length > 0) {
+            serviceMessage += `:\n\n${serviceFeatures.map((f: string) => `• ${f}`).join('\n')}`;
+          }
+          
+          serviceMessage += '\n\nCould you provide more information about this service?';
+          
+          // Send the service tag message
+          await sendMessage.mutateAsync({
+            conversationId: newConversation.id,
+            content: serviceMessage,
+            messageType: 'user'
+          });
+
+          // Clear the location state to prevent re-triggering
+          navigate(location.pathname, { replace: true, state: {} });
+        } catch (error) {
+          console.error('Error creating service conversation:', error);
+        }
+      }
+    };
+
+    handleServiceChat();
+  }, [location.state, isAuthenticated, selectedConversationId]);
 
   const handleStartNewChat = () => {
     if (!requireAuth('start a new conversation')) return;
