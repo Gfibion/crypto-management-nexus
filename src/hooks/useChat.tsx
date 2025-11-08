@@ -45,7 +45,7 @@ export const useConversations = () => {
       
       let query = supabase.from('conversations').select(`
         *,
-        user_profile:profiles(
+        user_profile:profiles!user_id(
           full_name,
           avatar_url
         )
@@ -126,7 +126,7 @@ export const useMessages = (conversationId: string | null) => {
         .from('chat_messages')
         .select(`
           *,
-          sender_profile:profiles(
+          sender_profile:profiles!sender_id(
             full_name,
             avatar_url
           )
