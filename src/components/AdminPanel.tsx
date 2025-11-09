@@ -8,8 +8,10 @@ import ContentManagement from './admin/ContentManagement';
 import UserManagement from './admin/UserManagement';
 import EmailLogsSection from './admin/EmailLogsSection';
 import NotificationPreferences from './admin/NotificationPreferences';
+import CommentsManagement from './admin/CommentsManagement';
+import TestimonialsManagement from './admin/TestimonialsManagement';
 
-type TabType = 'dashboard' | 'articles' | 'messages' | 'content' | 'users' | 'emails' | 'notifications';
+type TabType = 'dashboard' | 'articles' | 'messages' | 'content' | 'users' | 'emails' | 'notifications' | 'comments' | 'testimonials';
 
 const AdminPanel: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
@@ -41,6 +43,14 @@ const AdminPanel: React.FC = () => {
         <NotificationPreferences />
       </div>
     );
+  }
+
+  if (activeTab === 'comments') {
+    return <CommentsManagement />;
+  }
+
+  if (activeTab === 'testimonials') {
+    return <TestimonialsManagement />;
   }
 
   return (

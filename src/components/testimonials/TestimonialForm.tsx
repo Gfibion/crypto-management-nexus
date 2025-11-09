@@ -15,11 +15,10 @@ const TestimonialForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    category: '',
+    company: '',
+    role: '',
     rating: 5,
-    title: '',
     message: '',
-    suggestions: ''
   });
 
   const handleInputChange = (field: string, value: string | number) => {
@@ -37,7 +36,7 @@ const TestimonialForm = () => {
       return;
     }
 
-    if (!formData.category || !formData.title || !formData.message) {
+    if (!formData.role || !formData.message) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
@@ -50,12 +49,14 @@ const TestimonialForm = () => {
       setIsSubmitting(true);
       
       const { error } = await supabase
-        .from('contact_messages')
+        .from('testimonials')
         .insert({
-          name: user.email?.split('@')[0] || 'Anonymous',
-          email: user.email || '',
-          subject: `${formData.category} - ${formData.title} (Rating: ${formData.rating}/5)`,
-          message: `${formData.message}\n\n--- Additional Feedback ---\nSuggestions: ${formData.suggestions || 'None provided'}`
+          message: formData.message,
+          rating: formData.rating,
+          company: formData.company || null,
+          role: formData.role,
+          user_id: user.id,
+          status: 'pending',
         });
 
       if (error) throw error;
@@ -67,11 +68,10 @@ const TestimonialForm = () => {
 
       // Reset form
       setFormData({
-        category: '',
+        company: '',
+        role: '',
         rating: 5,
-        title: '',
         message: '',
-        suggestions: ''
       });
 
     } catch (error: any) {
@@ -119,21 +119,30 @@ const TestimonialForm = () => {
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <Label htmlFor="category" className="text-gray-300">
-              What would you like to review? *
+            <Label htmlFor="role" className="text-gray-300">
+              Your Role/Position *
             </Label>
-            <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
-              <SelectTrigger className="bg-slate-700 border-purple-600/30 text-white">
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="website">Website & User Experience</SelectItem>
-                <SelectItem value="services">Services Quality</SelectItem>
-                <SelectItem value="skills">Skills & Expertise</SelectItem>
-                <SelectItem value="communication">Communication & Support</SelectItem>
-                <SelectItem value="overall">Overall Experience</SelectItem>
-              </SelectContent>
-            </Select>
+            <Input
+              id="role"
+              value={formData.role}
+              onChange={(e) => handleInputChange('role', e.target.value)}
+              placeholder="e.g., CEO, Business Manager, Developer"
+              className="bg-slate-700 border-purple-600/30 text-white"
+              required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="company" className="text-gray-300">
+              Company/Organization (Optional)
+            </Label>
+            <Input
+              id="company"
+              value={formData.company}
+              onChange={(e) => handleInputChange('company', e.target.value)}
+              placeholder="Your company or organization name"
+              className="bg-slate-700 border-purple-600/30 text-white"
+            />
           </div>
 
           <div>
@@ -145,20 +154,6 @@ const TestimonialForm = () => {
           </div>
 
           <div>
-            <Label htmlFor="title" className="text-gray-300">
-              Review Title *
-            </Label>
-            <Input
-              id="title"
-              value={formData.title}
-              onChange={(e) => handleInputChange('title', e.target.value)}
-              placeholder="Summarize your experience in a few words"
-              className="bg-slate-700 border-purple-600/30 text-white"
-              required
-            />
-          </div>
-
-          <div>
             <Label htmlFor="message" className="text-gray-300">
               Your Testimonial *
             </Label>
@@ -166,24 +161,10 @@ const TestimonialForm = () => {
               id="message"
               value={formData.message}
               onChange={(e) => handleInputChange('message', e.target.value)}
-              placeholder="Share your detailed experience, what you liked, and how our services helped you..."
-              rows={4}
+              placeholder="Share your experience working with us, the results you achieved, and what you valued most..."
+              rows={5}
               className="bg-slate-700 border-purple-600/30 text-white"
               required
-            />
-          </div>
-
-          <div>
-            <Label htmlFor="suggestions" className="text-gray-300">
-              Suggestions for Improvement (Optional)
-            </Label>
-            <Textarea
-              id="suggestions"
-              value={formData.suggestions}
-              onChange={(e) => handleInputChange('suggestions', e.target.value)}
-              placeholder="Any suggestions on how we can improve our services or website?"
-              rows={3}
-              className="bg-slate-700 border-purple-600/30 text-white"
             />
           </div>
 
