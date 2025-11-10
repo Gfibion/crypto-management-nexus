@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import ParticleBackground from "@/components/ParticleBackground";
 import ImageSlideshow from "@/components/home/ImageSlideshow";
-import { ArrowDown, Briefcase, Star, TrendingUp, Sparkles } from "lucide-react";
+import { ArrowDown, Briefcase, Star, TrendingUp, Sparkles, Zap, Code, Users } from "lucide-react";
 import SEOHead from "@/components/SEOHead";
 
 const Index = () => {
@@ -135,17 +135,59 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Stats Section */}
+      <section className="py-16 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div className="text-center p-6 bg-gradient-to-br from-purple-900/20 to-blue-900/20 rounded-2xl backdrop-blur-sm border border-purple-800/20 hover:border-purple-600/40 transition-all duration-300">
+              <Zap className="h-8 w-8 text-purple-400 mx-auto mb-3" />
+              <div className="text-3xl font-bold text-white mb-1">Fresh</div>
+              <div className="text-sm text-gray-400">Perspectives</div>
+            </div>
+            <div className="text-center p-6 bg-gradient-to-br from-blue-900/20 to-cyan-900/20 rounded-2xl backdrop-blur-sm border border-blue-800/20 hover:border-blue-600/40 transition-all duration-300">
+              <Code className="h-8 w-8 text-blue-400 mx-auto mb-3" />
+              <div className="text-3xl font-bold text-white mb-1">Modern</div>
+              <div className="text-sm text-gray-400">Technologies</div>
+            </div>
+            <div className="text-center p-6 bg-gradient-to-br from-cyan-900/20 to-purple-900/20 rounded-2xl backdrop-blur-sm border border-cyan-800/20 hover:border-cyan-600/40 transition-all duration-300">
+              <Users className="h-8 w-8 text-cyan-400 mx-auto mb-3" />
+              <div className="text-3xl font-bold text-white mb-1">Team</div>
+              <div className="text-sm text-gray-400">Collaboration</div>
+            </div>
+            <div className="text-center p-6 bg-gradient-to-br from-purple-900/20 to-pink-900/20 rounded-2xl backdrop-blur-sm border border-purple-800/20 hover:border-purple-600/40 transition-all duration-300">
+              <Star className="h-8 w-8 text-pink-400 mx-auto mb-3" />
+              <div className="text-3xl font-bold text-white mb-1">Quality</div>
+              <div className="text-sm text-gray-400">Driven</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Call to Action Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-purple-900/10 via-blue-900/10 to-cyan-900/10">
-        <div className="max-w-3xl mx-auto text-center">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-900/10 via-blue-900/10 to-cyan-900/10" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-600/5 via-transparent to-transparent" />
+        
+        <div className="max-w-3xl mx-auto text-center relative z-10">
           <div className={`transition-all duration-1000 ease-out ${isVisible ? "opacity-100" : "opacity-0"}`}>
+            <div className="inline-flex items-center gap-2 bg-purple-900/30 px-4 py-2 rounded-full mb-8 border border-purple-600/30">
+              <Sparkles className="h-4 w-4 text-purple-400" />
+              <span className="text-sm text-purple-300">Available for opportunities</span>
+            </div>
+            
             <h2 className="text-3xl sm:text-4xl font-bold mb-6 text-white">Ready to Contribute to Your Organization?</h2>
             <p className="text-lg sm:text-xl text-gray-300 mb-10 leading-relaxed">
               Partner with a motivated recent graduate who brings fresh perspectives, modern knowledge, and enthusiasm for both traditional business principles and cutting-edge technology.
             </p>
-            <Button asChild size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white transition-all duration-300">
-              <Link to="/chat">Let's Connect</Link>
-            </Button>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button asChild size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white transition-all duration-300">
+                <Link to="/chat">Let's Connect</Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" className="border-purple-400/50 text-purple-400 hover:bg-purple-400/10 transition-all duration-300">
+                <Link to="/portfolio">View Portfolio</Link>
+              </Button>
+            </div>
           </div>
         </div>
       </section>
