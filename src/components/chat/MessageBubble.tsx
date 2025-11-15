@@ -10,22 +10,17 @@ interface MessageBubbleProps {
 }
 
 export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
-  const getMessageLabel = (messageType: string) => {
-    switch (messageType) {
+  const getUserName = () => {
+    switch (message.message_type) {
       case 'admin':
         return 'Support Team';
       case 'ai':
         return 'AI Assistant';
+      case 'user':
+        return message.sender_profile?.full_name || 'User';
       default:
-        return 'You';
+        return 'User';
     }
-  };
-
-  const getUserName = () => {
-    if (message.message_type === 'user' && message.sender_profile?.full_name) {
-      return message.sender_profile.full_name;
-    }
-    return getMessageLabel(message.message_type);
   };
 
   const getInitials = (name: string) => {
