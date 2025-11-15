@@ -13,6 +13,7 @@ import RelatedArticles from '@/components/article/RelatedArticles';
 import BackButton from '@/components/article/BackButton';
 import CommentsToggle from '@/components/article/CommentsToggle';
 import { useArticleLikesNotifications } from '@/hooks/useArticleLikes';
+import SEOHead from '@/components/SEOHead';
 
 const ArticleReader: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -66,9 +67,42 @@ const ArticleReader: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen pt-20 px-4">
-      <div className="max-w-4xl mx-auto">
-        <BackButton onBack={() => navigate('/articles')} />
+    <>
+      <SEOHead 
+        title={`${currentArticle.title} - Gfibion Joseph Mutua`}
+        description={currentArticle.excerpt || `Read ${currentArticle.title} by Gfibion Joseph Mutua. Expert insights on business management and ICT consulting.`}
+        keywords={`${currentArticle.tags?.join(', ')}, ${currentArticle.category}, business article, ICT article, Joseph Mutua`}
+        ogImage={currentArticle.featured_image || undefined}
+        ogType="article"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Article",
+          "headline": currentArticle.title,
+          "description": currentArticle.excerpt,
+          "image": currentArticle.featured_image,
+          "datePublished": currentArticle.created_at,
+          "dateModified": currentArticle.updated_at,
+          "author": {
+            "@type": "Person",
+            "name": "Gfibion Joseph Mutua",
+            "jobTitle": "Business Manager & ICT Consultant"
+          },
+          "publisher": {
+            "@type": "Person",
+            "name": "Gfibion Joseph Mutua"
+          },
+          "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": `https://gfibion-jmutua.vercel.app/articles/${currentArticle.slug}`
+          },
+          "keywords": currentArticle.tags?.join(', '),
+          "articleSection": currentArticle.category,
+          "wordCount": currentArticle.content.split(' ').length
+        }}
+      />
+      <div className="min-h-screen pt-20 px-4">
+        <div className="max-w-4xl mx-auto">
+          <BackButton onBack={() => navigate('/articles')} />
 
         {/* Article Content */}
         <Card className="bg-slate-800/50 border-purple-800/30 mb-8">
@@ -112,8 +146,9 @@ const ArticleReader: React.FC = () => {
             onNavigate={handleArticleNavigation}
           />
         )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
