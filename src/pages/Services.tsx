@@ -8,16 +8,18 @@ import { Calendar, Search as SearchIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { generateMailtoLink } from "@/utils/emailTemplates";
 import PageLayout from "@/components/PageLayout";
-import { businessManagementServices, ictTechnologyServices } from "@/components/services/serviceData";
 import ServiceCard from "@/components/services/ServiceCard";
 import { getIcon } from "@/components/services/ServiceIcons";
 import SEOHead from "@/components/SEOHead";
 import SkillCategory from "@/components/skills/SkillCategory";
 import { skillsData, categoryOrder } from "@/components/skills/skillsData";
+import { useServices } from "@/hooks/useSupabaseData";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
 const Services = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const { data: dbServices = [], isLoading } = useServices();
   
   // Convert skillsData to the expected format
   const allSkills = Object.entries(skillsData).flatMap(([category, skills]) => 
@@ -61,27 +63,31 @@ const Services = () => {
   };
 
   // Filter services based on search term and category
-  const filteredBusinessServices = businessManagementServices.filter(service => {
-    const matchesSearch = !searchTerm || 
-      service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      service.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      service.features.some(feature => feature.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesCategory = !selectedCategory || selectedCategory === 'Business Management';
-    
-    return matchesSearch && matchesCategory;
-  });
+  const filteredBusinessServices = dbServices
+    .filter(service => service.category === 'Business Management' && service.active !== false)
+    .filter(service => {
+      const matchesSearch = !searchTerm || 
+        service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        service.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (Array.isArray(service.features) && service.features.some((f: string) => f.toLowerCase().includes(searchTerm.toLowerCase())));
+      
+      const matchesCategory = !selectedCategory || selectedCategory === 'Business Management';
+      
+      return matchesSearch && matchesCategory;
+    });
 
-  const filteredIctServices = ictTechnologyServices.filter(service => {
-    const matchesSearch = !searchTerm || 
-      service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      service.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      service.features.some(feature => feature.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesCategory = !selectedCategory || selectedCategory === 'ICT & Technology';
-    
-    return matchesSearch && matchesCategory;
-  });
+  const filteredIctServices = dbServices
+    .filter(service => service.category === 'ICT & Technology' && service.active !== false)
+    .filter(service => {
+      const matchesSearch = !searchTerm || 
+        service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        service.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (Array.isArray(service.features) && service.features.some((f: string) => f.toLowerCase().includes(searchTerm.toLowerCase())));
+      
+      const matchesCategory = !selectedCategory || selectedCategory === 'ICT & Technology';
+      
+      return matchesSearch && matchesCategory;
+    });
 
   return (
     <>
@@ -105,6 +111,15 @@ const Services = () => {
       <PageLayout>
         <div className="px-4 py-16">
           <div className="max-w-6xl mx-auto">
+            {/* Loading State */}
+            {isLoading && (
+              <div className="min-h-[60vh] flex items-center justify-center">
+                <LoadingSpinner message="Loading services..." size="lg" />
+              </div>
+            )}
+
+            {!isLoading && (
+              <>
             {/* Header Section */}
             <div className="text-center mb-16">
               <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
@@ -278,6 +293,8 @@ const Services = () => {
             </Card>
           </div>
         </div>
+              </>
+            )}
       </PageLayout>
     </>
   );
