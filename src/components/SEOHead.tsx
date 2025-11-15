@@ -12,6 +12,7 @@ interface SEOHeadProps {
   ogType?: string;
   twitterCard?: string;
   structuredData?: object;
+  breadcrumbs?: Array<{ name: string; url: string }>;
 }
 
 const SEOHead: React.FC<SEOHeadProps> = ({
@@ -24,7 +25,8 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   ogImage,
   ogType = "website",
   twitterCard = "summary_large_image",
-  structuredData
+  structuredData,
+  breadcrumbs
 }) => {
   const defaultOgImage = getMediaAsset('icon_pwa');
   const finalOgImage = ogImage || defaultOgImage?.url || '/lovable-uploads/8b735fe1-3282-48d6-9daa-a0e5ecb43911.png';
@@ -70,7 +72,22 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     if (structuredData) {
       updateStructuredData(structuredData);
     }
-  }, [title, description, keywords, canonical, ogTitle, ogDescription, finalOgImage, ogType, twitterCard, structuredData]);
+
+    // Add breadcrumb structured data if provided
+    if (breadcrumbs && breadcrumbs.length > 0) {
+      const breadcrumbData = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": breadcrumbs.map((crumb, index) => ({
+          "@type": "ListItem",
+          "position": index + 1,
+          "name": crumb.name,
+          "item": `https://gfibion-jmutua.vercel.app${crumb.url}`
+        }))
+      };
+      updateStructuredData(breadcrumbData, 'breadcrumb');
+    }
+  }, [title, description, keywords, canonical, ogTitle, ogDescription, finalOgImage, ogType, twitterCard, structuredData, breadcrumbs]);
 
   const updateMetaTag = (attribute: string, name: string, content: string) => {
     let element = document.querySelector(`meta[${attribute}="${name}"]`);
@@ -92,11 +109,15 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     element.setAttribute('href', url);
   };
 
-  const updateStructuredData = (data: object) => {
-    let element = document.querySelector('script[type="application/ld+json"]');
+  const updateStructuredData = (data: object, id?: string) => {
+    const selector = id 
+      ? `script[type="application/ld+json"][data-id="${id}"]`
+      : 'script[type="application/ld+json"]:not([data-id])';
+    let element = document.querySelector(selector);
     if (!element) {
       element = document.createElement('script');
       element.setAttribute('type', 'application/ld+json');
+      if (id) element.setAttribute('data-id', id);
       document.head.appendChild(element);
     }
     element.textContent = JSON.stringify(data);
