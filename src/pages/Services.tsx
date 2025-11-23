@@ -15,21 +15,53 @@ import SkillCategory from "@/components/skills/SkillCategory";
 import { skillsData, categoryOrder } from "@/components/skills/skillsData";
 import { useServices } from "@/hooks/useSupabaseData";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import { businessManagementServices, ictTechnologyServices } from "@/components/services/serviceData";
 
 const Services = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const { data: dbServices = [], isLoading, isError } = useServices();
   
+  // Fallback to hardcoded services if database is empty
+  // Convert hardcoded services to match database format
+  const fallbackServices = [
+    ...businessManagementServices.map(service => ({
+      id: service.id,
+      title: service.title,
+      description: service.description,
+      icon: service.icon,
+      category: service.category,
+      featured: service.featured || false,
+      features: service.features || [],
+      price_range: service.price_range || null,
+      active: true
+    })),
+    ...ictTechnologyServices.map(service => ({
+      id: service.id,
+      title: service.title,
+      description: service.description,
+      icon: service.icon,
+      category: service.category,
+      featured: service.featured || false,
+      features: service.features || [],
+      price_range: service.price_range || null,
+      active: true
+    }))
+  ];
+  
+  // Use database services if available, otherwise fallback to hardcoded
+  const services = dbServices.length > 0 ? dbServices : fallbackServices;
+  
   // Debug: Log services when they change
   useEffect(() => {
-    if (dbServices.length > 0) {
-      console.log(`Services loaded: ${dbServices.length} total services`);
-      const businessCount = dbServices.filter(s => s.category === 'Business Management').length;
-      const ictCount = dbServices.filter(s => s.category === 'ICT & Technology').length;
+    if (services.length > 0) {
+      const source = dbServices.length > 0 ? 'database' : 'hardcoded (fallback)';
+      console.log(`Services loaded from ${source}: ${services.length} total services`);
+      const businessCount = services.filter(s => s.category === 'Business Management').length;
+      const ictCount = services.filter(s => s.category === 'ICT & Technology').length;
       console.log(`Business Management: ${businessCount}, ICT & Technology: ${ictCount}`);
     }
-  }, [dbServices]);
+  }, [services, dbServices]);
   
   // Convert skillsData to the expected format
   const allSkills = Object.entries(skillsData).flatMap(([category, skills]) => 
@@ -73,7 +105,7 @@ const Services = () => {
   };
 
   // Filter services based on search term and category
-  const filteredBusinessServices = dbServices
+  const filteredBusinessServices = services
     .filter(service => service.category === 'Business Management' && service.active !== false)
     .filter(service => {
       const matchesSearch = !searchTerm || 
@@ -86,7 +118,7 @@ const Services = () => {
       return matchesSearch && matchesCategory;
     });
 
-  const filteredIctServices = dbServices
+  const filteredIctServices = services
     .filter(service => service.category === 'ICT & Technology' && service.active !== false)
     .filter(service => {
       const matchesSearch = !searchTerm || 
@@ -233,7 +265,7 @@ const Services = () => {
             )}
 
             {/* No Services Message */}
-            {!searchTerm && dbServices.length === 0 && (
+            {!searchTerm && services.length === 0 && (
               <div className="text-center py-16">
                 <div className="mb-6">
                   <div className="text-6xl mb-4">🔧</div>
