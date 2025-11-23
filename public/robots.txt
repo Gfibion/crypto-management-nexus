@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://Josephmgfibion.org/sitemap.xml
+Sitemap: https://josephmgfibion.org/sitemap.xml

@@ -74,7 +74,7 @@ const handler = async (req: Request): Promise<Response> => {
           </div>
           ${data.articleId ? `
             <p style="color: #64748b; font-size: 14px;">
-              <a href="https://gfibionjosephmutua.lovable.app/articles/${data.articleId}" style="color: #7c3aed;">View Article & Comment</a>
+              <a href="https://josephmgfibion.org/articles/${data.articleId}" style="color: #7c3aed;">View Article & Comment</a>
             </p>
           ` : ''}
         </div>
