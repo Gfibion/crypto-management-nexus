@@ -291,10 +291,10 @@ const Services = () => {
                 </div>
               </CardContent>
             </Card>
-          </div>
-        </div>
               </>
             )}
+          </div>
+        </div>
       </PageLayout>
     </>
   );
