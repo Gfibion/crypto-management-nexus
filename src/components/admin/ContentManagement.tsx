@@ -15,6 +15,7 @@ import { Settings, Edit, Trash2, Plus, Upload, Eye, EyeOff, RefreshCw } from 'lu
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { populateAllAdminData } from '@/utils/populateAdminData';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 interface ContentManagementProps {
   setActiveTab: (tab: 'dashboard' | 'content') => void;
@@ -39,21 +40,26 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
     },
   });
 
-  const { data: services = [] } = useQuery({
+  const { data: services = [], isLoading: servicesLoading, refetch: refetchServices } = useQuery({
     queryKey: ['admin-services'],
     queryFn: async () => {
+      console.log('Admin: Fetching services from database...');
       // Fetch all services (including inactive ones) for admin management
       const { data, error } = await supabase
         .from('services')
         .select('*')
         .order('featured', { ascending: false })
         .order('created_at', { ascending: false });
-      if (error) throw error;
+      if (error) {
+        console.error('Admin: Error fetching services:', error);
+        throw error;
+      }
+      console.log(`Admin: Fetched ${data?.length || 0} services from database`);
       return data || [];
     },
     // Refetch on window focus and periodically to keep data fresh
     refetchOnWindowFocus: true,
-    refetchInterval: 60000, // Refetch every minute
+    refetchInterval: 30000, // Refetch every 30 seconds
   });
 
   const { data: skills = [] } = useQuery({
@@ -176,17 +182,26 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
     setIsPopulating(true);
     try {
       await populateAllAdminData();
-      // Refresh all queries
-      queryClient.invalidateQueries({ queryKey: ['admin-services'] });
-      queryClient.invalidateQueries({ queryKey: ['admin-skills'] });
+      // Invalidate and refetch all queries to ensure UI updates
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['admin-services'] }),
+        queryClient.invalidateQueries({ queryKey: ['admin-skills'] }),
+        queryClient.invalidateQueries({ queryKey: ['services'] }),
+        queryClient.invalidateQueries({ queryKey: ['skills'] })
+      ]);
+      // Force refetch
+      queryClient.refetchQueries({ queryKey: ['admin-services'] });
+      queryClient.refetchQueries({ queryKey: ['services'] });
+      
       toast({
         title: "Success",
-        description: "Admin data populated successfully with comprehensive services and skills",
+        description: "Admin data populated successfully. Services should now be visible.",
       });
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Populate error:', error);
       toast({
         title: "Error",
-        description: "Failed to populate admin data",
+        description: error.message || "Failed to populate admin data",
         variant: "destructive"
       });
     } finally {
@@ -684,9 +699,19 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
           </div>
         </CardHeader>
         <CardContent>
+          {activeContentTab === 'services' && servicesLoading && (
+            <div className="text-center py-12 text-gray-400">
+              <LoadingSpinner message="Loading services..." />
+            </div>
+          )}
+          {activeContentTab === 'services' && !servicesLoading && (
+            <div className="mb-4 text-sm text-gray-400">
+              Showing {services.length} service{services.length !== 1 ? 's' : ''} from database
+            </div>
+          )}
           <div className="grid gap-4">
             {getCurrentData().map(renderItemCard)}
-            {getCurrentData().length === 0 && (
+            {getCurrentData().length === 0 && !(activeContentTab === 'services' && servicesLoading) && (
               <div className="text-center py-12 text-gray-400">
                 <div className="mb-4">
                   <Settings className="h-12 w-12 mx-auto text-gray-600" />
@@ -695,6 +720,8 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
                 <p className="mb-4">
                   {activeContentTab === 'contact' 
                     ? 'No contact messages received yet.' 
+                    : activeContentTab === 'services'
+                    ? 'No services in database. Click "Populate Data" to add services from hardcoded data.'
                     : `Create your first ${activeContentTab.slice(0, -1)} item!`
                   }
                 </p>

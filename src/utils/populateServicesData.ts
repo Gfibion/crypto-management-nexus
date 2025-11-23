@@ -4,101 +4,57 @@ import { allBusinessServices, allIctServices } from '@/components/services/expan
 
 export const populateServicesData = async () => {
   try {
-    console.log('Starting to populate/update services data...');
+    console.log('Starting to populate services data...');
 
-    // Combine all services from both files
-    // Use the main serviceData.ts as primary source, and expandedServiceData.ts for additional services
+    // Use only the main serviceData.ts (simpler, more reliable)
     const allServices = [
       ...businessManagementServices,
-      ...ictTechnologyServices,
-      ...allBusinessServices,
-      ...allIctServices
+      ...ictTechnologyServices
     ];
 
-    // Remove duplicates based on id, keeping the first occurrence (from serviceData.ts takes priority)
-    const uniqueServices = Array.from(
-      new Map(allServices.map(service => [service.id, service])).values()
-    );
+    console.log(`Processing ${allServices.length} services`);
 
-    console.log(`Found ${uniqueServices.length} unique services to process`);
+    // Prepare services data for database insertion
+    const servicesToInsert = allServices.map(service => ({
+      title: service.title,
+      description: service.description,
+      icon: service.icon || null,
+      category: service.category, // Already 'Business Management' or 'ICT & Technology'
+      featured: service.featured || false,
+      features: service.features || [],
+      price_range: service.price_range || null,
+      active: true
+    }));
 
-    // Get existing services from database to match by title
-    const { data: existingServices, error: fetchError } = await supabase
+    // Delete all existing services first, then insert fresh ones
+    // This ensures clean data without duplicates
+    const { error: deleteError } = await supabase
       .from('services')
-      .select('id, title');
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all (this condition is always true)
 
-    if (fetchError) {
-      console.error('Error fetching existing services:', fetchError);
-      throw fetchError;
+    if (deleteError) {
+      console.warn('Error deleting existing services (may not exist):', deleteError);
+      // Continue anyway
     }
 
-    const existingTitles = new Set(existingServices?.map(s => s.title.toLowerCase()) || []);
-    const existingById = new Map(existingServices?.map(s => [s.title.toLowerCase(), s.id]) || []);
+    // Insert all services
+    const { data: insertedData, error: insertError } = await supabase
+      .from('services')
+      .insert(servicesToInsert)
+      .select();
 
-    let insertedCount = 0;
-    let updatedCount = 0;
-
-    // Process each service
-    for (const service of uniqueServices) {
-      // Normalize category to match database expectations
-      let category = service.category;
-      if (category === 'Business Strategy & Consulting' || 
-          category === 'Strategic Management' ||
-          category === 'Operations & Leadership' ||
-          category === 'Financial Management' ||
-          category === 'Business Development' ||
-          category === 'Innovation & Entrepreneurship') {
-        category = 'Business Management';
-      } else if (category === 'Information & Communication Technology' ||
-                 category === 'Software Development' ||
-                 category === 'System Architecture' ||
-                 category === 'Data & Analytics' ||
-                 category === 'Infrastructure & Security') {
-        category = 'ICT & Technology';
-      }
-
-      const serviceData = {
-        title: service.title,
-        description: service.description,
-        icon: service.icon || null,
-        category: category,
-        featured: service.featured || false,
-        features: service.features || [],
-        price_range: service.price_range || null,
-        active: true
-      };
-
-      const titleLower = service.title.toLowerCase();
-      
-      if (existingTitles.has(titleLower)) {
-        // Update existing service
-        const existingId = existingById.get(titleLower);
-        const { error: updateError } = await supabase
-          .from('services')
-          .update(serviceData)
-          .eq('id', existingId);
-
-        if (updateError) {
-          console.error(`Error updating service "${service.title}":`, updateError);
-        } else {
-          updatedCount++;
-        }
-      } else {
-        // Insert new service
-        const { error: insertError } = await supabase
-          .from('services')
-          .insert([serviceData]);
-
-        if (insertError) {
-          console.error(`Error inserting service "${service.title}":`, insertError);
-        } else {
-          insertedCount++;
-        }
-      }
+    if (insertError) {
+      console.error('Error inserting services:', insertError);
+      throw insertError;
     }
 
-    console.log(`Successfully processed services: ${insertedCount} inserted, ${updatedCount} updated`);
-    return { success: true, inserted: insertedCount, updated: updatedCount, total: uniqueServices.length };
+    console.log(`Successfully inserted ${insertedData?.length || 0} services into database`);
+    return { 
+      success: true, 
+      inserted: insertedData?.length || 0, 
+      total: allServices.length 
+    };
   } catch (error) {
     console.error('Failed to populate services data:', error);
     throw error;

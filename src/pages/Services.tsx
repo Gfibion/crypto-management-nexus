@@ -50,7 +50,8 @@ const Services = () => {
   ];
   
   // Use database services if available, otherwise fallback to hardcoded
-  const services = dbServices.length > 0 ? dbServices : fallbackServices;
+  // Only use fallback if we're not loading and database is empty
+  const services = (!isLoading && dbServices.length === 0) ? fallbackServices : dbServices;
   
   // Debug: Log services when they change
   useEffect(() => {
