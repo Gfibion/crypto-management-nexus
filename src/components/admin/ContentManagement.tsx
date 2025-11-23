@@ -42,10 +42,18 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
   const { data: services = [] } = useQuery({
     queryKey: ['admin-services'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('services').select('*').order('created_at', { ascending: false });
+      // Fetch all services (including inactive ones) for admin management
+      const { data, error } = await supabase
+        .from('services')
+        .select('*')
+        .order('featured', { ascending: false })
+        .order('created_at', { ascending: false });
       if (error) throw error;
-      return data;
+      return data || [];
     },
+    // Refetch on window focus and periodically to keep data fresh
+    refetchOnWindowFocus: true,
+    refetchInterval: 60000, // Refetch every minute
   });
 
   const { data: skills = [] } = useQuery({
@@ -212,7 +220,12 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
     const getDescription = () => {
       switch (activeContentTab) {
         case 'projects': return item.description;
-        case 'services': return item.description;
+        case 'services': {
+          const desc = item.description || '';
+          const category = item.category ? ` • ${item.category}` : '';
+          const price = item.price_range ? ` • ${item.price_range}` : '';
+          return desc.substring(0, 80) + (desc.length > 80 ? '...' : '') + category + price;
+        }
         case 'skills': return `${item.category} - Level ${item.proficiency_level}/10`;
         case 'education': return `${item.field_of_study} (${item.start_year}-${item.end_year || 'Present'})`;
         case 'contact': return item.message?.substring(0, 100) + '...';
@@ -252,9 +265,31 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
                   {item.email} • {new Date(item.created_at).toLocaleDateString()}
                 </p>
               )}
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2 mb-2">
                 {getBadges()}
+                {activeContentTab === 'services' && item.category && (
+                  <Badge key="category" variant="outline" className="border-purple-400/30 text-purple-300">
+                    {item.category}
+                  </Badge>
+                )}
               </div>
+              {activeContentTab === 'services' && Array.isArray(item.features) && item.features.length > 0 && (
+                <div className="mt-2">
+                  <p className="text-gray-400 text-xs mb-1">Features:</p>
+                  <div className="flex flex-wrap gap-1">
+                    {item.features.slice(0, 3).map((feature: string, idx: number) => (
+                      <Badge key={idx} variant="outline" className="text-xs border-gray-600 text-gray-400">
+                        {feature}
+                      </Badge>
+                    ))}
+                    {item.features.length > 3 && (
+                      <Badge variant="outline" className="text-xs border-gray-600 text-gray-400">
+                        +{item.features.length - 3} more
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
             <div className="flex gap-2 ml-4">
               {activeContentTab !== 'contact' && (
@@ -552,10 +587,24 @@ const ContentManagement: React.FC<ContentManagementProps> = ({ setActiveTab }) =
               </Button>
               <Button
                 onClick={() => {
+                  // Prepare data for submission
+                  const submitData = { ...formData };
+                  
+                  // Ensure features is an array for services
+                  if (activeContentTab === 'services') {
+                    if (!Array.isArray(submitData.features)) {
+                      submitData.features = submitData.features 
+                        ? (typeof submitData.features === 'string' 
+                            ? submitData.features.split('\n').filter(f => f.trim())
+                            : [])
+                        : [];
+                    }
+                  }
+                  
                   if (isEditing) {
-                    updateItem.mutate({ table: activeContentTab, id: editingItem.id, data: formData });
+                    updateItem.mutate({ table: activeContentTab, id: editingItem.id, data: submitData });
                   } else {
-                    createItem.mutate({ table: activeContentTab, data: formData });
+                    createItem.mutate({ table: activeContentTab, data: submitData });
                   }
                 }}
                 className="bg-gradient-to-r from-purple-600 to-red-600 hover:from-purple-700 hover:to-red-700 text-white"
