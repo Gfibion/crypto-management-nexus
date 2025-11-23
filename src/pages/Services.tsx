@@ -101,7 +101,7 @@ const Services = () => {
           "name": "Business Management & ICT Services",
           "provider": {
             "@type": "Person",
-            "name": "Gfibion Joseph Mutua"
+            "name": "Gfibion, Gfibion Genesis, Gfibion Joseph,Joseph Mutua"
           },
           "serviceType": ["Business Management Consulting", "ICT Technology Services", "Strategic Planning", "Digital Transformation"],
           "description": "Professional business management and ICT consulting services",
@@ -146,21 +146,21 @@ const Services = () => {
                 </div>
                 <div className="flex gap-2 flex-wrap justify-center">
                   <Badge
-                    variant={selectedCategory === null ? "default" : "outline"}
+                    variant={(selectedCategory === null ? "default" : "outline") as "default" | "outline"}
                     className="cursor-pointer hover:bg-primary/80 transition-colors"
                     onClick={() => setSelectedCategory(null)}
                   >
                     All Services
                   </Badge>
                   <Badge
-                    variant={selectedCategory === 'Business Management' ? "default" : "outline"}
+                    variant={(selectedCategory === 'Business Management' ? "default" : "outline") as "default" | "outline"}
                     className="cursor-pointer hover:bg-primary/80 transition-colors"
                     onClick={() => setSelectedCategory('Business Management')}
                   >
                     Business Management
                   </Badge>
                   <Badge
-                    variant={selectedCategory === 'ICT & Technology' ? "default" : "outline"}
+                    variant={(selectedCategory === 'ICT & Technology' ? "default" : "outline") as "default" | "outline"}
                     className="cursor-pointer hover:bg-primary/80 transition-colors"
                     onClick={() => setSelectedCategory('ICT & Technology')}
                   >
