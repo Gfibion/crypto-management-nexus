@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProcessSection from "@/components/services/ProcessSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +19,17 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 const Services = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const { data: dbServices = [], isLoading } = useServices();
+  const { data: dbServices = [], isLoading, isError } = useServices();
+  
+  // Debug: Log services when they change
+  useEffect(() => {
+    if (dbServices.length > 0) {
+      console.log(`Services loaded: ${dbServices.length} total services`);
+      const businessCount = dbServices.filter(s => s.category === 'Business Management').length;
+      const ictCount = dbServices.filter(s => s.category === 'ICT & Technology').length;
+      console.log(`Business Management: ${businessCount}, ICT & Technology: ${ictCount}`);
+    }
+  }, [dbServices]);
   
   // Convert skillsData to the expected format
   const allSkills = Object.entries(skillsData).flatMap(([category, skills]) => 
@@ -219,6 +229,26 @@ const Services = () => {
                     />
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* No Services Message */}
+            {!searchTerm && dbServices.length === 0 && (
+              <div className="text-center py-16">
+                <div className="mb-6">
+                  <div className="text-6xl mb-4">🔧</div>
+                  <h3 className="text-2xl font-bold text-white mb-2">No Services Available</h3>
+                  <p className="text-gray-300 max-w-md mx-auto">
+                    Services are currently being set up. Please check back soon or contact us for more information.
+                  </p>
+                </div>
+                <Button 
+                  onClick={handleScheduleConsultation}
+                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Contact Us
+                </Button>
               </div>
             )}
 

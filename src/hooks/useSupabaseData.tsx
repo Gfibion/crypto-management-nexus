@@ -13,7 +13,8 @@ export const useServices = () => {
         .from('services')
         .select('*')
         .eq('active', true)
-        .order('featured', { ascending: false });
+        .order('featured', { ascending: false })
+        .order('created_at', { ascending: false });
       
       if (error) {
         console.error('Error fetching services:', error);
@@ -26,9 +27,14 @@ export const useServices = () => {
         return [];
       }
       
-      console.log('Services fetched successfully:', data);
+      console.log(`Services fetched successfully: ${data.length} services found`);
       return data;
     },
+    // Enable automatic refetching to keep services up-to-date
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+    staleTime: 30000, // Consider data fresh for 30 seconds
+    gcTime: 300000, // Keep in cache for 5 minutes
   });
 };
 
