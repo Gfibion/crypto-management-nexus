@@ -4,10 +4,14 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
-import { Bell, Volume2, VolumeX, MessageSquare, Mail, MessageCircle, Heart } from 'lucide-react';
+import { Bell, Volume2, VolumeX, MessageSquare, Mail, MessageCircle, Heart, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import TestNotification from './TestNotification';
 import SystemDiagnostics from './SystemDiagnostics';
+
+interface NotificationPreferencesProps {
+  setActiveTab?: (tab: any) => void;
+}
 
 export interface NotificationPreferences {
   enabled: {
@@ -47,7 +51,7 @@ export const saveNotificationPreferences = (preferences: NotificationPreferences
   localStorage.setItem('notificationPreferences', JSON.stringify(preferences));
 };
 
-const NotificationPreferences: React.FC = () => {
+const NotificationPreferences: React.FC<NotificationPreferencesProps> = ({ setActiveTab }) => {
   const [preferences, setPreferences] = useState<NotificationPreferences>(getNotificationPreferences());
   const { toast } = useToast();
 
@@ -101,6 +105,20 @@ const NotificationPreferences: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Back Button */}
+      {setActiveTab && (
+        <div className="mb-4">
+          <Button 
+            onClick={() => setActiveTab('dashboard')}
+            variant="outline"
+            className="border-purple-600/30 text-purple-300 hover:bg-purple-600/20"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Dashboard
+          </Button>
+        </div>
+      )}
+
       <div>
         <h2 className="text-2xl font-bold text-foreground mb-2">Notification Preferences</h2>
         <p className="text-muted-foreground">Customize which notifications you want to receive and how they sound.</p>

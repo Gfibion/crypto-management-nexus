@@ -4,11 +4,15 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Check, X, Trash2, Star, Award } from 'lucide-react';
+import { Check, X, Trash2, Star, Award, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
 
-const TestimonialsManagement = () => {
+interface TestimonialsManagementProps {
+  setActiveTab: (tab: any) => void;
+}
+
+const TestimonialsManagement: React.FC<TestimonialsManagementProps> = ({ setActiveTab }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
@@ -117,6 +121,18 @@ const TestimonialsManagement = () => {
 
   return (
     <div className="space-y-6">
+      {/* Back Button */}
+      <div className="mb-4">
+        <Button 
+          onClick={() => setActiveTab('dashboard')}
+          variant="outline"
+          className="border-purple-600/30 text-purple-300 hover:bg-purple-600/20"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Dashboard
+        </Button>
+      </div>
+
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-white flex items-center gap-2">
