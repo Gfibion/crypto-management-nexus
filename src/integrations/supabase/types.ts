@@ -446,41 +446,82 @@ export type Database = {
         }
         Relationships: []
       }
+      service_categories: {
+        Row: {
+          created_at: string | null
+          description: string
+          id: string
+          name: string
+          slug: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          id?: string
+          name: string
+          slug: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          id?: string
+          name?: string
+          slug?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       services: {
         Row: {
           active: boolean | null
+          category_id: string | null
           created_at: string
           description: string
           featured: boolean | null
           icon: string | null
           id: string
           price_range: string | null
+          tags: string[] | null
           title: string
           updated_at: string
         }
         Insert: {
           active?: boolean | null
+          category_id?: string | null
           created_at?: string
           description: string
           featured?: boolean | null
           icon?: string | null
           id?: string
           price_range?: string | null
+          tags?: string[] | null
           title: string
           updated_at?: string
         }
         Update: {
           active?: boolean | null
+          category_id?: string | null
           created_at?: string
           description?: string
           featured?: boolean | null
           icon?: string | null
           id?: string
           price_range?: string | null
+          tags?: string[] | null
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "services_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       skills: {
         Row: {

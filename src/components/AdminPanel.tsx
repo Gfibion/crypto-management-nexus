@@ -38,19 +38,15 @@ const AdminPanel: React.FC = () => {
   }
 
   if (activeTab === 'notifications') {
-    return (
-      <div className="space-y-6">
-        <NotificationPreferences />
-      </div>
-    );
+    return <NotificationPreferences setActiveTab={setActiveTab} />;
   }
 
   if (activeTab === 'comments') {
-    return <CommentsManagement />;
+    return <CommentsManagement setActiveTab={setActiveTab} />;
   }
 
   if (activeTab === 'testimonials') {
-    return <TestimonialsManagement />;
+    return <TestimonialsManagement setActiveTab={setActiveTab} />;
   }
 
   return (
