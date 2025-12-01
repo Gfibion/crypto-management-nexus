@@ -82,7 +82,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
           "@type": "ListItem",
           "position": index + 1,
           "name": crumb.name,
-          "item": `https://gfibion-jmutua.vercel.app${crumb.url}`
+          "item": `https://josephmgfibion.org${crumb.url}`
         }))
       };
       updateStructuredData(breadcrumbData, 'breadcrumb');
