@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ProcessSection from "@/components/services/ProcessSection";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,61 +8,16 @@ import { Calendar, Search as SearchIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { generateMailtoLink } from "@/utils/emailTemplates";
 import PageLayout from "@/components/PageLayout";
+import { businessManagementServices, ictTechnologyServices } from "@/components/services/serviceData";
 import ServiceCard from "@/components/services/ServiceCard";
 import { getIcon } from "@/components/services/ServiceIcons";
 import SEOHead from "@/components/SEOHead";
 import SkillCategory from "@/components/skills/SkillCategory";
 import { skillsData, categoryOrder } from "@/components/skills/skillsData";
-import { useServices } from "@/hooks/useSupabaseData";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import { businessManagementServices, ictTechnologyServices } from "@/components/services/serviceData";
 
 const Services = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const { data: dbServices = [], isLoading, isError } = useServices();
-  
-  // Fallback to hardcoded services if database is empty
-  // Convert hardcoded services to match database format
-  const fallbackServices = [
-    ...businessManagementServices.map(service => ({
-      id: service.id,
-      title: service.title,
-      description: service.description,
-      icon: service.icon,
-      category: service.category,
-      featured: service.featured || false,
-      features: service.features || [],
-      price_range: service.price_range || null,
-      active: true
-    })),
-    ...ictTechnologyServices.map(service => ({
-      id: service.id,
-      title: service.title,
-      description: service.description,
-      icon: service.icon,
-      category: service.category,
-      featured: service.featured || false,
-      features: service.features || [],
-      price_range: service.price_range || null,
-      active: true
-    }))
-  ];
-  
-  // Use database services if available, otherwise fallback to hardcoded
-  // Only use fallback if we're not loading and database is empty
-  const services = (!isLoading && dbServices.length === 0) ? fallbackServices : dbServices;
-  
-  // Debug: Log services when they change
-  useEffect(() => {
-    if (services.length > 0) {
-      const source = dbServices.length > 0 ? 'database' : 'hardcoded (fallback)';
-      console.log(`Services loaded from ${source}: ${services.length} total services`);
-      const businessCount = services.filter(s => s.category === 'Business Management').length;
-      const ictCount = services.filter(s => s.category === 'ICT & Technology').length;
-      console.log(`Business Management: ${businessCount}, ICT & Technology: ${ictCount}`);
-    }
-  }, [services, dbServices]);
   
   // Convert skillsData to the expected format
   const allSkills = Object.entries(skillsData).flatMap(([category, skills]) => 
@@ -106,31 +61,27 @@ const Services = () => {
   };
 
   // Filter services based on search term and category
-  const filteredBusinessServices = services
-    .filter(service => service.category === 'Business Management' && service.active !== false)
-    .filter(service => {
-      const matchesSearch = !searchTerm || 
-        service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        service.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (Array.isArray(service.features) && service.features.some((f: string) => f.toLowerCase().includes(searchTerm.toLowerCase())));
-      
-      const matchesCategory = !selectedCategory || selectedCategory === 'Business Management';
-      
-      return matchesSearch && matchesCategory;
-    });
+  const filteredBusinessServices = businessManagementServices.filter(service => {
+    const matchesSearch = !searchTerm || 
+      service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      service.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      service.features.some(feature => feature.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesCategory = !selectedCategory || selectedCategory === 'Business Management';
+    
+    return matchesSearch && matchesCategory;
+  });
 
-  const filteredIctServices = services
-    .filter(service => service.category === 'ICT & Technology' && service.active !== false)
-    .filter(service => {
-      const matchesSearch = !searchTerm || 
-        service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        service.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (Array.isArray(service.features) && service.features.some((f: string) => f.toLowerCase().includes(searchTerm.toLowerCase())));
-      
-      const matchesCategory = !selectedCategory || selectedCategory === 'ICT & Technology';
-      
-      return matchesSearch && matchesCategory;
-    });
+  const filteredIctServices = ictTechnologyServices.filter(service => {
+    const matchesSearch = !searchTerm || 
+      service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      service.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      service.features.some(feature => feature.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesCategory = !selectedCategory || selectedCategory === 'ICT & Technology';
+    
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <>
@@ -144,25 +95,16 @@ const Services = () => {
           "name": "Business Management & ICT Services",
           "provider": {
             "@type": "Person",
-            "name": "Gfibion, Gfibion Genesis, Gfibion Joseph,Joseph Mutua"
+            "name": "Gfibion Joseph Mutua"
           },
           "serviceType": ["Business Management Consulting", "ICT Technology Services", "Strategic Planning", "Digital Transformation"],
           "description": "Professional business management and ICT consulting services",
-          "url": "https://josephmgfibion.org/services"
+          "url": "https://gfibionjosephmutua.lovable.app/services"
         }}
       />
       <PageLayout>
         <div className="px-4 py-16">
           <div className="max-w-6xl mx-auto">
-            {/* Loading State */}
-            {isLoading && (
-              <div className="min-h-[60vh] flex items-center justify-center">
-                <LoadingSpinner message="Loading services..." size="lg" />
-              </div>
-            )}
-
-            {!isLoading && (
-              <>
             {/* Header Section */}
             <div className="text-center mb-16">
               <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 bg-clip-text text-transparent">
@@ -189,21 +131,21 @@ const Services = () => {
                 </div>
                 <div className="flex gap-2 flex-wrap justify-center">
                   <Badge
-                    variant={(selectedCategory === null ? "default" : "outline") as "default" | "outline"}
+                    variant={selectedCategory === null ? "default" : "outline"}
                     className="cursor-pointer hover:bg-primary/80 transition-colors"
                     onClick={() => setSelectedCategory(null)}
                   >
                     All Services
                   </Badge>
                   <Badge
-                    variant={(selectedCategory === 'Business Management' ? "default" : "outline") as "default" | "outline"}
+                    variant={selectedCategory === 'Business Management' ? "default" : "outline"}
                     className="cursor-pointer hover:bg-primary/80 transition-colors"
                     onClick={() => setSelectedCategory('Business Management')}
                   >
                     Business Management
                   </Badge>
                   <Badge
-                    variant={(selectedCategory === 'ICT & Technology' ? "default" : "outline") as "default" | "outline"}
+                    variant={selectedCategory === 'ICT & Technology' ? "default" : "outline"}
                     className="cursor-pointer hover:bg-primary/80 transition-colors"
                     onClick={() => setSelectedCategory('ICT & Technology')}
                   >
@@ -262,26 +204,6 @@ const Services = () => {
                     />
                   ))}
                 </div>
-              </div>
-            )}
-
-            {/* No Services Message */}
-            {!searchTerm && services.length === 0 && (
-              <div className="text-center py-16">
-                <div className="mb-6">
-                  <div className="text-6xl mb-4">🔧</div>
-                  <h3 className="text-2xl font-bold text-white mb-2">No Services Available</h3>
-                  <p className="text-gray-300 max-w-md mx-auto">
-                    Services are currently being set up. Please check back soon or contact us for more information.
-                  </p>
-                </div>
-                <Button 
-                  onClick={handleScheduleConsultation}
-                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
-                >
-                  <Calendar className="mr-2 h-4 w-4" />
-                  Contact Us
-                </Button>
               </div>
             )}
 
@@ -354,8 +276,6 @@ const Services = () => {
                 </div>
               </CardContent>
             </Card>
-              </>
-            )}
           </div>
         </div>
       </PageLayout>

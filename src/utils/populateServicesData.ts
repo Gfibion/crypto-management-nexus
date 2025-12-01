@@ -1,60 +1,54 @@
 import { supabase } from '@/integrations/supabase/client';
-import { businessManagementServices, ictTechnologyServices } from '@/components/services/serviceData';
-import { allBusinessServices, allIctServices } from '@/components/services/expandedServiceData';
+import { businessServices, ictServices } from '@/components/services/serviceData';
 
 export const populateServicesData = async () => {
   try {
-    console.log('Starting to populate services data...');
+    // First, check if services already exist
+    const { data: existingServices } = await supabase
+      .from('services')
+      .select('id')
+      .limit(1);
 
-    // Use only the main serviceData.ts (simpler, more reliable)
-    const allServices = [
-      ...businessManagementServices,
-      ...ictTechnologyServices
-    ];
-
-    console.log(`Processing ${allServices.length} services`);
+    if (existingServices && existingServices.length > 0) {
+      console.log('Services already exist in database');
+      return;
+    }
 
     // Prepare services data for database insertion
-    const servicesToInsert = allServices.map(service => ({
-      title: service.title,
-      description: service.description,
-      icon: service.icon || null,
-      category: service.category, // Already 'Business Management' or 'ICT & Technology'
-      featured: service.featured || false,
-      features: service.features || [],
-      price_range: service.price_range || null,
-      active: true
-    }));
+    const allServicesData = [
+      ...businessServices.map(service => ({
+        id: service.id,
+        title: service.title,
+        description: service.description,
+        icon: service.icon,
+        category: 'Business Strategy & Consulting',
+        featured: service.featured || false,
+        features: service.features,
+        active: true
+      })),
+      ...ictServices.map(service => ({
+        id: service.id,
+        title: service.title,
+        description: service.description,
+        icon: service.icon,
+        category: 'Information & Communication Technology',
+        featured: service.featured || false,
+        features: service.features,
+        active: true
+      }))
+    ];
 
-    // Delete all existing services first, then insert fresh ones
-    // This ensures clean data without duplicates
-    const { error: deleteError } = await supabase
+    // Insert services into database
+    const { error } = await supabase
       .from('services')
-      .delete()
-      .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all (this condition is always true)
+      .insert(allServicesData);
 
-    if (deleteError) {
-      console.warn('Error deleting existing services (may not exist):', deleteError);
-      // Continue anyway
+    if (error) {
+      console.error('Error populating services data:', error);
+      throw error;
     }
 
-    // Insert all services
-    const { data: insertedData, error: insertError } = await supabase
-      .from('services')
-      .insert(servicesToInsert)
-      .select();
-
-    if (insertError) {
-      console.error('Error inserting services:', insertError);
-      throw insertError;
-    }
-
-    console.log(`Successfully inserted ${insertedData?.length || 0} services into database`);
-    return { 
-      success: true, 
-      inserted: insertedData?.length || 0, 
-      total: allServices.length 
-    };
+    console.log('Services data populated successfully');
   } catch (error) {
     console.error('Failed to populate services data:', error);
     throw error;

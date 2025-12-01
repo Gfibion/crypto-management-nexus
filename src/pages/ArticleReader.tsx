@@ -93,7 +93,7 @@ const ArticleReader: React.FC = () => {
           },
           "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": `https://josephmgfibion.org/articles/${currentArticle.slug}`
+            "@id": `https://gfibion-jmutua.vercel.app/articles/${currentArticle.slug}`
           },
           "keywords": currentArticle.tags?.join(', '),
           "articleSection": currentArticle.category,

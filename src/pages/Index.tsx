@@ -30,7 +30,7 @@ const Index = () => {
           "@type": "WebSite",
           "name": "Gfibion Joseph Mutua Portfolio",
           "description": "Professional business manager and ICT consultant portfolio",
-          "url": "https://josephmgfibion.org",
+          "url": "https://gfibionjosephmutua.lovable.app",
           "author": {
             "@type": "Person",
             "name": "Gfibion Joseph Mutua"

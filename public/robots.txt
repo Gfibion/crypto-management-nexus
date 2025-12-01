@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://josephmgfibion.org/sitemap.xml
+Sitemap: https://gfibion-jmutua.vercel.app/sitemap.xml
