@@ -13,6 +13,7 @@ import ServiceCard from "@/components/services/ServiceCard";
 import { getIcon } from "@/components/services/ServiceIcons";
 import SEOHead from "@/components/SEOHead";
 import SkillCategory from "@/components/skills/SkillCategory";
+import ReferralShare from "@/components/ReferralShare";
 import { skillsData, categoryOrder } from "@/components/skills/skillsData";
 
 const Services = () => {
@@ -89,6 +90,7 @@ const Services = () => {
         title="Business Management & ICT Technology Services - Gfibion Joseph Mutua"
         description="Comprehensive business management consulting and ICT technology services by Gfibion Joseph Mutua. Strategic planning, digital transformation, technology integration, business analytics, and professional consulting solutions."
         keywords="business management services, ICT technology services, business consulting, strategic planning, digital transformation, technology integration, business analytics, process optimization, organizational development, technology consulting, business strategy services"
+        ogImage="/og-services.png"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "Service",
@@ -276,6 +278,9 @@ const Services = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Referral Share Section */}
+            <ReferralShare className="mt-8" />
           </div>
         </div>
       </PageLayout>

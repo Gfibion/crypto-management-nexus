@@ -14,6 +14,7 @@ import BackButton from '@/components/article/BackButton';
 import CommentsToggle from '@/components/article/CommentsToggle';
 import { useArticleLikesNotifications } from '@/hooks/useArticleLikes';
 import SEOHead from '@/components/SEOHead';
+import SocialShare from '@/components/SocialShare';
 
 const ArticleReader: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -117,6 +118,19 @@ const ArticleReader: React.FC = () => {
             />
 
             <ArticleLikes articleId={currentArticle.id} />
+
+            <div className="mt-6 pt-6 border-t border-slate-700">
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-gray-200">Share this article</h3>
+                <SocialShare
+                  url={`https://josephmgfibion.org/articles/${currentArticle.slug}`}
+                  title={currentArticle.title}
+                  description={currentArticle.excerpt || ''}
+                  hashtags={currentArticle.tags || []}
+                  variant="outline"
+                />
+              </div>
+            </div>
 
             <CommentsToggle 
               showComments={showComments}

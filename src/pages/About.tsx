@@ -10,6 +10,7 @@ const About = () => {
         title="About Gfibion Joseph Mutua - Professional Business Manager & ICT Consultant"
         description="Learn about Gfibion Joseph Mutua, emerging business professional and tech enthusiast specializing in strategic management, digital innovation, and technology integration. Fresh graduate with modern business knowledge."
         keywords="Gfibion Joseph Mutua, about, business professional, tech enthusiast, strategic management, digital innovation, technology integration, fresh graduate, business management, ICT specialist"
+        ogImage="/og-default.png"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "Person",

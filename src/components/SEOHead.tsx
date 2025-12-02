@@ -29,7 +29,11 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   breadcrumbs
 }) => {
   const defaultOgImage = getMediaAsset('icon_pwa');
-  const finalOgImage = ogImage || defaultOgImage?.url || '/lovable-uploads/8b735fe1-3282-48d6-9daa-a0e5ecb43911.png';
+  // Use absolute URL for OG images
+  const baseUrl = 'https://josephmgfibion.org';
+  const finalOgImage = ogImage 
+    ? (ogImage.startsWith('http') ? ogImage : `${baseUrl}${ogImage}`)
+    : (defaultOgImage?.url || `${baseUrl}/og-default.png`);
   
   useEffect(() => {
     // Update page title
