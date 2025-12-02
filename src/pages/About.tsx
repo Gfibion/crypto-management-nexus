@@ -19,7 +19,7 @@ const About = () => {
           "description": "Emerging business professional and tech enthusiast ready to drive innovation",
           "alumniOf": "Business Management Program",
           "knowsAbout": ["Business Management", "ICT", "Innovation", "Strategic Thinking", "Digital Innovation", "Technology Integration"],
-          "url": "https://gfibionjosephmutua.lovable.app/about"
+          "url": "https://josephmgfibion.org/about"
         }}
       />
       <div className="min-h-screen pt-20 px-4">
