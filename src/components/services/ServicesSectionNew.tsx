@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,8 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
   services, 
   colorScheme 
 }) => {
+  const navigate = useNavigate();
+  
   const getIcon = (iconName: string) => {
     const iconMap = {
       'pie-chart': <PieChart className="h-6 w-6" />,
@@ -149,7 +152,7 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({
                   <ArrowRight className="ml-2 h-3 w-3 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <Button 
-                  onClick={() => window.location.href = '/chat'}
+                  onClick={() => navigate('/chat')}
                   size="sm"
                   variant="outline"
                   className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white"
