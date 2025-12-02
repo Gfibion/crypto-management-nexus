@@ -7,6 +7,7 @@ import ParticleBackground from "@/components/ParticleBackground";
 import ImageSlideshow from "@/components/home/ImageSlideshow";
 import { ArrowDown, Briefcase, Star, TrendingUp, Sparkles, Zap, Code, Users } from "lucide-react";
 import SEOHead from "@/components/SEOHead";
+import ReferralShare from "@/components/ReferralShare";
 
 const Index = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -25,6 +26,7 @@ const Index = () => {
         title="Gfibion Joseph Mutua - Professional Business Manager & ICT Consultant | Strategic Management & Digital Solutions"
         description="Welcome to the professional portfolio of Gfibion Joseph Mutua, expert business manager and ICT consultant specializing in strategic management, digital transformation, business consulting, and innovative technology solutions. Discover comprehensive business and ICT services."
         keywords="Gfibion Joseph Mutua, business manager, ICT consultant, strategic management, digital transformation, business consulting, technology integration, professional portfolio, business strategy, digital solutions, Kenya business expert, entrepreneurship, strategic planning"
+        ogImage="/og-default.png"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "WebSite",
@@ -189,6 +191,11 @@ const Index = () => {
               </Button>
             </div>
           </div>
+        </div>
+
+        {/* Referral Share Section */}
+        <div className="max-w-4xl mx-auto px-4 mt-12">
+          <ReferralShare />
         </div>
       </section>
     </div>

@@ -2,6 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { generateMailtoLink } from "@/utils/emailTemplates";
+import ReferralShare from "@/components/ReferralShare";
 
 const PortfolioCTA = () => {
   const handleScheduleConsultation = () => {
