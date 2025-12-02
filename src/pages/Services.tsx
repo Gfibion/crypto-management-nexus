@@ -99,7 +99,7 @@ const Services = () => {
           },
           "serviceType": ["Business Management Consulting", "ICT Technology Services", "Strategic Planning", "Digital Transformation"],
           "description": "Professional business management and ICT consulting services",
-          "url": "https://gfibionjosephmutua.lovable.app/services"
+          "url": "https://josephmgfibion.org/services"
         }}
       />
       <PageLayout>
