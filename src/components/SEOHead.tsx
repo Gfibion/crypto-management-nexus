@@ -55,18 +55,16 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     updateMetaTag('name', 'twitter:title', ogTitle || title);
     updateMetaTag('name', 'twitter:description', ogDescription || description);
     updateMetaTag('name', 'twitter:image', finalOgImage);
+    updateMetaTag('name', 'twitter:creator', '@GfibionJoseph');
+    updateMetaTag('name', 'twitter:site', '@GfibionJoseph');
 
-    // Update canonical URL automatically if not provided
-    const currentUrl = typeof window !== 'undefined'
-      ? window.location.origin + window.location.pathname + window.location.search
-      : (canonical || '');
-    const canonicalUrl = canonical || currentUrl;
-    if (canonicalUrl) {
-      updateCanonicalTag(canonicalUrl);
-      // Keep URL consistency across social tags
-      updateMetaTag('property', 'og:url', canonicalUrl);
-      updateMetaTag('name', 'twitter:url', canonicalUrl);
-    }
+    // Update canonical URL - always use base domain for consistency
+    const canonicalUrl = canonical || `${baseUrl}${typeof window !== 'undefined' ? window.location.pathname : '/'}`;
+    updateCanonicalTag(canonicalUrl);
+    // Keep URL consistency across social tags
+    updateMetaTag('property', 'og:url', canonicalUrl);
+    updateMetaTag('name', 'twitter:url', canonicalUrl);
+    updateMetaTag('property', 'og:site_name', 'Gfibion Joseph Mutua Portfolio');
 
     // Robots directives
     updateMetaTag('name', 'robots', 'index, follow');
