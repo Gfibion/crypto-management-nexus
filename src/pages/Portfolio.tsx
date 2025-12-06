@@ -15,7 +15,8 @@ const Portfolio = () => {
         title="Gfibion Joseph Mutua Portfolio - Business Management & ICT Projects | Professional Work Showcase"
         description="Explore the professional portfolio of Gfibion Joseph Mutua featuring business management projects, ICT consulting work, strategic planning implementations, and academic achievements. View case studies and project outcomes from an emerging business professional."
         keywords="Gfibion Joseph Mutua portfolio, business management projects, ICT consulting portfolio, strategic planning case studies, business consultant work examples, technology integration projects, professional portfolio Kenya, business strategy implementations, digital transformation projects, academic business projects"
-        ogImage="/og-portfolio.png"
+        canonical="https://josephmgfibion.org/portfolio"
+        ogImage="https://josephmgfibion.org/og-portfolio.png"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "CreativeWork",

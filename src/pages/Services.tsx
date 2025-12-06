@@ -90,7 +90,8 @@ const Services = () => {
         title="Business Management & ICT Technology Services - Gfibion Joseph Mutua"
         description="Comprehensive business management consulting and ICT technology services by Gfibion Joseph Mutua. Strategic planning, digital transformation, technology integration, business analytics, and professional consulting solutions."
         keywords="business management services, ICT technology services, business consulting, strategic planning, digital transformation, technology integration, business analytics, process optimization, organizational development, technology consulting, business strategy services"
-        ogImage="/og-services.png"
+        canonical="https://josephmgfibion.org/services"
+        ogImage="https://josephmgfibion.org/og-services.png"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "Service",
