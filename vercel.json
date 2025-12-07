@@ -2,6 +2,7 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
+    { "source": "/sitemap.xml", "destination": "https://plnoqiktsyqwcwzlueri.supabase.co/functions/v1/sitemap" },
     { "source": "/about", "destination": "/index.html" },
     { "source": "/services", "destination": "/index.html" },
     { "source": "/portfolio", "destination": "/index.html" },
