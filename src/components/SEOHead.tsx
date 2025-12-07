@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { getMediaAsset } from '@/config/mediaAssets';
 
 interface SEOHeadProps {
@@ -28,9 +29,14 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   structuredData,
   breadcrumbs
 }) => {
+  const location = useLocation();
   const defaultOgImage = getMediaAsset('icon_pwa');
-  // Use absolute URL for OG images
   const baseUrl = 'https://josephmgfibion.org';
+  
+  // Use explicit canonical if provided, otherwise build from current path
+  const finalCanonical = canonical || `${baseUrl}${location.pathname === '/' ? '' : location.pathname}`;
+  
+  // Ensure absolute URL for OG images
   const finalOgImage = ogImage 
     ? (ogImage.startsWith('http') ? ogImage : `${baseUrl}${ogImage}`)
     : (defaultOgImage?.url || `${baseUrl}/og-default.png`);
@@ -49,6 +55,8 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     updateMetaTag('property', 'og:description', ogDescription || description);
     updateMetaTag('property', 'og:image', finalOgImage);
     updateMetaTag('property', 'og:type', ogType);
+    updateMetaTag('property', 'og:url', finalCanonical);
+    updateMetaTag('property', 'og:site_name', 'Gfibion Joseph Mutua Portfolio');
     
     // Update Twitter tags
     updateMetaTag('name', 'twitter:card', twitterCard);
@@ -57,14 +65,10 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     updateMetaTag('name', 'twitter:image', finalOgImage);
     updateMetaTag('name', 'twitter:creator', '@GfibionJoseph');
     updateMetaTag('name', 'twitter:site', '@GfibionJoseph');
+    updateMetaTag('name', 'twitter:url', finalCanonical);
 
-    // Update canonical URL - always use base domain for consistency
-    const canonicalUrl = canonical || `${baseUrl}${typeof window !== 'undefined' ? window.location.pathname : '/'}`;
-    updateCanonicalTag(canonicalUrl);
-    // Keep URL consistency across social tags
-    updateMetaTag('property', 'og:url', canonicalUrl);
-    updateMetaTag('name', 'twitter:url', canonicalUrl);
-    updateMetaTag('property', 'og:site_name', 'Gfibion Joseph Mutua Portfolio');
+    // Update canonical URL
+    updateCanonicalTag(finalCanonical);
 
     // Robots directives
     updateMetaTag('name', 'robots', 'index, follow');
@@ -84,12 +88,12 @@ const SEOHead: React.FC<SEOHeadProps> = ({
           "@type": "ListItem",
           "position": index + 1,
           "name": crumb.name,
-          "item": `https://josephmgfibion.org${crumb.url}`
+          "item": `${baseUrl}${crumb.url}`
         }))
       };
       updateStructuredData(breadcrumbData, 'breadcrumb');
     }
-  }, [title, description, keywords, canonical, ogTitle, ogDescription, finalOgImage, ogType, twitterCard, structuredData, breadcrumbs]);
+  }, [title, description, keywords, finalCanonical, ogTitle, ogDescription, finalOgImage, ogType, twitterCard, structuredData, breadcrumbs, location.pathname]);
 
   const updateMetaTag = (attribute: string, name: string, content: string) => {
     let element = document.querySelector(`meta[${attribute}="${name}"]`);
