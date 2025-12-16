@@ -2,21 +2,14 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/sitemap.xml", "destination": "https://plnoqiktsyqwcwzlueri.supabase.co/functions/v1/sitemap" },
-    { "source": "/about", "destination": "/index.html" },
-    { "source": "/services", "destination": "/index.html" },
-    { "source": "/portfolio", "destination": "/index.html" },
-    { "source": "/articles", "destination": "/index.html" },
-    { "source": "/articles/:slug", "destination": "/index.html" },
-    { "source": "/education", "destination": "/index.html" },
-    { "source": "/chat", "destination": "/index.html" },
-    { "source": "/donate", "destination": "/index.html" },
-    { "source": "/profile", "destination": "/index.html" },
-    { "source": "/privacy", "destination": "/index.html" },
-    { "source": "/terms", "destination": "/index.html" },
-    { "source": "/auth", "destination": "/index.html" },
-    { "source": "/admin", "destination": "/index.html" },
-    { "source": "/:path*", "destination": "/index.html" }
+    {
+      "source": "/sitemap.xml",
+      "destination": "https://plnoqiktsyqwcwzlueri.supabase.co/functions/v1/sitemap"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ],
   "headers": [
     {
