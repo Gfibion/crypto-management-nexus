@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Shield, BookOpen, MessageCircle, Home, User, Briefcase, GraduationCap, Code, FolderOpen, Heart, ChevronDown } from "lucide-react";
+import { Shield, BookOpen, MessageCircle, Home, User, Briefcase, GraduationCap, Code, FolderOpen, Heart, ChevronDown, Scale, Lock } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -43,6 +43,10 @@ const DesktopNavigation = ({ primaryNavItems, secondaryNavItems }: DesktopNaviga
         return <MessageCircle className="h-4 w-4" />;
       case "Donate":
         return <Heart className="h-4 w-4" />;
+      case "Terms":
+        return <Scale className="h-4 w-4" />;
+      case "Privacy":
+        return <Lock className="h-4 w-4" />;
       case "Admin":
         return <Shield className="h-4 w-4" />;
       default:
