@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { User, Settings, LogOut, Loader2, Shield, Scale, Lock } from "lucide-react";
+import { User, Settings, LogOut, Loader2, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -118,19 +118,6 @@ const ProfileDropdown = () => {
             </Link>
           </DropdownMenuItem>
         )}
-        <DropdownMenuSeparator className="bg-purple-800/30" />
-        <DropdownMenuItem asChild className="text-gray-300 hover:bg-purple-600/20 cursor-pointer">
-          <Link to="/terms" className="flex items-center">
-            <Scale className="mr-2 h-4 w-4" />
-            <span>Terms of Service</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild className="text-gray-300 hover:bg-purple-600/20 cursor-pointer">
-          <Link to="/privacy" className="flex items-center">
-            <Lock className="mr-2 h-4 w-4" />
-            <span>Privacy Policy</span>
-          </Link>
-        </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-purple-800/30" />
         <DropdownMenuItem 
           onClick={handleSignOut}
