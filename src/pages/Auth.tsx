@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useEffect } from "react";
 import LoadingSpinner from "@/components/LoadingSpinner";
 
@@ -129,6 +129,19 @@ const Auth = () => {
                 >
                   {isLogin ? "Sign In" : "Sign Up"}
                 </Button>
+
+                {!isLogin && (
+                  <p className="text-xs text-gray-400 text-center mt-3">
+                    By signing up, you agree to our{" "}
+                    <Link to="/terms" className="text-purple-400 hover:text-purple-300 underline">
+                      Terms of Service
+                    </Link>{" "}
+                    and{" "}
+                    <Link to="/privacy" className="text-purple-400 hover:text-purple-300 underline">
+                      Privacy Policy
+                    </Link>
+                  </p>
+                )}
               </form>
               
               <div className="mt-4 text-center">

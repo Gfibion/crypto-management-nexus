@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Shield, FileText, Mail, ExternalLink } from "lucide-react";
+import { Shield, FileText, Mail, Scale } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -15,6 +15,13 @@ const Footer = () => {
 
           {/* Legal Links */}
           <div className="flex flex-wrap items-center justify-center gap-6">
+            <Link
+              to="/terms"
+              className="flex items-center gap-1.5 text-gray-400 hover:text-purple-400 transition-colors text-sm"
+            >
+              <Scale className="h-4 w-4" />
+              Terms of Service
+            </Link>
             <Link
               to="/privacy"
               className="flex items-center gap-1.5 text-gray-400 hover:text-purple-400 transition-colors text-sm"
