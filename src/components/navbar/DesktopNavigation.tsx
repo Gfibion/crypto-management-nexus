@@ -91,36 +91,9 @@ const DesktopNavigation = ({ primaryNavItems, secondaryNavItems }: DesktopNaviga
             className="w-56 bg-slate-800/95 backdrop-blur-sm border-purple-800/30 shadow-xl z-50" 
             align="end"
           >
-            {secondaryNavItems
-              .filter((item) => !["Terms", "Privacy"].includes(item.name))
-              .map((item, index, arr) => (
-                <div key={item.name}>
-                  <DropdownMenuItem asChild className="text-gray-300 hover:bg-purple-600/20 cursor-pointer">
-                    <Link 
-                      to={item.path} 
-                      className={`flex items-center gap-3 w-full ${
-                        location.pathname === item.path ? "text-purple-400 bg-purple-600/10" : ""
-                      }`}
-                    >
-                      {getIcon(item.name)}
-                      <span>{item.name}</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  {index < arr.length - 1 && (
-                    <DropdownMenuSeparator className="bg-purple-800/30" />
-                  )}
-                </div>
-              ))}
-            
-            {/* Legal Section */}
-            <DropdownMenuSeparator className="bg-purple-800/30" />
-            <div className="px-2 py-1.5 text-xs font-semibold text-purple-400/70 uppercase tracking-wide">
-              Legal
-            </div>
-            {secondaryNavItems
-              .filter((item) => ["Terms", "Privacy"].includes(item.name))
-              .map((item) => (
-                <DropdownMenuItem key={item.name} asChild className="text-gray-300 hover:bg-purple-600/20 cursor-pointer">
+            {secondaryNavItems.map((item, index) => (
+              <div key={item.name}>
+                <DropdownMenuItem asChild className="text-gray-300 hover:bg-purple-600/20 cursor-pointer">
                   <Link 
                     to={item.path} 
                     className={`flex items-center gap-3 w-full ${
@@ -131,7 +104,11 @@ const DesktopNavigation = ({ primaryNavItems, secondaryNavItems }: DesktopNaviga
                     <span>{item.name}</span>
                   </Link>
                 </DropdownMenuItem>
-              ))}
+                {index < secondaryNavItems.length - 1 && (
+                  <DropdownMenuSeparator className="bg-purple-800/30" />
+                )}
+              </div>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       )}
