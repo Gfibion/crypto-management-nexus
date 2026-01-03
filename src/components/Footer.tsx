@@ -1,70 +1,109 @@
 import { Link } from "react-router-dom";
-import { Shield, FileText, Mail, Scale } from "lucide-react";
+import { Shield, FileText, Mail, Scale, Gavel } from "lucide-react";
 import gfibionGenesisLogo from "@/assets/gfibion-genesis-logo.png";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
-  return (
-    <footer className="bg-slate-900/80 border-t border-purple-800/30 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex flex-col gap-6">
-          {/* Main footer content */}
-          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-            {/* Copyright */}
-            <div className="text-gray-400 text-sm text-center md:text-left">
-              <p>&copy; {currentYear} Gfibion Joseph Mutua. All rights reserved.</p>
-            </div>
+  const linkBaseClasses = 
+    "flex items-center gap-2 text-gray-300 hover:text-white focus:text-white " +
+    "transition-colors text-sm font-medium rounded-md px-3 py-2 " +
+    "focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-900";
 
-            {/* Legal Links */}
-            <div className="flex flex-wrap items-center justify-center gap-6">
-              <Link
-                to="/terms"
-                className="flex items-center gap-1.5 text-gray-400 hover:text-purple-400 transition-colors text-sm"
-              >
-                <Scale className="h-4 w-4" />
-                Terms of Service
-              </Link>
-              <Link
-                to="/privacy"
-                className="flex items-center gap-1.5 text-gray-400 hover:text-purple-400 transition-colors text-sm"
-              >
-                <Shield className="h-4 w-4" />
-                Privacy Policy
-              </Link>
-              <Link
-                to="/chat"
-                className="flex items-center gap-1.5 text-gray-400 hover:text-purple-400 transition-colors text-sm"
-              >
-                <Mail className="h-4 w-4" />
-                Contact
-              </Link>
-              <a
-                href="https://josephmgfibion.org/sitemap.xml"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-gray-400 hover:text-purple-400 transition-colors text-sm"
-              >
-                <FileText className="h-4 w-4" />
-                Sitemap
-              </a>
-            </div>
-          </div>
+  return (
+    <footer 
+      className="bg-slate-900 border-t border-purple-700/40 py-10 px-4 sm:px-6 lg:px-8"
+      role="contentinfo"
+      aria-label="Site footer"
+    >
+      <div className="max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          
+          {/* Legal Section */}
+          <nav aria-label="Legal information">
+            <h3 className="flex items-center gap-2 text-white font-semibold text-base mb-4">
+              <Gavel className="h-5 w-5 text-purple-400" aria-hidden="true" />
+              Legal
+            </h3>
+            <ul className="space-y-2" role="list">
+              <li>
+                <Link
+                  to="/terms"
+                  className={linkBaseClasses}
+                  aria-label="Read our Terms of Service"
+                >
+                  <Scale className="h-4 w-4 text-purple-400" aria-hidden="true" />
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/privacy"
+                  className={linkBaseClasses}
+                  aria-label="Read our Privacy Policy"
+                >
+                  <Shield className="h-4 w-4 text-purple-400" aria-hidden="true" />
+                  Privacy Policy
+                </Link>
+              </li>
+            </ul>
+          </nav>
+
+          {/* Quick Links Section */}
+          <nav aria-label="Quick links">
+            <h3 className="flex items-center gap-2 text-white font-semibold text-base mb-4">
+              <FileText className="h-5 w-5 text-purple-400" aria-hidden="true" />
+              Quick Links
+            </h3>
+            <ul className="space-y-2" role="list">
+              <li>
+                <Link
+                  to="/chat"
+                  className={linkBaseClasses}
+                  aria-label="Contact us via chat"
+                >
+                  <Mail className="h-4 w-4 text-purple-400" aria-hidden="true" />
+                  Contact
+                </Link>
+              </li>
+              <li>
+                <a
+                  href="https://josephmgfibion.org/sitemap.xml"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={linkBaseClasses}
+                  aria-label="View XML sitemap (opens in new tab)"
+                >
+                  <FileText className="h-4 w-4 text-purple-400" aria-hidden="true" />
+                  Sitemap
+                  <span className="sr-only">(opens in new tab)</span>
+                </a>
+              </li>
+            </ul>
+          </nav>
 
           {/* Made by Gfibion Genesis */}
-          <div className="flex items-center justify-center gap-2 pt-4 border-t border-purple-800/20">
-            <span className="text-gray-500 text-xs">Made by</span>
+          <div className="flex flex-col items-center md:items-end justify-center">
+            <span className="text-gray-400 text-xs mb-2">Made by</span>
             <div className="flex items-center gap-2">
               <img 
                 src={gfibionGenesisLogo} 
-                alt="Gfibion Genesis Logo" 
-                className="h-6 w-auto"
+                alt="Gfibion Genesis company logo" 
+                className="h-8 w-auto"
+                loading="lazy"
               />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-blue-500 font-semibold text-sm">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-blue-400 font-bold text-base">
                 Gfibion Genesis
               </span>
             </div>
           </div>
+        </div>
+
+        {/* Copyright */}
+        <div className="mt-8 pt-6 border-t border-purple-800/30 text-center">
+          <p className="text-gray-400 text-sm">
+            &copy; {currentYear} Gfibion Joseph Mutua. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
