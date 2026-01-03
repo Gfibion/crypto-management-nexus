@@ -43,13 +43,7 @@ export const useConversations = () => {
     queryFn: async () => {
       if (!user) return [];
       
-      let query = supabase.from('conversations').select(`
-        *,
-        user_profile:profiles!user_id(
-          full_name,
-          avatar_url
-        )
-      `);
+      let query = supabase.from('conversations').select('*');
       
       // If not admin, only get user's own conversations
       if (!isAdmin) {
@@ -60,10 +54,18 @@ export const useConversations = () => {
 
       if (error) throw error;
       
-      // Transform the data to match our interface
-      const conversations = (data || []).map(conv => ({
-        ...conv,
-        user_profile: Array.isArray(conv.user_profile) ? conv.user_profile[0] : conv.user_profile
+      // Fetch user profiles separately for each conversation
+      const conversations = await Promise.all((data || []).map(async (conv) => {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name, avatar_url')
+          .eq('id', conv.user_id)
+          .maybeSingle();
+        
+        return {
+          ...conv,
+          user_profile: profile || null
+        };
       }));
       
       return conversations as Conversation[];
@@ -124,22 +126,28 @@ export const useMessages = (conversationId: string | null) => {
       
       const { data, error } = await supabase
         .from('chat_messages')
-        .select(`
-          *,
-          sender_profile:profiles!sender_id(
-            full_name,
-            avatar_url
-          )
-        `)
+        .select('*')
         .eq('conversation_id', conversationId)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
       
-      // Transform the data to match our interface
-      const messages = (data || []).map(msg => ({
-        ...msg,
-        sender_profile: Array.isArray(msg.sender_profile) ? msg.sender_profile[0] : msg.sender_profile
+      // Fetch sender profiles separately for each message
+      const messages = await Promise.all((data || []).map(async (msg) => {
+        let sender_profile = null;
+        if (msg.sender_id) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('full_name, avatar_url')
+            .eq('id', msg.sender_id)
+            .maybeSingle();
+          sender_profile = profile;
+        }
+        
+        return {
+          ...msg,
+          sender_profile
+        };
       }));
       
       return messages as ChatMessage[];
