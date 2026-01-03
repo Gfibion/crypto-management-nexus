@@ -79,47 +79,21 @@ const MobileNavigation = ({ navItems, isOpen, onClose }: MobileNavigationProps) 
   return (
     <div className="md:hidden">
       <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-slate-900/95 backdrop-blur-sm border-b border-purple-800/30">
-        {navItems
-          .filter((item) => !["Terms", "Privacy"].includes(item.name))
-          .map((item) => (
-            <Link
-              key={item.name}
-              to={item.path}
-              onClick={onClose}
-              className={`block px-3 py-2 text-base font-medium transition-colors flex items-center space-x-2 ${
-                location.pathname === item.path
-                  ? "text-purple-400"
-                  : "text-gray-300 hover:text-purple-400"
-              }`}
-            >
-              {getIcon(item.name)}
-              <span>{item.name}</span>
-            </Link>
-          ))}
-        
-        {/* Legal Section */}
-        <div className="border-t border-purple-800/30 pt-3 mt-3">
-          <div className="px-3 py-1 text-xs font-semibold text-purple-400/70 uppercase tracking-wide">
-            Legal
-          </div>
-          {navItems
-            .filter((item) => ["Terms", "Privacy"].includes(item.name))
-            .map((item) => (
-              <Link
-                key={item.name}
-                to={item.path}
-                onClick={onClose}
-                className={`block px-3 py-2 text-base font-medium transition-colors flex items-center space-x-2 ${
-                  location.pathname === item.path
-                    ? "text-purple-400"
-                    : "text-gray-300 hover:text-purple-400"
-                }`}
-              >
-                {getIcon(item.name)}
-                <span>{item.name}</span>
-              </Link>
-            ))}
-        </div>
+        {navItems.map((item) => (
+          <Link
+            key={item.name}
+            to={item.path}
+            onClick={onClose}
+            className={`block px-3 py-2 text-base font-medium transition-colors flex items-center space-x-2 ${
+              location.pathname === item.path
+                ? "text-purple-400"
+                : "text-gray-300 hover:text-purple-400"
+            }`}
+          >
+            {getIcon(item.name)}
+            <span>{item.name}</span>
+          </Link>
+        ))}
         
         {/* Profile link moved to mobile dropdown */}
         {user && (
