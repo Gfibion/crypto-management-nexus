@@ -18,16 +18,16 @@ const Navbar = () => {
     { name: "About", path: "/about" },
     { name: "Portfolio", path: "/portfolio" },
     { name: "Services", path: "/services" },
+    { name: "Articles", path: "/articles" },
+    { name: "Education", path: "/education" },
     { name: "Chat", path: "/chat" },
-    { name: "Terms", path: "/terms" },
-    { name: "Privacy", path: "/privacy" },
   ];
 
   // Secondary navigation items (in dropdown on desktop)
   const secondaryNavItems = [
-    { name: "Articles", path: "/articles" },
-    { name: "Education", path: "/education" },
     { name: "Donate", path: "/donate" },
+    { name: "Terms", path: "/terms" },
+    { name: "Privacy", path: "/privacy" },
   ];
 
   // Add admin link if user is admin
