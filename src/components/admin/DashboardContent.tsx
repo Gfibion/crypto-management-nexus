@@ -2,14 +2,14 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Shield, MessageSquare, Users, FileText, BarChart3, Mail, Settings, Bell, MessageCircle, Award } from 'lucide-react';
+import { Shield, MessageSquare, Users, FileText, BarChart3, Mail, Settings, Bell, MessageCircle, Award, Briefcase } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import TabButton from './TabButton';
 
 interface DashboardContentProps {
   activeTab: string;
-  setActiveTab: (tab: 'dashboard' | 'articles' | 'messages' | 'content' | 'users' | 'emails' | 'notifications' | 'comments' | 'testimonials') => void;
+  setActiveTab: (tab: 'dashboard' | 'articles' | 'messages' | 'content' | 'users' | 'emails' | 'notifications' | 'comments' | 'testimonials' | 'services') => void;
   conversations: any[];
 }
 
@@ -133,6 +133,13 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           icon={Award}
         >
           Testimonials
+        </TabButton>
+        <TabButton
+          isActive={activeTab === 'services'}
+          onClick={() => setActiveTab('services')}
+          icon={Briefcase}
+        >
+          Services
         </TabButton>
       </div>
 
