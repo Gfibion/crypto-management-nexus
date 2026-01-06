@@ -4,11 +4,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Search as SearchIcon } from "lucide-react";
+import { Calendar, Search as SearchIcon, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { generateMailtoLink } from "@/utils/emailTemplates";
 import PageLayout from "@/components/PageLayout";
-import { businessManagementServices, ictTechnologyServices } from "@/components/services/serviceData";
+import { useServices } from "@/hooks/useServices";
 import ServiceCard from "@/components/services/ServiceCard";
 import { getIcon } from "@/components/services/ServiceIcons";
 import SEOHead from "@/components/SEOHead";
@@ -19,6 +19,9 @@ import { skillsData, categoryOrder } from "@/components/skills/skillsData";
 const Services = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  
+  // Fetch services from Supabase with fallback to hardcoded data
+  const { businessServices, ictServices, isLoading } = useServices();
   
   // Convert skillsData to the expected format
   const allSkills = Object.entries(skillsData).flatMap(([category, skills]) => 
@@ -62,7 +65,7 @@ const Services = () => {
   };
 
   // Filter services based on search term and category
-  const filteredBusinessServices = businessManagementServices.filter(service => {
+  const filteredBusinessServices = businessServices.filter(service => {
     const matchesSearch = !searchTerm || 
       service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       service.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -73,7 +76,7 @@ const Services = () => {
     return matchesSearch && matchesCategory;
   });
 
-  const filteredIctServices = ictTechnologyServices.filter(service => {
+  const filteredIctServices = ictServices.filter(service => {
     const matchesSearch = !searchTerm || 
       service.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       service.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -83,6 +86,16 @@ const Services = () => {
     
     return matchesSearch && matchesCategory;
   });
+
+  if (isLoading) {
+    return (
+      <PageLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </PageLayout>
+    );
+  }
 
   return (
     <>
