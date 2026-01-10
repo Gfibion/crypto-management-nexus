@@ -10,8 +10,9 @@ import NotificationPreferences from './admin/NotificationPreferences';
 import CommentsManagement from './admin/CommentsManagement';
 import TestimonialsManagement from './admin/TestimonialsManagement';
 import ServicesManagement from './admin/ServicesManagement';
+import DonationsManagement from './admin/DonationsManagement';
 
-type TabType = 'dashboard' | 'articles' | 'messages' | 'content' | 'users' | 'emails' | 'notifications' | 'comments' | 'testimonials' | 'services';
+type TabType = 'dashboard' | 'articles' | 'messages' | 'content' | 'users' | 'emails' | 'notifications' | 'comments' | 'testimonials' | 'services' | 'donations';
 
 const AdminPanel: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard');
@@ -51,6 +52,20 @@ const AdminPanel: React.FC = () => {
 
   if (activeTab === 'services') {
     return <ServicesManagement setActiveTab={setActiveTab} />;
+  }
+
+  if (activeTab === 'donations') {
+    return (
+      <div className="space-y-6">
+        <DashboardContent
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          conversations={conversations}
+          showOnlyTabs={true}
+        />
+        <DonationsManagement />
+      </div>
+    );
   }
 
   return (

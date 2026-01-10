@@ -1,22 +1,23 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Shield, MessageSquare, Users, FileText, BarChart3, Mail, Settings, Bell, MessageCircle, Award, Briefcase } from 'lucide-react';
+import { Shield, MessageSquare, Users, FileText, BarChart3, Mail, Settings, Bell, MessageCircle, Award, Briefcase, Heart } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import TabButton from './TabButton';
 
 interface DashboardContentProps {
   activeTab: string;
-  setActiveTab: (tab: 'dashboard' | 'articles' | 'messages' | 'content' | 'users' | 'emails' | 'notifications' | 'comments' | 'testimonials' | 'services') => void;
+  setActiveTab: (tab: 'dashboard' | 'articles' | 'messages' | 'content' | 'users' | 'emails' | 'notifications' | 'comments' | 'testimonials' | 'services' | 'donations') => void;
   conversations: any[];
+  showOnlyTabs?: boolean;
 }
 
 const DashboardContent: React.FC<DashboardContentProps> = ({
   activeTab,
   setActiveTab,
-  conversations
+  conversations,
+  showOnlyTabs = false
 }) => {
   const activeConversations = conversations.filter(conv => conv.status === 'active' || conv.status === 'waiting_for_admin');
   const closedConversations = conversations.filter(conv => conv.status === 'closed');
@@ -141,8 +142,17 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
         >
           Services
         </TabButton>
+        <TabButton
+          isActive={activeTab === 'donations'}
+          onClick={() => setActiveTab('donations')}
+          icon={Heart}
+        >
+          Donations
+        </TabButton>
       </div>
 
+      {showOnlyTabs ? null : (
+      <>
       {/* Dashboard Stats Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card className="bg-slate-800/50 border-purple-800/30 p-6">
@@ -276,6 +286,8 @@ const DashboardContent: React.FC<DashboardContentProps> = ({
           </Button>
         </div>
       </Card>
+      </>
+      )}
     </div>
   );
 };

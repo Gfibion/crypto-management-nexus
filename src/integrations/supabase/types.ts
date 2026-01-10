@@ -272,6 +272,48 @@ export type Database = {
         }
         Relationships: []
       }
+      donations: {
+        Row: {
+          amount: number
+          channel: string | null
+          created_at: string
+          currency: string
+          donor_name: string | null
+          email: string
+          id: string
+          paid_at: string | null
+          reference: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          channel?: string | null
+          created_at?: string
+          currency?: string
+          donor_name?: string | null
+          email: string
+          id?: string
+          paid_at?: string | null
+          reference: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          channel?: string | null
+          created_at?: string
+          currency?: string
+          donor_name?: string | null
+          email?: string
+          id?: string
+          paid_at?: string | null
+          reference?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       education: {
         Row: {
           achievements: string[] | null
