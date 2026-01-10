@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -22,6 +23,8 @@ serve(async (req) => {
     }
 
     const paystackSecretKey = Deno.env.get('PAYSTACK_SECRET_KEY');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
     if (!paystackSecretKey) {
       console.error('PAYSTACK_SECRET_KEY not configured');
@@ -30,6 +33,9 @@ serve(async (req) => {
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    // Initialize Supabase client with service role key
+    const supabase = createClient(supabaseUrl!, supabaseServiceKey!);
 
     // Verify transaction with Paystack
     const verifyResponse = await fetch(
@@ -49,14 +55,38 @@ serve(async (req) => {
 
     if (verifyData.status && verifyData.data.status === 'success') {
       // Transaction was successful
-      const { amount, currency, customer, paid_at, channel } = verifyData.data;
+      const { amount, currency, customer, paid_at, channel, metadata } = verifyData.data;
+      
+      // Extract donor name from metadata
+      const donorName = metadata?.custom_fields?.find(
+        (f: { variable_name: string }) => f.variable_name === 'donor_name'
+      )?.value || null;
+
+      // Save donation to database
+      const { error: insertError } = await supabase
+        .from('donations')
+        .insert({
+          email: customer.email,
+          donor_name: donorName,
+          amount: amount / 100, // Convert from kobo to main currency
+          currency,
+          reference,
+          channel,
+          status: 'success',
+          paid_at,
+        });
+
+      if (insertError) {
+        console.error('Error saving donation:', insertError);
+        // Don't fail the response, donation was successful even if DB insert failed
+      }
       
       return new Response(
         JSON.stringify({
           success: true,
           message: 'Payment verified successfully',
           data: {
-            amount: amount / 100, // Convert from kobo to main currency
+            amount: amount / 100,
             currency,
             email: customer.email,
             paidAt: paid_at,
