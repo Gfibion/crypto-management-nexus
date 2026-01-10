@@ -4,7 +4,7 @@ import DonationHeader from '@/components/donate/DonationHeader';
 import DonationForm from '@/components/donate/DonationForm';
 import DonationInfo from '@/components/donate/DonationInfo';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertTriangle } from 'lucide-react';
+import { Info } from 'lucide-react';
 import PageLayout from '@/components/PageLayout';
 import SEOHead from '@/components/SEOHead';
 
@@ -31,11 +31,11 @@ const Donate = () => {
         }}
       />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Alert className="mb-8 bg-gradient-to-r from-blue-900/50 to-cyan-900/50 border-blue-500/50 text-blue-100 backdrop-blur-sm animate-scale-in shadow-lg">
-          <AlertTriangle className="h-6 w-6 text-blue-400 animate-pulse" />
-          <AlertTitle className="text-xl font-semibold text-blue-100 animate-slide-in">Feature Under Development</AlertTitle>
-          <AlertDescription className="text-blue-200 text-base mt-2 animate-fade-in stagger-1">
-            Please note that the donation functionality is currently in development mode. This is a demonstration of the interface and features that will be available once fully implemented. All payment processing is simulated for demonstration purposes only.
+        <Alert className="mb-8 bg-gradient-to-r from-cyan-900/50 to-blue-900/50 border-cyan-500/50 text-cyan-100 backdrop-blur-sm animate-scale-in shadow-lg">
+          <Info className="h-6 w-6 text-cyan-400" />
+          <AlertTitle className="text-xl font-semibold text-cyan-100 animate-slide-in">Secure Payments via Paystack</AlertTitle>
+          <AlertDescription className="text-cyan-200 text-base mt-2 animate-fade-in stagger-1">
+            Your donation is processed securely through Paystack, a trusted payment gateway. All transactions are encrypted and verified for your safety.
           </AlertDescription>
         </Alert>
         
