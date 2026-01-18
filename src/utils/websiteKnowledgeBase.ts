@@ -249,5 +249,5 @@ export const websiteKnowledgeBase = `
 
 ---
 Last Updated: October 2025
-Website: https://josephmgfibion.org
+Website: https://www.josephmgfibion.org
 `;

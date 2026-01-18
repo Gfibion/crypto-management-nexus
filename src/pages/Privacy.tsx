@@ -12,7 +12,7 @@ const Privacy = () => {
         title="Privacy Policy - Gfibion Joseph Mutua | Data Protection & User Privacy"
         description="Learn how Gfibion Joseph Mutua's professional portfolio website collects, uses, and protects your personal information. Our commitment to your privacy and data security."
         keywords="privacy policy, data protection, user privacy, cookies, GDPR, data security, personal information, Gfibion Joseph Mutua"
-        canonical="https://josephmgfibion.org/privacy"
+        canonical="https://www.josephmgfibion.org/privacy"
       />
       <div className="min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">

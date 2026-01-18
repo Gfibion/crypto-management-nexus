@@ -31,7 +31,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
 }) => {
   const location = useLocation();
   const defaultOgImage = getMediaAsset('icon_pwa');
-  const baseUrl = 'https://josephmgfibion.org';
+  const baseUrl = 'https://www.josephmgfibion.org';
   
   // Use explicit canonical if provided, otherwise build from current path
   const finalCanonical = canonical || `${baseUrl}${location.pathname === '/' ? '' : location.pathname}`;

@@ -9,7 +9,7 @@ const Terms = () => {
       <SEOHead
         title="Terms of Service | Gfibion Joseph Mutua"
         description="Read the terms and conditions governing the use of Gfibion Joseph Mutua's website and services."
-        canonical="https://josephmgfibion.org/terms"
+        canonical="https://www.josephmgfibion.org/terms"
       />
       
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900/20 to-slate-900">

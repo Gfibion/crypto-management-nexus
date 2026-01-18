@@ -15,18 +15,18 @@ const Donate = () => {
         title="Support Gfibion Joseph Mutua | Donate to Business & Technology Innovation"
         description="Support the work of Gfibion Joseph Mutua in business management and ICT consulting. Your donation helps fund innovative projects, educational content, and community development initiatives."
         keywords="donate, support, Gfibion Joseph Mutua, business innovation, technology development, community support, ICT projects, Kenya entrepreneur support"
-        canonical="https://josephmgfibion.org/donate"
-        ogImage="https://josephmgfibion.org/og-default.png"
+        canonical="https://www.josephmgfibion.org/donate"
+        ogImage="https://www.josephmgfibion.org/og-default.png"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "WebPage",
           "name": "Donate to Gfibion Joseph Mutua",
           "description": "Support business and technology innovation initiatives",
-          "url": "https://josephmgfibion.org/donate",
+          "url": "https://www.josephmgfibion.org/donate",
           "isPartOf": {
             "@type": "WebSite",
             "name": "Gfibion Joseph Mutua",
-            "url": "https://josephmgfibion.org"
+            "url": "https://www.josephmgfibion.org"
           }
         }}
       />

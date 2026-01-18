@@ -78,7 +78,7 @@ Innovation, Integrity, Excellence
 ## TARGET AUDIENCE
 SMBs, startups, organizations seeking digital transformation and strategic guidance
 
-Visit website: https://josephmgfibion.org
+Visit website: https://www.josephmgfibion.org
 `;
 
     const systemPrompt = chatType === 'site-questions' 
