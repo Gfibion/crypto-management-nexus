@@ -30,8 +30,8 @@ const Education = () => {
         title="Gfibion Joseph Mutua Education & Qualifications | Business Management & ICT Academic Background"
         description="Discover the educational background and academic qualifications of Gfibion Joseph Mutua, professional business manager and ICT consultant. View degrees, certifications, and academic achievements in business management and technology."
         keywords="Gfibion Joseph Mutua education, business management degree, ICT qualifications, academic background, business consultant education, Kenya business graduate, management studies, technology education, professional qualifications, academic achievements"
-        canonical="https://josephmgfibion.org/education"
-        ogImage="https://josephmgfibion.org/og-default.png"
+        canonical="https://www.josephmgfibion.org/education"
+        ogImage="https://www.josephmgfibion.org/og-default.png"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "EducationalOccupationalCredential",

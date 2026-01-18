@@ -68,7 +68,7 @@ const Footer = () => {
               </li>
               <li>
                 <a
-                  href="https://josephmgfibion.org/sitemap.xml"
+                  href="https://www.josephmgfibion.org/sitemap.xml"
                   target="_blank"
                   rel="noopener noreferrer"
                   className={linkBaseClasses}

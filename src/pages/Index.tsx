@@ -26,14 +26,14 @@ const Index = () => {
         title="Gfibion Joseph Mutua - Professional Business Manager & ICT Consultant | Strategic Management & Digital Solutions"
         description="Welcome to the professional portfolio of Gfibion Joseph Mutua, expert business manager and ICT consultant specializing in strategic management, digital transformation, business consulting, and innovative technology solutions. Discover comprehensive business and ICT services."
         keywords="Gfibion Joseph Mutua, business manager, ICT consultant, strategic management, digital transformation, business consulting, technology integration, professional portfolio, business strategy, digital solutions, Kenya business expert, entrepreneurship, strategic planning"
-        canonical="https://josephmgfibion.org/"
-        ogImage="https://josephmgfibion.org/og-default.png"
+        canonical="https://www.josephmgfibion.org/"
+        ogImage="https://www.josephmgfibion.org/og-default.png"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "WebSite",
           "name": "Gfibion Joseph Mutua Portfolio",
           "description": "Professional business manager and ICT consultant portfolio",
-          "url": "https://josephmgfibion.org",
+          "url": "https://www.josephmgfibion.org",
           "author": {
             "@type": "Person",
             "name": "Gfibion Joseph Mutua"

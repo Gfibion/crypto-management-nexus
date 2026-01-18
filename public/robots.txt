@@ -101,7 +101,7 @@ User-agent: DotBot
 Disallow: /
 
 # Sitemap location
-Sitemap: https://josephmgfibion.org/sitemap.xml
+Sitemap: https://www.josephmgfibion.org/sitemap.xml
 
 # Host directive (for Yandex)
-Host: https://josephmgfibion.org
+Host: https://www.josephmgfibion.org

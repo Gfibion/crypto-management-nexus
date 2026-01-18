@@ -94,7 +94,7 @@ const ArticleReader: React.FC = () => {
           },
           "mainEntityOfPage": {
             "@type": "WebPage",
-            "@id": `https://josephmgfibion.org/articles/${currentArticle.slug}`
+            "@id": `https://www.josephmgfibion.org/articles/${currentArticle.slug}`
           },
           "keywords": currentArticle.tags?.join(', '),
           "articleSection": currentArticle.category,
@@ -123,7 +123,7 @@ const ArticleReader: React.FC = () => {
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-200">Share this article</h3>
                 <SocialShare
-                  url={`https://josephmgfibion.org/articles/${currentArticle.slug}`}
+                  url={`https://www.josephmgfibion.org/articles/${currentArticle.slug}`}
                   title={currentArticle.title}
                   description={currentArticle.excerpt || ''}
                   hashtags={currentArticle.tags || []}

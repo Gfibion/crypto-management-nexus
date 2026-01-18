@@ -11,7 +11,7 @@ interface ReferralShareProps {
 
 const ReferralShare: React.FC<ReferralShareProps> = ({ className = "" }) => {
   const { toast } = useToast();
-  const referralUrl = 'https://josephmgfibion.org';
+  const referralUrl = 'https://www.josephmgfibion.org';
   const referralMessage = 'Check out Gfibion Joseph Mutua - Professional Business Manager & ICT Consultant. Expert in strategic management, digital transformation, and innovative business solutions!';
 
   const handleCopyReferralLink = async () => {

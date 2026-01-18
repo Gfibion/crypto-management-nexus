@@ -142,8 +142,8 @@ const Chat = () => {
           title="Live Business Consulting Chat with Gfibion Joseph Mutua | Get Expert ICT & Management Advice"
           description="Connect directly with professional business manager and ICT consultant Gfibion Joseph Mutua through live chat. Get expert advice on business strategy, digital transformation, technology integration, and management consulting."
           keywords="business consulting chat, ICT consultant contact, live business advice, management consulting chat, Joseph Mutua contact, Gfibion consultation, business strategy chat, technology consulting support, professional business help, Kenya business consultant"
-          canonical="https://josephmgfibion.org/chat"
-          ogImage="https://josephmgfibion.org/og-default.png"
+          canonical="https://www.josephmgfibion.org/chat"
+          ogImage="https://www.josephmgfibion.org/og-default.png"
           structuredData={{
             "@context": "https://schema.org",
             "@type": "ContactPage",
@@ -237,8 +237,8 @@ const Chat = () => {
         title="Live Business Consulting Chat with Gfibion Joseph Mutua | Get Expert ICT & Management Advice"
         description="Connect directly with professional business manager and ICT consultant Gfibion Joseph Mutua through live chat. Get expert advice on business strategy, digital transformation, technology integration, and management consulting."
         keywords="business consulting chat, ICT consultant contact, live business advice, management consulting chat, Joseph Mutua contact, Gfibion consultation, business strategy chat, technology consulting support, professional business help, Kenya business consultant"
-        canonical="https://josephmgfibion.org/chat"
-        ogImage="https://josephmgfibion.org/og-default.png"
+        canonical="https://www.josephmgfibion.org/chat"
+        ogImage="https://www.josephmgfibion.org/og-default.png"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "ContactPage",

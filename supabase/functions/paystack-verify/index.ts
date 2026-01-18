@@ -87,7 +87,7 @@ async function sendAdminNotification(donation: {
                 </div>
               </div>
               <div style="text-align: center;">
-                <a href="https://josephmgfibion.org/admin" class="cta">View in Admin Panel</a>
+                <a href="https://www.josephmgfibion.org/admin" class="cta">View in Admin Panel</a>
               </div>
             </div>
             <div class="footer">
@@ -206,14 +206,14 @@ async function sendDonorThankYouEmail(donation: {
 
               <div class="social">
                 <p>Stay connected with us!</p>
-                <a href="https://josephmgfibion.org" class="cta">Visit Our Website</a>
+                <a href="https://www.josephmgfibion.org" class="cta">Visit Our Website</a>
               </div>
             </div>
             <div class="footer">
               <p>With heartfelt gratitude <span class="heart">❤️</span></p>
               <p><strong>Joseph M. Gfibion</strong><br>Gfibion Genesis</p>
               <p style="margin-top: 20px;">
-                <a href="https://josephmgfibion.org">josephmgfibion.org</a>
+                <a href="https://www.josephmgfibion.org">www.josephmgfibion.org</a>
               </p>
               <p style="margin-top: 15px; font-size: 11px; color: #cbd5e1;">
                 This email serves as your official donation receipt.<br>

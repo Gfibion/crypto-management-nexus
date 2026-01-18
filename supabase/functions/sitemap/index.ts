@@ -8,7 +8,7 @@ const corsHeaders = {
 const SUPABASE_URL = 'https://plnoqiktsyqwcwzlueri.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsbm9xaWt0c3lxd2N3emx1ZXJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk4OTIzNzQsImV4cCI6MjA2NTQ2ODM3NH0.s4K-4IorBrQmjcHOqYj1qjaHyjoYMPRQKksdobQ-Cw0';
 
-const BASE_URL = 'https://josephmgfibion.org';
+const BASE_URL = 'https://www.josephmgfibion.org';
 
 interface SitemapUrl {
   loc: string;

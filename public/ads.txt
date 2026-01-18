@@ -1,8 +1,8 @@
-#ads.txt https://josephmgfibion.org
+#ads.txt https://www.josephmgfibion.org
 
 #updated 12.01.2025
 
-ownerdomain=josephmgfibion.org
+ownerdomain=www.josephmgfibion.org
 managerdomain=newormedia.com
 contact=hello@newormedia.com
 

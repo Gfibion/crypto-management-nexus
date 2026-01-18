@@ -44,8 +44,8 @@ const Articles = () => {
         title="Business Management & ICT Articles by Gfibion Joseph Mutua | Expert Insights & Analysis"
         description="Read expert articles and insights on business management, ICT consulting, digital transformation, and strategic planning by Gfibion Joseph Mutua. Get valuable business advice and technology trends analysis from a professional business consultant."
         keywords="business management articles, ICT consulting insights, digital transformation blog, strategic planning advice, business strategy articles, Joseph Mutua articles, Gfibion business insights, Kenya business consultant blog, technology consulting articles, business development insights"
-        canonical="https://josephmgfibion.org/articles"
-        ogImage="https://josephmgfibion.org/og-articles.png"
+        canonical="https://www.josephmgfibion.org/articles"
+        ogImage="https://www.josephmgfibion.org/og-articles.png"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "Blog",
