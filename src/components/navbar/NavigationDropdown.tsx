@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ChevronDown, Home, User, Briefcase, Code, GraduationCap, FolderOpen, Heart, Shield } from "lucide-react";
+import { ChevronDown, Home, User, Briefcase, GraduationCap, FolderOpen, Heart, Shield } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,8 +34,6 @@ const NavigationDropdown = ({ navItems }: NavigationDropdownProps) => {
         return <User className="h-4 w-4" />;
       case "Services":
         return <Briefcase className="h-4 w-4" />;
-      case "Skills":
-        return <Code className="h-4 w-4" />;
       case "Education":
         return <GraduationCap className="h-4 w-4" />;
       case "Portfolio":
