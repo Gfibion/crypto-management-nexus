@@ -36,6 +36,8 @@ Deno.serve(async (req) => {
       { loc: '/education', lastmod: now, changefreq: 'monthly', priority: 0.7 },
       { loc: '/chat', lastmod: now, changefreq: 'monthly', priority: 0.6 },
       { loc: '/donate', lastmod: now, changefreq: 'yearly', priority: 0.5 },
+      { loc: '/privacy', lastmod: now, changefreq: 'yearly', priority: 0.4 },
+      { loc: '/terms', lastmod: now, changefreq: 'yearly', priority: 0.4 },
     ];
 
     // Fetch latest article updates to get accurate lastmod for articles page
