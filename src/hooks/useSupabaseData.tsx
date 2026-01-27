@@ -1,7 +1,5 @@
-import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { skillsData } from '@/components/skills/skillsData';
 import { useNotifications } from '@/hooks/useNotifications';
 
 export const useServices = () => {
@@ -27,33 +25,6 @@ export const useServices = () => {
       }
       
       console.log('Services fetched successfully:', data);
-      return data;
-    },
-  });
-};
-
-export const useSkills = () => {
-  return useQuery({
-    queryKey: ['skills'],
-    queryFn: async () => {
-      console.log('Fetching skills from database...');
-      const { data, error } = await supabase
-        .from('skills')
-        .select('*')
-        .order('proficiency_level', { ascending: false });
-      
-      if (error) {
-        console.error('Error fetching skills:', error);
-        throw error;
-      }
-      
-      // If no skills in database, return empty array to let populate function run
-      if (!data || data.length === 0) {
-        console.log('No skills in database, returning empty array');
-        return [];
-      }
-      
-      console.log('Skills fetched from database:', data);
       return data;
     },
   });
@@ -271,33 +242,3 @@ export const useChatMessages = (conversationId: string) => {
   });
 };
 
-// Mutation hook for creating skills in database
-export const useCreateSkill = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async (skillData: {
-      name: string;
-      category: string;
-      proficiency_level: number;
-      years_experience?: number;
-      description?: string;
-    }) => {
-      console.log('Creating skill:', skillData);
-      const { data, error } = await supabase
-        .from('skills')
-        .insert([skillData])
-        .select();
-      
-      if (error) {
-        console.error('Error creating skill:', error);
-        throw error;
-      }
-      console.log('Skill created successfully:', data);
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['skills'] });
-    },
-  });
-};

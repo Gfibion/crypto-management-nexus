@@ -1,7 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { Shield, User, LogOut, BookOpen, MessageCircle, Home, Briefcase, GraduationCap, Code, FolderOpen, Heart, Scale, Lock } from "lucide-react";
+import { Shield, User, LogOut, BookOpen, MessageCircle, Home, Briefcase, GraduationCap, FolderOpen, Heart, Scale, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useUserRole";
@@ -51,8 +51,6 @@ const MobileNavigation = ({ navItems, isOpen, onClose }: MobileNavigationProps) 
         return <User className="h-4 w-4" />;
       case "Services":
         return <Briefcase className="h-4 w-4" />;
-      case "Skills":
-        return <Code className="h-4 w-4" />;
       case "Education":
         return <GraduationCap className="h-4 w-4" />;
       case "Articles":
