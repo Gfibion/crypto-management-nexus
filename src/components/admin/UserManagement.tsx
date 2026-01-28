@@ -24,6 +24,8 @@ const UserManagement: React.FC<UserManagementProps> = ({ setActiveTab }) => {
   const { data: users = [], isLoading } = useQuery({
     queryKey: ['admin-users'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
         .select('*');
@@ -35,6 +37,16 @@ const UserManagement: React.FC<UserManagementProps> = ({ setActiveTab }) => {
         .select('*');
       
       if (rolesError) throw rolesError;
+
+      // Log audit event for accessing user profiles
+      if (user && profiles) {
+        await supabase.from('audit_logs').insert({
+          user_id: user.id,
+          action: 'VIEW',
+          table_name: 'profiles',
+          details: { record_count: profiles.length, context: 'user_management' }
+        });
+      }
 
       // Combine profiles with roles
       return profiles.map(profile => ({

@@ -28,12 +28,25 @@ const DonationsManagement = () => {
   const { data: donations, isLoading, error, refetch } = useQuery({
     queryKey: ['admin-donations'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
       const { data, error } = await supabase
         .from('donations')
         .select('*')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
+      
+      // Log audit event for accessing donations data
+      if (user && data) {
+        await supabase.from('audit_logs').insert({
+          user_id: user.id,
+          action: 'VIEW',
+          table_name: 'donations',
+          details: { record_count: data.length }
+        });
+      }
+      
       return data as Donation[];
     },
   });
